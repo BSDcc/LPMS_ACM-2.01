@@ -1,7 +1,7 @@
 object FLPMS_Main: TFLPMS_Main
-  Left = 484
+  Left = 1363
   Height = 591
-  Top = 137
+  Top = 149
   Width = 849
   Caption = 'FLPMS_Main'
   ClientHeight = 570
@@ -80,17 +80,17 @@ object FLPMS_Main: TFLPMS_Main
   LCLVersion = '2.0.6.0'
   object Panel1: TPanel
     Left = 0
-    Height = 515
+    Height = 516
     Top = 34
     Width = 210
     Align = alLeft
     BevelOuter = bvNone
-    ClientHeight = 515
+    ClientHeight = 516
     ClientWidth = 210
     TabOrder = 0
     object tvTree: TTreeView
       Left = 0
-      Height = 515
+      Height = 516
       Hint = 'Click on an item to display it''s information on the right'
       Top = 0
       Width = 210
@@ -106,18 +106,18 @@ object FLPMS_Main: TFLPMS_Main
   end
   object Panel4: TPanel
     Left = 210
-    Height = 515
+    Height = 516
     Top = 34
     Width = 639
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 515
+    ClientHeight = 516
     ClientWidth = 639
     TabOrder = 1
     object Panel2: TPanel
       Left = 0
       Height = 41
-      Top = 474
+      Top = 475
       Width = 639
       Align = alBottom
       BevelOuter = bvNone
@@ -176,27 +176,27 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Panel3: TPanel
       Left = 0
-      Height = 474
+      Height = 475
       Top = 0
       Width = 639
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 474
+      ClientHeight = 475
       ClientWidth = 639
       TabOrder = 0
       object pnlUser: TPanel
         Left = 0
-        Height = 474
+        Height = 475
         Top = 0
         Width = 639
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 474
+        ClientHeight = 475
         ClientWidth = 639
         TabOrder = 2
         object Label6: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 16
           Width = 35
           Caption = 'Prefix:'
@@ -204,7 +204,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label8: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 112
           Width = 34
           Caption = 'Email:'
@@ -212,7 +212,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label10: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 273
           Width = 56
           Caption = 'Renewals:'
@@ -220,7 +220,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label7: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 80
           Width = 56
           Caption = 'Company:'
@@ -228,7 +228,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label11: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 144
           Width = 65
           Caption = 'Contact No:'
@@ -236,7 +236,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label12: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 48
           Width = 62
           Caption = 'Username:'
@@ -244,7 +244,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label13: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 176
           Width = 43
           Caption = 'Unique:'
@@ -252,15 +252,15 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label14: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 208
-          Width = 75
+          Width = 74
           Caption = 'License Type:'
           ParentColor = False
         end
         object Label15: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 240
           Width = 67
           Caption = 'Expiry Date:'
@@ -268,7 +268,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label16: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 323
           Width = 46
           Caption = 'Options:'
@@ -276,7 +276,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label9: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 349
           Width = 23
           Caption = 'Key:'
@@ -284,15 +284,15 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label17: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 403
-          Width = 76
+          Width = 75
           Caption = 'New Lic Type:'
           ParentColor = False
         end
         object Label18: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 435
           Width = 63
           Caption = 'New Prefix:'
@@ -300,7 +300,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtPrefixU: TEdit
           Left = 106
-          Height = 27
+          Height = 26
           Top = 12
           Width = 121
           ReadOnly = True
@@ -308,7 +308,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtEmailU: TEdit
           Left = 106
-          Height = 27
+          Height = 26
           Top = 108
           Width = 431
           Anchors = [akTop, akLeft, akRight]
@@ -325,7 +325,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtCompanyU: TEdit
           Left = 106
-          Height = 27
+          Height = 26
           Top = 76
           Width = 523
           Anchors = [akTop, akLeft, akRight]
@@ -334,7 +334,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtContactU: TEdit
           Left = 106
-          Height = 27
+          Height = 26
           Top = 140
           Width = 121
           MaxLength = 50
@@ -342,7 +342,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtUserNameU: TEdit
           Left = 106
-          Height = 27
+          Height = 26
           Top = 44
           Width = 523
           Anchors = [akTop, akLeft, akRight]
@@ -351,7 +351,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtUniqueU: TEdit
           Left = 106
-          Height = 27
+          Height = 26
           Top = 172
           Width = 121
           CharCase = ecUppercase
@@ -403,7 +403,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtRenewalsU: TEdit
           Left = 106
-          Height = 27
+          Height = 26
           Top = 269
           Width = 60
           ReadOnly = True
@@ -435,7 +435,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtKeyU: TEdit
           Left = 106
-          Height = 27
+          Height = 26
           Top = 345
           Width = 297
           ReadOnly = True
@@ -451,7 +451,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object cbxNewLicU: TComboBox
           Left = 106
-          Height = 27
+          Height = 26
           Top = 399
           Width = 121
           ItemHeight = 0
@@ -468,7 +468,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object cbxNewPrefixU: TComboBox
           Left = 106
-          Height = 27
+          Height = 26
           Top = 431
           Width = 121
           ItemHeight = 0
@@ -559,7 +559,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object txtExpired: TStaticText
           Left = 233
-          Height = 18
+          Height = 17
           Top = 240
           Width = 4
           AutoSize = True
@@ -572,7 +572,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtDBKeyU: TEdit
           Left = 250
-          Height = 27
+          Height = 26
           Top = 12
           Width = 121
           TabOrder = 1
@@ -599,17 +599,17 @@ object FLPMS_Main: TFLPMS_Main
       end
       object pnlCompany: TPanel
         Left = 0
-        Height = 474
+        Height = 475
         Top = 0
         Width = 639
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 474
+        ClientHeight = 475
         ClientWidth = 639
         TabOrder = 1
         object Label1: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 16
           Width = 35
           Caption = 'Prefix:'
@@ -617,15 +617,15 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label2: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 48
-          Width = 53
+          Width = 52
           Caption = 'Key Type:'
           ParentColor = False
         end
         object Label3: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 80
           Width = 56
           Caption = 'Company:'
@@ -633,7 +633,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label4: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 112
           Width = 81
           Caption = 'License Count:'
@@ -641,7 +641,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label5: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 144
           Width = 89
           Caption = 'Renewal Period:'
@@ -649,7 +649,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtPrefixC: TEdit
           Left = 116
-          Height = 27
+          Height = 26
           Top = 12
           Width = 121
           ReadOnly = True
@@ -657,7 +657,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtCompanyC: TEdit
           Left = 116
-          Height = 27
+          Height = 26
           Top = 76
           Width = 513
           Anchors = [akTop, akLeft, akRight]
@@ -665,7 +665,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object cbxKeyTypeC: TComboBox
           Left = 116
-          Height = 27
+          Height = 26
           Top = 44
           Width = 121
           ItemHeight = 0
@@ -689,7 +689,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object speRenewalC: TSpinEdit
           Left = 116
-          Height = 27
+          Height = 26
           Top = 140
           Width = 121
           MaxValue = 999
@@ -699,7 +699,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object speLicCountC: TSpinEdit
           Left = 116
-          Height = 27
+          Height = 26
           Top = 108
           Width = 121
           MaxValue = 999
@@ -708,14 +708,421 @@ object FLPMS_Main: TFLPMS_Main
           Value = 1
         end
       end
-      object pnlRoot: TPanel
+      object pnlBackup: TPanel
         Left = 0
-        Height = 474
+        Height = 475
         Top = 0
         Width = 639
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 474
+        ClientHeight = 475
+        ClientWidth = 639
+        TabOrder = 4
+        object Label29: TLabel
+          Left = 8
+          Height = 13
+          Top = 100
+          Width = 81
+          Caption = 'Backing up:'
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+        end
+        object Label30: TLabel
+          Left = 8
+          Height = 15
+          Top = 132
+          Width = 33
+          Caption = 'Table:'
+          ParentColor = False
+        end
+        object Label31: TLabel
+          Left = 8
+          Height = 15
+          Top = 164
+          Width = 42
+          Caption = 'Record:'
+          ParentColor = False
+        end
+        object edtTable: TEdit
+          Left = 66
+          Height = 26
+          Top = 128
+          Width = 121
+          Enabled = False
+          ReadOnly = True
+          TabOrder = 3
+        end
+        object edtRecord: TEdit
+          Left = 66
+          Height = 26
+          Top = 160
+          Width = 121
+          Enabled = False
+          ReadOnly = True
+          TabOrder = 4
+        end
+        object StaticText2: TStaticText
+          Left = 8
+          Height = 29
+          Top = 20
+          Width = 421
+          AutoSize = True
+          Caption = 'LPMS Access Control Manager - Backup'
+          Font.Color = clWindowText
+          Font.Height = -21
+          Font.Name = 'Tahoma'
+          ParentFont = False
+          TabOrder = 0
+        end
+        object btnLockB: TBitBtn
+          Left = 8
+          Height = 36
+          Top = 58
+          Width = 36
+          Glyph.Data = {
+            F6060000424DF606000000000000360000002800000018000000180000000100
+            180000000000C0060000130B0000130B00000000000000000001FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BD0081
+            BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00A3E224D5FF2DD9FF25D5FF
+            1CD1FF11BFF208ADE6039AD50081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F200BDFF2D
+            D9FF3AE0FF32DCFF29D8FF20D3FF18CFFF10CAFF08C1FB02A9E60081BD0081BD
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD00BDFF00BDFF35DDFF46E5FF3EE1FF35DDFF2DD9FF1CB7E3087EB110BAEE0C
+            C7FF05BFFB008CCA0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD00BDFF00BDFF3CE1FF51EAFF4AE6FF41E3FF39E0FF1EA3
+            C9003B670C83B218CFFF0FCAFF08C1FB0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF42E3FF5CEEFF55EBFF
+            4DE9FF45E5FF01314F002D4E044B7220C9F31CD0FF13CCFF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF49
+            E6FF66F2FF5FEFFF58EDFF51EAFF001C300020380025411683A628D7FF1FD3FF
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD00BDFF00BDFF4EE9FF6EF6FF69F3FF63F0FF5BEEFF1D657800162700182B20
+            8CA935DDFF2CD9FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD00BDFF00BDFF52EAFF76F8FF70F6FF6BF4FF66F2FF41AF
+            C0001524114A5D49E6FF41E2FF38DEFF0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF56EBFF7BFAFF77F8FF
+            73F7FF6EF4FF5FE2EF3591A3379EB154EBFF4CE7FF44E3FF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF2FD5FF8A
+            F4FFA7FCFFADFCFF96FBFF95FAFF70F6FF6BF4FF65F2FF5EEFFF57EDFF50E9FF
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD56E7FB76F7FF8AC4C593BCBDA0F4F7BBFEFFCBFEFFDCFFFFCCFCFFAFFAFF76
+            F4FF62F0FF5BEEFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD0893CA40BAD58686868989896CB5BD62F0FF6DF4FF7AF7
+            FF88FAFF96FCFFA5FEFFA0FBFF68F2FF0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD8181819696964CA9BD
+            26D7FF2FDAFF3AE0FF44E3FF77A3A67E9D9F6CE3EE78F7FF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
+            8181A0A0A03589A6049FD909ADE60FBDF22DBADE81818187878759ADBD26BDE6
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FF818181ABABAB5C818E0081BD0081BD0081BD0081BD8181818B
+            8B8B34819F0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF818181B8B8B8818181FF00FFFF00FFFF00
+            FFFF00FF818181909090818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181CBCBCB818181
+            FF00FFFF00FFFF00FFFF00FF818181939393818181FF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
+            8181E5E5E59C9C9C818181FF00FFFF00FFFF00FF818181969696818181FF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FF818181E5E5E5F2F2F2ABABAB818181818181818181A6A6A681
+            8181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181818181E9E9E9E7E7E7C7C7
+            C7C9C9C9ADADAD818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            818181818181818181818181818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+          }
+          OnClick = btnLockBClick
+          TabOrder = 1
+          Visible = False
+        end
+        object btnUnlockB: TBitBtn
+          Left = 8
+          Height = 36
+          Top = 58
+          Width = 36
+          Glyph.Data = {
+            F6060000424DF606000000000000360000002800000018000000180000000100
+            180000000000C0060000130B0000130B00000000000000000001FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BD0081
+            BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00A3E224D5FF2DD9FF25D5FF
+            1CD1FF11BFF208ADE6039AD50081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F200BDFF2D
+            D9FF3AE0FF32DCFF29D8FF20D3FF18CFFF10CAFF08C1FB02A9E60081BD0081BD
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD00BDFF00BDFF35DDFF46E5FF3EE1FF35DDFF2DD9FF1CB7E3087EB110BAEE0C
+            C7FF05BFFB008CCA0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD00BDFF00BDFF3CE1FF51EAFF4AE6FF41E3FF39E0FF1EA3
+            C9003B670C83B218CFFF0FCAFF08C1FB0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF42E3FF5CEEFF55EBFF
+            4DE9FF45E5FF01314F002D4E044B7220C9F31CD0FF13CCFF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF49
+            E6FF66F2FF5FEFFF58EDFF51EAFF001C300020380025411683A628D7FF1FD3FF
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD00BDFF00BDFF4EE9FF6EF6FF69F3FF63F0FF5BEEFF1D657800162700182B20
+            8CA935DDFF2CD9FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD00BDFF00BDFF52EAFF76F8FF70F6FF6BF4FF66F2FF41AF
+            C0001524114A5D49E6FF41E2FF38DEFF0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF56EBFF7BFAFF77F8FF
+            73F7FF6EF4FF5FE2EF3591A3379EB154EBFF4CE7FF44E3FF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF13C9FF70
+            F0FFA6FCFF95FBFF96FBFF95FAFF70F6FF6BF4FF65F2FF5EEFFF57EDFF50E9FF
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD56E7FB65C7D01C4D621E5B79418BAABBFEFFCBFEFFDCFFFFCCFCFFAFFAFF76
+            F4FF62F0FF5BEEFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD0893CA15728E002037003053024A796CF4FF78F7FF86FA
+            FF95FCFFA3FCFFB2FEFF95FAFF68F2FF0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD0480B10D99C722CAF4
+            2FDAFF39DEFF43E3FF4EE9FF7BA3A680A5A676E6EE78F7FF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00
+            81BD0081BD0189C5049FD909ADE60FBDF22DBADE81818181818159ADBD26BDE6
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FF8181818181812D81A10081BD0081BD0081BD0081BD82828282
+            828234819F0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF8181819F9F9F818181FF00FFFF00FFFF00
+            FFFF00FF848484878787818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181ABABAB818181
+            FF00FFFF00FFFF00FFFF00FF8181818B8B8B818181FF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
+            8181B8B8B8818181FF00FFFF00FFFF00FFFF00FF818181909090818181FF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FF818181C5C5C5818181FF00FFFF00FFFF00FFFF00FF81818193
+            9393818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF818181DDDDDD959595818181FF00FFFF00
+            FFFF00FF818181969696818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181A4A4A4F2F2F2
+            9D9D9D818181818181818181A3A3A3818181FF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FF818181818181D9D9D9E1E1E1C7C7C7C4C4C4A6A6A6818181FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FF818181818181818181818181818181FF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+          }
+          OnClick = btnUnlockBClick
+          TabOrder = 2
+        end
+      end
+      object pnlRestore: TPanel
+        Left = 0
+        Height = 475
+        Top = 0
+        Width = 639
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 475
+        ClientWidth = 639
+        TabOrder = 3
+        object Label26: TLabel
+          Left = 8
+          Height = 15
+          Top = 104
+          Width = 43
+          Caption = 'UserID:'
+          ParentColor = False
+        end
+        object Label27: TLabel
+          Left = 8
+          Height = 15
+          Top = 136
+          Width = 57
+          Caption = 'Password:'
+          ParentColor = False
+        end
+        object Label28: TLabel
+          Left = 8
+          Height = 15
+          Top = 168
+          Width = 29
+          Caption = 'Host:'
+          ParentColor = False
+        end
+        object edtUserID: TEdit
+          Left = 96
+          Height = 26
+          Top = 100
+          Width = 121
+          TabOrder = 3
+        end
+        object edtHost: TEdit
+          Left = 96
+          Height = 26
+          Top = 164
+          Width = 300
+          TabOrder = 5
+        end
+        object edtPassword: TEdit
+          Left = 96
+          Height = 26
+          Top = 132
+          Width = 121
+          EchoMode = emPassword
+          PasswordChar = '*'
+          TabOrder = 4
+        end
+        object StaticText3: TStaticText
+          Left = 8
+          Height = 29
+          Top = 20
+          Width = 424
+          AutoSize = True
+          Caption = 'LPMS Access Control Manager - Restore'
+          Font.Color = clWindowText
+          Font.Height = -21
+          Font.Name = 'Tahoma'
+          ParentFont = False
+          TabOrder = 0
+        end
+        object btnUnlockR: TBitBtn
+          Left = 8
+          Height = 36
+          Top = 58
+          Width = 36
+          Glyph.Data = {
+            F6060000424DF606000000000000360000002800000018000000180000000100
+            180000000000C0060000130B0000130B00000000000000000001FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BD0081
+            BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00A3E224D5FF2DD9FF25D5FF
+            1CD1FF11BFF208ADE6039AD50081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F200BDFF2D
+            D9FF3AE0FF32DCFF29D8FF20D3FF18CFFF10CAFF08C1FB02A9E60081BD0081BD
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD00BDFF00BDFF35DDFF46E5FF3EE1FF35DDFF2DD9FF1CB7E3087EB110BAEE0C
+            C7FF05BFFB008CCA0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD00BDFF00BDFF3CE1FF51EAFF4AE6FF41E3FF39E0FF1EA3
+            C9003B670C83B218CFFF0FCAFF08C1FB0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF42E3FF5CEEFF55EBFF
+            4DE9FF45E5FF01314F002D4E044B7220C9F31CD0FF13CCFF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF49
+            E6FF66F2FF5FEFFF58EDFF51EAFF001C300020380025411683A628D7FF1FD3FF
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD00BDFF00BDFF4EE9FF6EF6FF69F3FF63F0FF5BEEFF1D657800162700182B20
+            8CA935DDFF2CD9FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD00BDFF00BDFF52EAFF76F8FF70F6FF6BF4FF66F2FF41AF
+            C0001524114A5D49E6FF41E2FF38DEFF0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF56EBFF7BFAFF77F8FF
+            73F7FF6EF4FF5FE2EF3591A3379EB154EBFF4CE7FF44E3FF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF13C9FF70
+            F0FFA6FCFF95FBFF96FBFF95FAFF70F6FF6BF4FF65F2FF5EEFFF57EDFF50E9FF
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD56E7FB65C7D01C4D621E5B79418BAABBFEFFCBFEFFDCFFFFCCFCFFAFFAFF76
+            F4FF62F0FF5BEEFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD0893CA15728E002037003053024A796CF4FF78F7FF86FA
+            FF95FCFFA3FCFFB2FEFF95FAFF68F2FF0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD0480B10D99C722CAF4
+            2FDAFF39DEFF43E3FF4EE9FF7BA3A680A5A676E6EE78F7FF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00
+            81BD0081BD0189C5049FD909ADE60FBDF22DBADE81818181818159ADBD26BDE6
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FF8181818181812D81A10081BD0081BD0081BD0081BD82828282
+            828234819F0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF8181819F9F9F818181FF00FFFF00FFFF00
+            FFFF00FF848484878787818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181ABABAB818181
+            FF00FFFF00FFFF00FFFF00FF8181818B8B8B818181FF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
+            8181B8B8B8818181FF00FFFF00FFFF00FFFF00FF818181909090818181FF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FF818181C5C5C5818181FF00FFFF00FFFF00FFFF00FF81818193
+            9393818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF818181DDDDDD959595818181FF00FFFF00
+            FFFF00FF818181969696818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181A4A4A4F2F2F2
+            9D9D9D818181818181818181A3A3A3818181FF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FF818181818181D9D9D9E1E1E1C7C7C7C4C4C4A6A6A6818181FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FF818181818181818181818181818181FF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+          }
+          OnClick = btnUnlockRClick
+          TabOrder = 2
+        end
+        object btnLockR: TBitBtn
+          Left = 8
+          Height = 36
+          Top = 58
+          Width = 36
+          Glyph.Data = {
+            F6060000424DF606000000000000360000002800000018000000180000000100
+            180000000000C0060000130B0000130B00000000000000000001FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BD0081
+            BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00A3E224D5FF2DD9FF25D5FF
+            1CD1FF11BFF208ADE6039AD50081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F200BDFF2D
+            D9FF3AE0FF32DCFF29D8FF20D3FF18CFFF10CAFF08C1FB02A9E60081BD0081BD
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD00BDFF00BDFF35DDFF46E5FF3EE1FF35DDFF2DD9FF1CB7E3087EB110BAEE0C
+            C7FF05BFFB008CCA0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD00BDFF00BDFF3CE1FF51EAFF4AE6FF41E3FF39E0FF1EA3
+            C9003B670C83B218CFFF0FCAFF08C1FB0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF42E3FF5CEEFF55EBFF
+            4DE9FF45E5FF01314F002D4E044B7220C9F31CD0FF13CCFF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF49
+            E6FF66F2FF5FEFFF58EDFF51EAFF001C300020380025411683A628D7FF1FD3FF
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD00BDFF00BDFF4EE9FF6EF6FF69F3FF63F0FF5BEEFF1D657800162700182B20
+            8CA935DDFF2CD9FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD00BDFF00BDFF52EAFF76F8FF70F6FF6BF4FF66F2FF41AF
+            C0001524114A5D49E6FF41E2FF38DEFF0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF56EBFF7BFAFF77F8FF
+            73F7FF6EF4FF5FE2EF3591A3379EB154EBFF4CE7FF44E3FF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF2FD5FF8A
+            F4FFA7FCFFADFCFF96FBFF95FAFF70F6FF6BF4FF65F2FF5EEFFF57EDFF50E9FF
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
+            BD56E7FB76F7FF8AC4C593BCBDA0F4F7BBFEFFCBFEFFDCFFFFCCFCFFAFFAFF76
+            F4FF62F0FF5BEEFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF0081BD0893CA40BAD58686868989896CB5BD62F0FF6DF4FF7AF7
+            FF88FAFF96FCFFA5FEFFA0FBFF68F2FF0081BDFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD8181819696964CA9BD
+            26D7FF2FDAFF3AE0FF44E3FF77A3A67E9D9F6CE3EE78F7FF0081BDFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
+            8181A0A0A03589A6049FD909ADE60FBDF22DBADE81818187878759ADBD26BDE6
+            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FF818181ABABAB5C818E0081BD0081BD0081BD0081BD8181818B
+            8B8B34819F0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF818181B8B8B8818181FF00FFFF00FFFF00
+            FFFF00FF818181909090818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181CBCBCB818181
+            FF00FFFF00FFFF00FFFF00FF818181939393818181FF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
+            8181E5E5E59C9C9C818181FF00FFFF00FFFF00FF818181969696818181FF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FF818181E5E5E5F2F2F2ABABAB818181818181818181A6A6A681
+            8181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181818181E9E9E9E7E7E7C7C7
+            C7C9C9C9ADADAD818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            818181818181818181818181818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+          }
+          OnClick = btnLockRClick
+          TabOrder = 1
+        end
+      end
+      object pnlRoot: TPanel
+        Left = 0
+        Height = 475
+        Top = 0
+        Width = 639
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 475
         ClientWidth = 639
         TabOrder = 0
         object Image1: TImage
@@ -1437,7 +1844,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label19: TLabel
           Left = 34
-          Height = 17
+          Height = 15
           Top = 124
           Width = 23
           Caption = 'Key:'
@@ -1445,7 +1852,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label20: TLabel
           Left = 106
-          Height = 17
+          Height = 15
           Top = 156
           Width = 35
           Caption = 'Prefix:'
@@ -1453,7 +1860,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label21: TLabel
           Left = 106
-          Height = 17
+          Height = 15
           Top = 188
           Width = 43
           Caption = 'Unique:'
@@ -1461,7 +1868,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label22: TLabel
           Left = 106
-          Height = 17
+          Height = 15
           Top = 220
           Width = 67
           Caption = 'Expiry Date:'
@@ -1469,7 +1876,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label23: TLabel
           Left = 106
-          Height = 17
+          Height = 15
           Top = 280
           Width = 61
           Caption = 'Priveleges:'
@@ -1477,7 +1884,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label24: TLabel
           Left = 34
-          Height = 17
+          Height = 15
           Top = 364
           Width = 43
           Caption = 'Unique:'
@@ -1485,9 +1892,9 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label25: TLabel
           Left = 106
-          Height = 17
+          Height = 15
           Top = 252
-          Width = 75
+          Width = 74
           Caption = 'License Type:'
           ParentColor = False
         end
@@ -1495,7 +1902,7 @@ object FLPMS_Main: TFLPMS_Main
           Left = 34
           Height = 29
           Top = 34
-          Width = 323
+          Width = 322
           AutoSize = True
           Caption = 'LPMS Access Control Manager'
           Font.Color = clWindowText
@@ -1538,7 +1945,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtUniqueR: TEdit
           Left = 192
-          Height = 27
+          Height = 26
           Top = 184
           Width = 127
           CharCase = ecUppercase
@@ -1547,7 +1954,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtPrefixR: TEdit
           Left = 192
-          Height = 27
+          Height = 26
           Top = 152
           Width = 127
           MaxLength = 6
@@ -1595,7 +2002,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtUniqueF: TEdit
           Left = 106
-          Height = 27
+          Height = 26
           Top = 360
           Width = 213
           CharCase = ecUppercase
@@ -1629,11 +2036,12 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtKeyR: TEdit
           Left = 106
-          Height = 27
+          Height = 26
           Top = 120
           Width = 325
           CharCase = ecUppercase
-          MaxLength = 12
+          MaxLength = 38
+          OnKeyDown = edtKeyRKeyDown
           TabOrder = 1
         end
         object btnClear: TSpeedButton
@@ -1674,419 +2082,12 @@ object FLPMS_Main: TFLPMS_Main
           ShowCaption = False
         end
       end
-      object pnlBackup: TPanel
-        Left = 0
-        Height = 474
-        Top = 0
-        Width = 639
-        Align = alClient
-        BevelOuter = bvNone
-        ClientHeight = 474
-        ClientWidth = 639
-        TabOrder = 4
-        object Label29: TLabel
-          Left = 8
-          Height = 15
-          Top = 100
-          Width = 81
-          Caption = 'Backing up:'
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentColor = False
-          ParentFont = False
-        end
-        object Label30: TLabel
-          Left = 8
-          Height = 17
-          Top = 132
-          Width = 33
-          Caption = 'Table:'
-          ParentColor = False
-        end
-        object Label31: TLabel
-          Left = 8
-          Height = 17
-          Top = 164
-          Width = 42
-          Caption = 'Record:'
-          ParentColor = False
-        end
-        object edtTable: TEdit
-          Left = 66
-          Height = 27
-          Top = 128
-          Width = 121
-          Enabled = False
-          ReadOnly = True
-          TabOrder = 3
-        end
-        object edtRecord: TEdit
-          Left = 66
-          Height = 27
-          Top = 160
-          Width = 121
-          Enabled = False
-          ReadOnly = True
-          TabOrder = 4
-        end
-        object StaticText2: TStaticText
-          Left = 8
-          Height = 29
-          Top = 20
-          Width = 421
-          AutoSize = True
-          Caption = 'LPMS Access Control Manager - Backup'
-          Font.Color = clWindowText
-          Font.Height = -21
-          Font.Name = 'Tahoma'
-          ParentFont = False
-          TabOrder = 0
-        end
-        object btnLockB: TBitBtn
-          Left = 8
-          Height = 36
-          Top = 58
-          Width = 36
-          Glyph.Data = {
-            F6060000424DF606000000000000360000002800000018000000180000000100
-            180000000000C0060000130B0000130B00000000000000000001FF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BD0081
-            BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00A3E224D5FF2DD9FF25D5FF
-            1CD1FF11BFF208ADE6039AD50081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F200BDFF2D
-            D9FF3AE0FF32DCFF29D8FF20D3FF18CFFF10CAFF08C1FB02A9E60081BD0081BD
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD00BDFF00BDFF35DDFF46E5FF3EE1FF35DDFF2DD9FF1CB7E3087EB110BAEE0C
-            C7FF05BFFB008CCA0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD00BDFF00BDFF3CE1FF51EAFF4AE6FF41E3FF39E0FF1EA3
-            C9003B670C83B218CFFF0FCAFF08C1FB0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF42E3FF5CEEFF55EBFF
-            4DE9FF45E5FF01314F002D4E044B7220C9F31CD0FF13CCFF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF49
-            E6FF66F2FF5FEFFF58EDFF51EAFF001C300020380025411683A628D7FF1FD3FF
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD00BDFF00BDFF4EE9FF6EF6FF69F3FF63F0FF5BEEFF1D657800162700182B20
-            8CA935DDFF2CD9FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD00BDFF00BDFF52EAFF76F8FF70F6FF6BF4FF66F2FF41AF
-            C0001524114A5D49E6FF41E2FF38DEFF0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF56EBFF7BFAFF77F8FF
-            73F7FF6EF4FF5FE2EF3591A3379EB154EBFF4CE7FF44E3FF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF2FD5FF8A
-            F4FFA7FCFFADFCFF96FBFF95FAFF70F6FF6BF4FF65F2FF5EEFFF57EDFF50E9FF
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD56E7FB76F7FF8AC4C593BCBDA0F4F7BBFEFFCBFEFFDCFFFFCCFCFFAFFAFF76
-            F4FF62F0FF5BEEFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD0893CA40BAD58686868989896CB5BD62F0FF6DF4FF7AF7
-            FF88FAFF96FCFFA5FEFFA0FBFF68F2FF0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD8181819696964CA9BD
-            26D7FF2FDAFF3AE0FF44E3FF77A3A67E9D9F6CE3EE78F7FF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
-            8181A0A0A03589A6049FD909ADE60FBDF22DBADE81818187878759ADBD26BDE6
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FF818181ABABAB5C818E0081BD0081BD0081BD0081BD8181818B
-            8B8B34819F0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF818181B8B8B8818181FF00FFFF00FFFF00
-            FFFF00FF818181909090818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181CBCBCB818181
-            FF00FFFF00FFFF00FFFF00FF818181939393818181FF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
-            8181E5E5E59C9C9C818181FF00FFFF00FFFF00FF818181969696818181FF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FF818181E5E5E5F2F2F2ABABAB818181818181818181A6A6A681
-            8181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181818181E9E9E9E7E7E7C7C7
-            C7C9C9C9ADADAD818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            818181818181818181818181818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-          }
-          OnClick = btnLockBClick
-          TabOrder = 1
-          Visible = False
-        end
-        object btnUnlockB: TBitBtn
-          Left = 8
-          Height = 36
-          Top = 58
-          Width = 36
-          Glyph.Data = {
-            F6060000424DF606000000000000360000002800000018000000180000000100
-            180000000000C0060000130B0000130B00000000000000000001FF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BD0081
-            BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00A3E224D5FF2DD9FF25D5FF
-            1CD1FF11BFF208ADE6039AD50081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F200BDFF2D
-            D9FF3AE0FF32DCFF29D8FF20D3FF18CFFF10CAFF08C1FB02A9E60081BD0081BD
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD00BDFF00BDFF35DDFF46E5FF3EE1FF35DDFF2DD9FF1CB7E3087EB110BAEE0C
-            C7FF05BFFB008CCA0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD00BDFF00BDFF3CE1FF51EAFF4AE6FF41E3FF39E0FF1EA3
-            C9003B670C83B218CFFF0FCAFF08C1FB0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF42E3FF5CEEFF55EBFF
-            4DE9FF45E5FF01314F002D4E044B7220C9F31CD0FF13CCFF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF49
-            E6FF66F2FF5FEFFF58EDFF51EAFF001C300020380025411683A628D7FF1FD3FF
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD00BDFF00BDFF4EE9FF6EF6FF69F3FF63F0FF5BEEFF1D657800162700182B20
-            8CA935DDFF2CD9FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD00BDFF00BDFF52EAFF76F8FF70F6FF6BF4FF66F2FF41AF
-            C0001524114A5D49E6FF41E2FF38DEFF0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF56EBFF7BFAFF77F8FF
-            73F7FF6EF4FF5FE2EF3591A3379EB154EBFF4CE7FF44E3FF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF13C9FF70
-            F0FFA6FCFF95FBFF96FBFF95FAFF70F6FF6BF4FF65F2FF5EEFFF57EDFF50E9FF
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD56E7FB65C7D01C4D621E5B79418BAABBFEFFCBFEFFDCFFFFCCFCFFAFFAFF76
-            F4FF62F0FF5BEEFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD0893CA15728E002037003053024A796CF4FF78F7FF86FA
-            FF95FCFFA3FCFFB2FEFF95FAFF68F2FF0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD0480B10D99C722CAF4
-            2FDAFF39DEFF43E3FF4EE9FF7BA3A680A5A676E6EE78F7FF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00
-            81BD0081BD0189C5049FD909ADE60FBDF22DBADE81818181818159ADBD26BDE6
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FF8181818181812D81A10081BD0081BD0081BD0081BD82828282
-            828234819F0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF8181819F9F9F818181FF00FFFF00FFFF00
-            FFFF00FF848484878787818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181ABABAB818181
-            FF00FFFF00FFFF00FFFF00FF8181818B8B8B818181FF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
-            8181B8B8B8818181FF00FFFF00FFFF00FFFF00FF818181909090818181FF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FF818181C5C5C5818181FF00FFFF00FFFF00FFFF00FF81818193
-            9393818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF818181DDDDDD959595818181FF00FFFF00
-            FFFF00FF818181969696818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181A4A4A4F2F2F2
-            9D9D9D818181818181818181A3A3A3818181FF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FF818181818181D9D9D9E1E1E1C7C7C7C4C4C4A6A6A6818181FF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FF818181818181818181818181818181FF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-          }
-          OnClick = btnUnlockBClick
-          TabOrder = 2
-        end
-      end
-      object pnlRestore: TPanel
-        Left = 0
-        Height = 474
-        Top = 0
-        Width = 639
-        Align = alClient
-        BevelOuter = bvNone
-        ClientHeight = 474
-        ClientWidth = 639
-        TabOrder = 3
-        object Label26: TLabel
-          Left = 8
-          Height = 17
-          Top = 104
-          Width = 43
-          Caption = 'UserID:'
-          ParentColor = False
-        end
-        object Label27: TLabel
-          Left = 8
-          Height = 17
-          Top = 136
-          Width = 57
-          Caption = 'Password:'
-          ParentColor = False
-        end
-        object Label28: TLabel
-          Left = 8
-          Height = 17
-          Top = 168
-          Width = 29
-          Caption = 'Host:'
-          ParentColor = False
-        end
-        object edtUserID: TEdit
-          Left = 96
-          Height = 27
-          Top = 100
-          Width = 121
-          TabOrder = 3
-        end
-        object edtHost: TEdit
-          Left = 96
-          Height = 27
-          Top = 164
-          Width = 300
-          TabOrder = 5
-        end
-        object edtPassword: TEdit
-          Left = 96
-          Height = 27
-          Top = 132
-          Width = 121
-          EchoMode = emPassword
-          PasswordChar = '*'
-          TabOrder = 4
-        end
-        object StaticText3: TStaticText
-          Left = 8
-          Height = 29
-          Top = 20
-          Width = 426
-          AutoSize = True
-          Caption = 'LPMS Access Control Manager - Restore'
-          Font.Color = clWindowText
-          Font.Height = -21
-          Font.Name = 'Tahoma'
-          ParentFont = False
-          TabOrder = 0
-        end
-        object btnUnlockR: TBitBtn
-          Left = 8
-          Height = 36
-          Top = 58
-          Width = 36
-          Glyph.Data = {
-            F6060000424DF606000000000000360000002800000018000000180000000100
-            180000000000C0060000130B0000130B00000000000000000001FF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BD0081
-            BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00A3E224D5FF2DD9FF25D5FF
-            1CD1FF11BFF208ADE6039AD50081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F200BDFF2D
-            D9FF3AE0FF32DCFF29D8FF20D3FF18CFFF10CAFF08C1FB02A9E60081BD0081BD
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD00BDFF00BDFF35DDFF46E5FF3EE1FF35DDFF2DD9FF1CB7E3087EB110BAEE0C
-            C7FF05BFFB008CCA0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD00BDFF00BDFF3CE1FF51EAFF4AE6FF41E3FF39E0FF1EA3
-            C9003B670C83B218CFFF0FCAFF08C1FB0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF42E3FF5CEEFF55EBFF
-            4DE9FF45E5FF01314F002D4E044B7220C9F31CD0FF13CCFF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF49
-            E6FF66F2FF5FEFFF58EDFF51EAFF001C300020380025411683A628D7FF1FD3FF
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD00BDFF00BDFF4EE9FF6EF6FF69F3FF63F0FF5BEEFF1D657800162700182B20
-            8CA935DDFF2CD9FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD00BDFF00BDFF52EAFF76F8FF70F6FF6BF4FF66F2FF41AF
-            C0001524114A5D49E6FF41E2FF38DEFF0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF56EBFF7BFAFF77F8FF
-            73F7FF6EF4FF5FE2EF3591A3379EB154EBFF4CE7FF44E3FF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF13C9FF70
-            F0FFA6FCFF95FBFF96FBFF95FAFF70F6FF6BF4FF65F2FF5EEFFF57EDFF50E9FF
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD56E7FB65C7D01C4D621E5B79418BAABBFEFFCBFEFFDCFFFFCCFCFFAFFAFF76
-            F4FF62F0FF5BEEFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD0893CA15728E002037003053024A796CF4FF78F7FF86FA
-            FF95FCFFA3FCFFB2FEFF95FAFF68F2FF0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD0480B10D99C722CAF4
-            2FDAFF39DEFF43E3FF4EE9FF7BA3A680A5A676E6EE78F7FF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00
-            81BD0081BD0189C5049FD909ADE60FBDF22DBADE81818181818159ADBD26BDE6
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FF8181818181812D81A10081BD0081BD0081BD0081BD82828282
-            828234819F0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF8181819F9F9F818181FF00FFFF00FFFF00
-            FFFF00FF848484878787818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181ABABAB818181
-            FF00FFFF00FFFF00FFFF00FF8181818B8B8B818181FF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
-            8181B8B8B8818181FF00FFFF00FFFF00FFFF00FF818181909090818181FF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FF818181C5C5C5818181FF00FFFF00FFFF00FFFF00FF81818193
-            9393818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF818181DDDDDD959595818181FF00FFFF00
-            FFFF00FF818181969696818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181A4A4A4F2F2F2
-            9D9D9D818181818181818181A3A3A3818181FF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FF818181818181D9D9D9E1E1E1C7C7C7C4C4C4A6A6A6818181FF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FF818181818181818181818181818181FF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-          }
-          OnClick = btnUnlockRClick
-          TabOrder = 2
-        end
-        object btnLockR: TBitBtn
-          Left = 8
-          Height = 36
-          Top = 58
-          Width = 36
-          Glyph.Data = {
-            F6060000424DF606000000000000360000002800000018000000180000000100
-            180000000000C0060000130B0000130B00000000000000000001FF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BD0081
-            BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00A3E224D5FF2DD9FF25D5FF
-            1CD1FF11BFF208ADE6039AD50081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F200BDFF2D
-            D9FF3AE0FF32DCFF29D8FF20D3FF18CFFF10CAFF08C1FB02A9E60081BD0081BD
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD00BDFF00BDFF35DDFF46E5FF3EE1FF35DDFF2DD9FF1CB7E3087EB110BAEE0C
-            C7FF05BFFB008CCA0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD00BDFF00BDFF3CE1FF51EAFF4AE6FF41E3FF39E0FF1EA3
-            C9003B670C83B218CFFF0FCAFF08C1FB0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF42E3FF5CEEFF55EBFF
-            4DE9FF45E5FF01314F002D4E044B7220C9F31CD0FF13CCFF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF49
-            E6FF66F2FF5FEFFF58EDFF51EAFF001C300020380025411683A628D7FF1FD3FF
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD00BDFF00BDFF4EE9FF6EF6FF69F3FF63F0FF5BEEFF1D657800162700182B20
-            8CA935DDFF2CD9FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD00BDFF00BDFF52EAFF76F8FF70F6FF6BF4FF66F2FF41AF
-            C0001524114A5D49E6FF41E2FF38DEFF0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF00BDFF56EBFF7BFAFF77F8FF
-            73F7FF6EF4FF5FE2EF3591A3379EB154EBFF4CE7FF44E3FF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF2FD5FF8A
-            F4FFA7FCFFADFCFF96FBFF95FAFF70F6FF6BF4FF65F2FF5EEFFF57EDFF50E9FF
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081
-            BD56E7FB76F7FF8AC4C593BCBDA0F4F7BBFEFFCBFEFFDCFFFFCCFCFFAFFAFF76
-            F4FF62F0FF5BEEFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FF0081BD0893CA40BAD58686868989896CB5BD62F0FF6DF4FF7AF7
-            FF88FAFF96FCFFA5FEFFA0FBFF68F2FF0081BDFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD8181819696964CA9BD
-            26D7FF2FDAFF3AE0FF44E3FF77A3A67E9D9F6CE3EE78F7FF0081BDFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
-            8181A0A0A03589A6049FD909ADE60FBDF22DBADE81818187878759ADBD26BDE6
-            0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FF818181ABABAB5C818E0081BD0081BD0081BD0081BD8181818B
-            8B8B34819F0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF818181B8B8B8818181FF00FFFF00FFFF00
-            FFFF00FF818181909090818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181CBCBCB818181
-            FF00FFFF00FFFF00FFFF00FF818181939393818181FF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF81
-            8181E5E5E59C9C9C818181FF00FFFF00FFFF00FF818181969696818181FF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FF818181E5E5E5F2F2F2ABABAB818181818181818181A6A6A681
-            8181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF818181818181E9E9E9E7E7E7C7C7
-            C7C9C9C9ADADAD818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            818181818181818181818181818181FF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-          }
-          OnClick = btnLockRClick
-          TabOrder = 1
-        end
-      end
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 21
-    Top = 549
+    Height = 20
+    Top = 550
     Width = 849
     Panels = <    
       item

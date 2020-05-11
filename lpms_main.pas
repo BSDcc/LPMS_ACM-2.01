@@ -206,6 +206,7 @@ type
    procedure btnLockRClick( Sender: TObject);
    procedure btnUnlockBClick( Sender: TObject);
    procedure btnUnlockRClick( Sender: TObject);
+   procedure edtKeyRKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
    procedure FileExitExecute( Sender: TObject);
    procedure FormClose( Sender: TObject; var CloseAction: TCloseAction);
    procedure FormCreate( Sender: TObject);
@@ -559,6 +560,34 @@ begin
    ToolsEmail.Enabled    := False;
 
    edtKeyR.SetFocus();
+
+end;
+
+//------------------------------------------------------------------------------
+// Check whether the User pressed the backspace key while editing the Key on
+// the Root display in order to preserve the positionof the '-' characters
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.edtKeyRKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+
+   if Key = VK_BACK then begin
+
+{------------------------------------------------------------------------------}
+{---- Add Code to reformat the Input field when Backspace is pressed       ----}
+{------------------------------------------------------------------------------}
+
+{
+      if edtKeyR.SelLength = Length(edtKeyR.Text) then
+         edtKeyR.Text := ''
+      else
+         edtKeyR.Text := Copy(edtKeyR.Text,1,Length(edtKeyR.Text) - 1);
+
+      edtKeyR.SelStart := Length(edtKeyR.Text);
+
+      Key := 0;
+}
+
+   end;
 
 end;
 
