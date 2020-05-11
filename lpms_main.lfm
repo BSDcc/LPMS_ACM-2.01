@@ -101,6 +101,7 @@ object FLPMS_Main: TFLPMS_Main
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
+      OnClick = tvTreeClick
       Options = [tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
     end
   end

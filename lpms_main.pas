@@ -214,6 +214,7 @@ type
    procedure ToolsEmailExecute( Sender: TObject);
    procedure ToolsExportExecute( Sender: TObject);
    procedure ToolsGenerateExecute( Sender: TObject);
+   procedure tvTreeClick(Sender: TObject);
 
 private  { Private Declarations }
 
@@ -249,6 +250,8 @@ private  { Private Declarations }
    function  InputQueryM(ThisCap, Question : string; DispType: integer) : string;
    function  MySQLAccess(ThisType: integer; S1 : string; adoQry: TSQLQuery) : boolean;
    procedure MySQLAbort(Msg: string);
+   function  ReplaceQuote(S1 : string) : string;
+
 
 type
    DB_TYPE = (DB_OPEN,             // Open the Database
@@ -588,6 +591,203 @@ begin
 }
 
    end;
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the TreeView
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.tvTreeClick(Sender: TObject);
+var
+   idx, DaysLeft : integer;
+   KeyName       : string;
+
+begin
+
+   ShortDateFormat := 'yyyy/MM/dd';
+   DateSeparator   := '/';
+
+//--- Ignore if we are doing a Backup or a Restore
+
+   if ((pnlBackup.Visible = True) or (pnlRestore.Visible = True)) then
+      Exit;
+
+//--- Warn the user if there are unsaved changes
+
+   if DoSave = True then begin
+
+      if (Application.MessageBox('WARNING: There are unsaved changes. You can:' + #10 + #10 + #10 + 'Click [Ok] to proceed and ignore the changes; or' + #10 + #10 + 'Click [Cancel] to return and attend to the changes.','LPMS Access Control Management',(MB_OKCANCEL + MB_ICONSTOP)) = ID_CANCEL) then
+         exit;
+
+      DoSave := False;
+
+   end;
+
+//--- Activate the correct display for the level selected
+
+   CanUpdate := True;
+   OpenDB(ord(DB_OPEN));
+
+   if tvTree.Selected.Level = 0 then begin
+
+      pnlRoot.Visible    := True;
+      pnlCompany.Visible := False;
+      pnlUser.Visible    := False;
+
+      edtKeyR.Clear();
+      edtPrefixR.Clear();
+      edtUniqueR.Clear();
+      dtpExpiryR.Date       := Now();
+      cbCollectR.Checked    := False;
+      cbDocGenR.Checked     := False;
+      cbFloatingR.Checked   := False;
+      cbOption4R.Checked    := False;
+      edtUniqueF.Clear();
+      cbxLicTypeR.ItemIndex := 0;
+
+      btnNew.Enabled    := True;
+      btnCancel.Enabled := False;
+      btnDelete.Enabled := False;
+      btnUpdate.Enabled := False;
+
+      btnDecodeR.Enabled := False;
+      btnEncodeR.Enabled := False;
+      btnFindR.Enabled   := False;
+
+      ToolsGenerate.Enabled := False;
+      ToolsEmail.Enabled    := False;
+
+      edtKeyR.SetFocus();
+
+   end else if tvTree.Selected.Level = 1 then begin
+
+      pnlRoot.Visible    := False;
+      pnlCompany.Visible := True;
+      pnlUser.Visible    := False;
+
+      GetData(ord(DB_COMPANY),tvTree.Selected.Text,'%','');
+
+      edtPrefixC.Text       := ReplaceQuote(adoQry1.FieldByName('LPMSKey_Prefix').AsString);
+      cbxKeyTypeC.ItemIndex := cbxKeyTypeC.Items.IndexOf(adoQry1.FieldByName('LPMSKey_Name').AsString);
+      edtCompanyC.Text      := ReplaceQuote(adoQry1.FieldByName('LPMSKey_Desc').AsString);
+      speLicCountC.Value    := adoQry1.FieldByName('LPMSKey_LicCount').AsInteger;
+      speRenewalC.Value     := adoQry1.FieldByName('LPMSKey_Interval').AsInteger;
+
+      if adoQry1.FieldByName('LPMSKey_Blocked').AsInteger = 0 then
+         cbBlockedC.Checked := False
+      else
+         cbBlockedC.Checked := True;
+
+      btnNew.Enabled    := True;
+      btnCancel.Enabled := False;
+      btnDelete.Enabled := True;
+      btnUpdate.Enabled := False;
+
+      ToolsGenerate.Enabled := False;
+      ToolsEmail.Enabled    := False;
+
+      cbxKeyTypeC.SetFocus();
+
+   end else if tvTree.Selected.Level = 2 then begin
+
+      pnlRoot.Visible    := False;
+      pnlCompany.Visible := False;
+      pnlUser.Visible    := True;
+
+      GetData(ord(DB_USER),tvTree.Selected.Parent.Text,tvTree.Selected.Text,'');
+
+      edtDBKeyU.Text      := adoQry2.FieldByName('LPMSKey_Key').AsString;
+      edtUserNameU.Text   := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Name').AsString);
+      edtCompanyU.Text    := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Company').AsString);
+      edtEmailU.Text      := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Email').AsString);
+      edtContactU.Text    := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Contact').AsString);
+      edtRenewalsU.Text   := adoQry2.FieldByName('LPMSKey_Renewals').AsString;
+
+      if adoQry2.FieldByName('LPMSKey_Blocked').AsInteger = 0 then
+         cbBlockedU.Checked := False
+      else
+         cbBlockedU.Checked := True;
+
+      edtKeyU.Text        := adoQry2.FieldByName('LPMSKey_Activation').AsString;
+
+      if adoQry2.FieldByName('LPMSKey_Transfer').AsInteger = 0 then
+         cbTransferU.Checked := False
+      else
+         cbTransferU.Checked := True;
+
+//      cbTransferUClick(Sender);
+
+//--- Extract and set the Transfer details
+
+      if cbTransferU.Checked = True then begin
+
+         cbxNewPrefixU.ItemIndex := cbxNewPrefixU.Items.IndexOf(ReplaceQuote(adoQry2.FieldByName('LPMSKey_NewPrefix').AsString));
+
+         if cbxNewPrefixU.ItemIndex = -1 then
+            cbxNewPrefixU.ItemIndex := 0;
+
+         if adoQry2.FieldByName('LPMSKey_NewLicense').AsInteger > cbxNewLicU.Items.Count - 1 then
+            cbxNewLicU.ItemIndex := 0
+         else
+            cbxNewLicU.ItemIndex := adoQry2.FieldByName('LPMSKey_NewLicense').AsInteger;
+
+      end;
+
+{
+//--- Decode the Key and populate the fields contained in the key
+
+      This_Key_Priv := new LPMS_Key_Priv;
+      This_Key_Priv.Key := edtKeyU.Text;
+      DaysLeft := DldDecode.LPMS_Key_Decode(This_Key_Priv);
+
+      if DaysLeft < 0 then begin
+
+         edtUniqueU.Text       := adoQry2.FieldByName('LPMSKey_Unique').AsString;
+         cbxLicTypeU.ItemIndex := adoQry2.FieldByName('LPMSKey_LicType').AsInteger;
+         dtpExpiryDateU.Date   := Now() + This_Key_Priv.DaysLeft;
+         txtExpired.Caption    := 'Expired!';
+         edtPrefixU.Text       := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Prefix').AsString);
+
+      end else begin
+
+         edtUniqueU.Text       := This_Key_Priv.Unique;
+         cbxLicTypeU.ItemIndex := This_Key_Priv.License;
+         dtpExpiryDateU.Date   := Now() + DaysLeft;
+         txtExpired.Caption    := '';
+         edtPrefixU.Text       := This_Key_Priv.DBPrefix;
+
+      end;
+
+}
+      if adoQry2.FieldByName('LPMSKEy_AllowDuplicates').AsString = '1' then
+         cbAllowDuplicates.Checked := True
+      else
+         cbAllowDuplicates.Checked := False;
+
+{
+      cbCollectU.Checked  := This_Key_Priv.LPMS_Collections;
+      cbDocGenU.Checked   := This_Key_Priv.LPMS_DocGen;
+      cbFloatingU.Checked := This_Key_Priv.LPMS_Floating;
+      cbOption4U.Checked  := This_Key_Priv.LPMS_Option4;
+
+      This_Key_Priv.Free;
+}
+
+      btnNew.Enabled    := False;
+      btnCancel.Enabled := False;
+      btnDelete.Enabled := True;
+      btnUpdate.Enabled := False;
+
+      ToolsGenerate.Enabled := True;
+      ToolsEmail.Enabled    := True;
+
+      edtUserNameU.SetFocus();
+
+   end;
+
+
+   OpenDB(ord(DB_CLOSE));
+   CanUpdate := False;
 
 end;
 
@@ -1005,6 +1205,19 @@ begin
    Application.Terminate;
    Close;
 
+end;
+
+//---------------------------------------------------------------------------
+// Function to manage replacement of single quotes and back slashes to avoid
+// SQL errors
+//---------------------------------------------------------------------------
+function TFLPMS_Main.ReplaceQuote(S1 : string) : string;
+begin
+
+   S1 := AnsiReplaceStr(S1,'&quot','''');
+   S1 := AnsiReplaceStr(S1,'&slash','\');
+
+   Result := S1;
 end;
 
 {
