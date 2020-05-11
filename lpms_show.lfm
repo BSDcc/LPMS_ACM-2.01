@@ -1,0 +1,108 @@
+object FLPMS_Show: TFLPMS_Show
+  Left = 289
+  Height = 353
+  Top = 250
+  Width = 702
+  Caption = 'FLPMS_Show'
+  ClientHeight = 353
+  ClientWidth = 702
+  OnCreate = FormCreate
+  OnShow = FormShow
+  Position = poScreenCenter
+  LCLVersion = '2.0.6.0'
+  object btnReturn: TButton
+    Left = 619
+    Height = 25
+    Top = 321
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Cancel'
+    Default = True
+    OnClick = btnReturnClick
+    TabOrder = 0
+  end
+  object btnSelect: TButton
+    Left = 538
+    Height = 25
+    Top = 321
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Select'
+    Enabled = False
+    OnClick = btnSelectClick
+    TabOrder = 1
+  end
+  object edtSelected: TEdit
+    Left = 8
+    Height = 27
+    Top = 321
+    Width = 524
+    Anchors = [akLeft, akRight, akBottom]
+    TabOrder = 2
+  end
+  object lvRecords: TListView
+    Left = 8
+    Height = 284
+    Top = 32
+    Width = 686
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Columns = <    
+      item
+        AutoSize = True
+        Caption = 'Company'
+        MinWidth = 180
+        Width = 180
+      end    
+      item
+        Caption = 'User'
+        Width = 160
+      end    
+      item
+        Caption = 'Expiry Date'
+        Width = 100
+      end    
+      item
+        Caption = 'License'
+        Width = 80
+      end    
+      item
+        Caption = 'Blocked'
+        Width = 80
+      end    
+      item
+        Caption = 'Reference'
+        Width = 70
+      end>
+    ColumnClick = False
+    GridLines = True
+    RowSelect = True
+    TabOrder = 3
+    ViewStyle = vsReport
+    OnSelectItem = lvRecordsSelectItem
+  end
+  object stUnique: TStaticText
+    Left = 8
+    Height = 23
+    Top = 8
+    Width = 686
+    Anchors = [akTop, akLeft, akRight]
+    Caption = 'LPMS Definitions containing xxxxxxxxxxxx as a Unique Identifier'
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 4
+  end
+  object sqlQry1: TSQLQuery
+    FieldDefs = <>
+    Params = <>
+    left = 560
+    top = 160
+  end
+  object sqlTran: TSQLTransaction
+    Active = False
+    left = 480
+    top = 160
+  end
+end
