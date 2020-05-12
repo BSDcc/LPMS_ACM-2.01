@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="11"/>
+    <BuildModes Active="Default"/>
+    <Units Count="2">
+      <Unit0>
+        <Filename Value="LPMS_EncDec.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="55"/>
+        <CursorPos Y="67"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="lpms_inputquery.pas"/>
+        <UnitName Value="LPMS_InputQuery"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="11"/>
+        <UsageCount Value="10"/>
+      </Unit1>
+    </Units>
+    <JumpHistory Count="4" HistoryIndex="3">
+      <Position1>
+        <Filename Value="LPMS_EncDec.lpr"/>
+        <Caret Line="25"/>
+      </Position1>
+      <Position2>
+        <Filename Value="LPMS_EncDec.lpr"/>
+        <Caret Line="49" Column="43" TopLine="24"/>
+      </Position2>
+      <Position3>
+        <Filename Value="LPMS_EncDec.lpr"/>
+        <Caret Line="68" TopLine="43"/>
+      </Position3>
+      <Position4>
+        <Filename Value="LPMS_EncDec.lpr"/>
+        <Caret Line="60" Column="48" TopLine="46"/>
+      </Position4>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0" ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>

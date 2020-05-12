@@ -18,16 +18,13 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="33"/>
+      <BuildNr Value="34"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
           <Version Value="11"/>
-          <Target>
-            <Filename Value="LPMS_ACM"/>
-          </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>

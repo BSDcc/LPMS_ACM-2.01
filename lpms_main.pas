@@ -20,7 +20,7 @@ interface
 uses
    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
    Menus, ActnList, StdCtrls, Buttons, Spin, DateTimePicker, StrUtils, LCLType,
-   Process,
+   Process, dynlibs,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    mysql56conn;
@@ -216,6 +216,34 @@ type
    procedure ToolsGenerateExecute( Sender: TObject);
    procedure tvTreeClick(Sender: TObject);
 
+type
+
+   REC_Key_Priv = record
+      Key              : string;
+      DaysLeft         : integer;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Option4     : boolean;
+      License          : integer;
+      DBPrefix         : string;
+      Unique           : string;
+   end;
+
+   REC_Key_Values = record
+      Unique           : string;
+      ExpDate          : string;
+      DBPrefix         : string;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Options4    : boolean;
+      License          : integer;
+   end;
+
+   LPMS_Key_Values = REC_Key_Values;
+   LPMS_Key_Priv   = REC_Key_Priv;
+
 private  { Private Declarations }
 
 {$IFDEF WINDOWS}                   // Target is Winblows
@@ -242,6 +270,9 @@ private  { Private Declarations }
    DoSave, CanUpdate, DoGen, FirstRun : boolean;
    ConStr1, ConStr2                   : string;
    Root                               : TTreeNode;
+//   This_Key_Values                    : LPMS_Key_Values;
+//   This_Key_Priv                      : LPMS_Key_Priv;
+
 
    Registered, BackSpace : boolean;
 
@@ -249,8 +280,11 @@ private  { Private Declarations }
    function  GetData(ThisType: integer; Company, User, Unique: string) : boolean;
    function  InputQueryM(ThisCap, Question : string; DispType: integer) : string;
    function  MySQLAccess(ThisType: integer; S1 : string; adoQry: TSQLQuery) : boolean;
-   procedure MySQLAbort(Msg: string);
+   procedure LPMS_ACM_Abort(Msg: string);
    function  ReplaceQuote(S1 : string) : string;
+   function  DeCode(Decode_Key_Priv : LPMS_Key_Priv) : integer;
+   function  EnCode(Encode_Key_Values : LPMS_Key_Values) : string;
+
 
 
 type
@@ -336,12 +370,12 @@ implementation
 procedure TFLPMS_Main. FormCreate( Sender: TObject);
 begin
 
-  DoSave     := False;
-  CanUpdate  := False;
-  DoGen      := False;
-  BackSpace  := False;
-  Registered := False;
-  FirstRun   := True;
+   DoSave     := False;
+   CanUpdate  := False;
+   DoGen      := False;
+   BackSpace  := False;
+   Registered := False;
+   FirstRun   := True;
 
 {$IFDEF WINDOWS}                    // Target is Winblows
    sqlCon  := TMySQL56Connection.Create(nil);
@@ -601,6 +635,7 @@ procedure TFLPMS_Main.tvTreeClick(Sender: TObject);
 var
    idx, DaysLeft : integer;
    KeyName       : string;
+   This_Key_Priv : REC_Key_Priv;
 
 begin
 
@@ -733,12 +768,10 @@ begin
 
       end;
 
-{
 //--- Decode the Key and populate the fields contained in the key
 
-      This_Key_Priv := new LPMS_Key_Priv;
       This_Key_Priv.Key := edtKeyU.Text;
-      DaysLeft := DldDecode.LPMS_Key_Decode(This_Key_Priv);
+      DaysLeft := DeCode(This_Key_Priv);
 
       if DaysLeft < 0 then begin
 
@@ -758,7 +791,6 @@ begin
 
       end;
 
-}
       if adoQry2.FieldByName('LPMSKEy_AllowDuplicates').AsString = '1' then
          cbAllowDuplicates.Checked := True
       else
@@ -788,6 +820,102 @@ begin
 
    OpenDB(ord(DB_CLOSE));
    CanUpdate := False;
+
+end;
+
+//------------------------------------------------------------------------------
+// Function to load the LPMS_EncDec DLL and decode a key contained in
+// Decode_Key_Priv
+//------------------------------------------------------------------------------
+function TFLPMS_Main.DeCode(Decode_Key_Priv : REC_Key_Priv) : integer;
+type
+  TMyFunc = function (ThisKey : string) : string; stdcall;
+
+var
+   MyLibC     : TLibHandle = dynlibs.NilHandle;
+   MyFunc     : TMyFunc;
+   FuncResult : string;
+
+begin
+
+//--- DLLs created by Lazarus has 'lib' prefixed to the name and 'SharedSuffix'
+//--- makes the name platform independent
+
+   MyLibC := LoadLibrary('liblpms_encdec.' + SharedSuffix);
+
+//--- Check whether the DLL was loaded successfully
+
+   if MyLibC = dynlibs.NilHandle then begin
+
+      LPMS_ACM_Abort('Unable to load Dynamic Link Library');
+      Exit;
+
+   end;
+
+//--- Call and execute the DoDecode function in the DLL
+
+   MyFunc := TMyFunc(GetProcedureAddress(MyLibC, 'DoDecode'));
+
+   FuncResult := MyFunc(Decode_Key_Priv.Key);
+
+//   Decode_Key_Priv.DaysLeft := 5;
+
+//--- Unload the DLL
+
+   if MyLibC <>  DynLibs.NilHandle then
+      if FreeLibrary(MyLibC) then
+         MyLibC := DynLibs.NilHandle;
+
+//--- Return the Result
+
+   Result := 5;//Decode_Key_Priv.DaysLeft;
+
+end;
+
+//------------------------------------------------------------------------------
+// Function to load the LPMS_EncDec DLL and encode a key with the information
+// contained in Encode_Key_Values
+//------------------------------------------------------------------------------
+function TFLPMS_Main.EnCode(Encode_Key_Values : LPMS_Key_Values) : string;
+type
+  TMyFunc = function (Encode_Key_Values : LPMS_Key_Values) : string; cdecl;
+
+var
+   MyLibC     : TLibHandle = dynlibs.NilHandle;
+   MyFunc     : TMyFunc;
+   FuncResult : string;
+
+begin
+
+//--- DLLs created by Lazarus has 'lib' prefixed to the name and 'SharedSuffix'
+//--- makes the name platform independent
+
+   MyLibC := LoadLibrary('liblpms_encdec.' + SharedSuffix);
+
+//--- Check whether the DLL was loaded successfully
+
+   if MyLibC = dynlibs.NilHandle then begin
+
+      LPMS_ACM_Abort('Unable to load Dynamic Link Library');
+      Exit;
+
+   end;
+
+//--- Call and execute the DoDecode function in the DLL
+
+   MyFunc := TMyFunc(GetProcedureAddress(MyLibC, 'DoEncode'));
+
+   FuncResult:= MyFunc(Encode_Key_Values);
+
+//--- Unload the DLL
+
+   if MyLibC <>  DynLibs.NilHandle then
+      if FreeLibrary(MyLibC) then
+         MyLibC := DynLibs.NilHandle;
+
+//--- Return the Result
+
+   Result := FuncResult;
 
 end;
 
@@ -1112,7 +1240,7 @@ begin
 
                if ((AnsiContainsStr(Err.Message,'MySQL server has gone away') = True) or (AnsiContainsStr(Err.Message,'Lost connection to MySQL server during query') = True)) then begin
 
-                  MySQLAbort(Err.Message);
+                  LPMS_ACM_Abort(Err.Message);
                   Result := False;
                   Exit
 
@@ -1142,7 +1270,7 @@ begin
 
                if ((AnsiContainsStr(Err.Message,'MySQL server has gone away') = True) or (AnsiContainsStr(Err.Message,'Lost connection to MySQL server during query') = True)) then begin
 
-                  MySQLAbort(Err.Message);
+                  LPMS_ACM_Abort(Err.Message);
                   Result := False;
                   Exit
 
@@ -1169,12 +1297,19 @@ end;
 //---------------------------------------------------------------------------
 // Function to handle MySQL connection problems
 //---------------------------------------------------------------------------
-procedure TFLPMS_Main.MySQLAbort(Msg: string);
+procedure TFLPMS_Main.LPMS_ACM_Abort(Msg: string);
 var
    idx     : integer;
    Process : TProcess;
 
 begin
+
+   if Application.MessageBox(PChar('FATAL: Unexpected/Unhandled error: ''' + Msg + ''' - LPMS_ACM cannot continue. You can: ' + #10 + #10 + #10 + 'Click [Ok] to terminate and restart LPMS_ACM; or' + #10 + #10 + 'Click [Cancel] to terminate LPMS_ACM'),'LPMS Access Control Management',(MB_OKCANCEL + MB_ICONSTOP)) = ID_CANCEL then begin
+
+      Application.Terminate;
+      Exit;
+
+   end;
 
    Process := TProcess.Create(nil);
 

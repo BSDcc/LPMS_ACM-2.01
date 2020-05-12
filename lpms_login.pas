@@ -174,7 +174,7 @@ begin
 {$ENDIF}
 
 
-   AutoLogin := false;
+   AutoLogin := False;
 
 //--- Check whether any paramters were passed and retrieve if so
 
