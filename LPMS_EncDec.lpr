@@ -17,7 +17,6 @@ uses
    Classes
    { you can add units after this };
 
-{
 //------------------------------------------------------------------------------
 // Define the Record structures
 //------------------------------------------------------------------------------
@@ -48,19 +47,18 @@ type
 
 //   LPMS_Key_Values = REC_Key_Values;
 //   LPMS_Key_Priv   = REC_Key_Priv;
-}
 
 //------------------------------------------------------------------------------
 // Function to decode a key contained in the parameter passed and return a
 // string containing DaysLeft , Unique, License and DBPrefix
 //------------------------------------------------------------------------------
-function DoDecode(This_Key: string): string; stdcall;
+function DoDecode(This_Key_Priv: REC_Key_Priv): string; stdcall;
 var
    KeyInfo : string;
 
 begin
 
-   KeyInfo := '5|0123456789ABC|2|MPA001';
+   KeyInfo := '5|0123456789ABC|2|MPA001|1|1|1|1|';
 
    Result := KeyInfo;
 
@@ -73,9 +71,9 @@ exports
 // Function to encode a key with the values contained in This_Key_Values and
 // return the encoded Key
 //------------------------------------------------------------------------------
-function DoEncode(Unique: string): string; stdcall;
+function DoEncode(This_Key_Values: REC_Key_Values): string; stdcall;
 begin
-  DoEncode := 'ABCD-EFG-HIJK-LMNO-PQRS-TUVW-XYZ1-2345';
+  Result := 'ABCD-EFG-HIJK-LMNO-PQRS-TUVW-XYZ1-2345';
 end;
 
 exports

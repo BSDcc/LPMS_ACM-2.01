@@ -58,6 +58,14 @@ type
    actList: TActionList;
    Backup1: TMenuItem;
    Bevel1: TBevel;
+   Bevel10: TBevel;
+   Bevel2: TBevel;
+   Bevel3: TBevel;
+   Bevel4: TBevel;
+   Bevel5: TBevel;
+   Bevel6: TBevel;
+   Bevel8: TBevel;
+   Bevel9: TBevel;
    btnCancel: TButton;
    btnDecodeR: TButton;
    btnDelete: TButton;
@@ -202,10 +210,15 @@ type
    procedure ActionsBackupExecute( Sender: TObject);
    procedure ActionsRefreshExecute( Sender: TObject);
    procedure ActionsRestoreExecute( Sender: TObject);
+   procedure btnCancelClick(Sender: TObject);
+   procedure btnDeleteClick(Sender: TObject);
    procedure btnLockBClick( Sender: TObject);
    procedure btnLockRClick( Sender: TObject);
+   procedure btnNewClick(Sender: TObject);
    procedure btnUnlockBClick( Sender: TObject);
    procedure btnUnlockRClick( Sender: TObject);
+   procedure btnUpdateClick(Sender: TObject);
+   procedure cbTransferUClick(Sender: TObject);
    procedure edtKeyRKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
    procedure FileExitExecute( Sender: TObject);
    procedure FormClose( Sender: TObject; var CloseAction: TCloseAction);
@@ -270,8 +283,9 @@ private  { Private Declarations }
    DoSave, CanUpdate, DoGen, FirstRun : boolean;
    ConStr1, ConStr2                   : string;
    Root                               : TTreeNode;
-//   This_Key_Values                    : LPMS_Key_Values;
-//   This_Key_Priv                      : LPMS_Key_Priv;
+   This_Key_Values                    : LPMS_Key_Values;
+   This_Key_Priv                      : LPMS_Key_Priv;
+   EncDecTokens                       : TStrings;    // Holds the input/result of an Encode/Decode operation
 
 
    Registered, BackSpace : boolean;
@@ -280,12 +294,13 @@ private  { Private Declarations }
    function  GetData(ThisType: integer; Company, User, Unique: string) : boolean;
    function  InputQueryM(ThisCap, Question : string; DispType: integer) : string;
    function  MySQLAccess(ThisType: integer; S1 : string; adoQry: TSQLQuery) : boolean;
+   function  DelData(ThisType: integer; Company, User: string) : boolean;
+   function  UpdateCpy() : boolean;
+   function  CpyExists(Prefix: string) : boolean;
    procedure LPMS_ACM_Abort(Msg: string);
-   function  ReplaceQuote(S1 : string) : string;
-   function  DeCode(Decode_Key_Priv : LPMS_Key_Priv) : integer;
-   function  EnCode(Encode_Key_Values : LPMS_Key_Values) : string;
-
-
+   function  ReplaceQuote(S1: string; ThisType: integer) : string;
+   function  DeCode() : integer;
+   function  EnCode() : string;
 
 type
    DB_TYPE = (DB_OPEN,             // Open the Database
@@ -299,42 +314,10 @@ type
 
    TY_TYPE = (TYPE_PASSWORD,       // Used when calling LPMS_InoputQuery
               TYPE_TEST,           //
-              TYPE_XFER);          //
+              TYPE_XFER,           //
+              TYPE_READ,           // Reading from the database - &quote to '''
+              TYPE_WRITE);         // Writing to the database - ''' to &quote
 
-{
-//--- Used for trapping the BackSpace Key
-
-   function WMHotKey(Message : TWMHotKey) : MESSAGE;
-}
-{
-   uses
-     Messages, Windows;
-   ...
-     // Your main form's class
-     protected
-       procedure WMHotKey(var Message: TMessage); message WM_HOTKEY;
-   ...
-   implementation
-   ...
-   procedure TMainForm.WMHotKey(var Message: TMessage);
-   begin
-     // This example brings the application up front. Put your code here
-     Application.BringToFront;
-   end;
-
----
-
-   RegisterHotKey(Handle, 100000 { Any unused number}, MOD_CONTROL, VK_F7);
-   // When closing program
-   UnregisterHotKey(Handle, 100000);
-
---- C++
-
-BEGIN_MESSAGE_MAP
-VCL_MESSAGE_HANDLER(WM_HOTKEY, TWMHotKey, WMHotKey)
-END_MESSAGE_MAP(TForm)
-
-}
 
 public   { Public Declarations }
 
@@ -635,12 +618,9 @@ procedure TFLPMS_Main.tvTreeClick(Sender: TObject);
 var
    idx, DaysLeft : integer;
    KeyName       : string;
-   This_Key_Priv : REC_Key_Priv;
+//   This_Key_Priv : REC_Key_Priv;
 
 begin
-
-   ShortDateFormat := 'yyyy/MM/dd';
-   DateSeparator   := '/';
 
 //--- Ignore if we are doing a Backup or a Restore
 
@@ -702,9 +682,9 @@ begin
 
       GetData(ord(DB_COMPANY),tvTree.Selected.Text,'%','');
 
-      edtPrefixC.Text       := ReplaceQuote(adoQry1.FieldByName('LPMSKey_Prefix').AsString);
+      edtPrefixC.Text       := ReplaceQuote(adoQry1.FieldByName('LPMSKey_Prefix').AsString,ord(TYPE_READ));
       cbxKeyTypeC.ItemIndex := cbxKeyTypeC.Items.IndexOf(adoQry1.FieldByName('LPMSKey_Name').AsString);
-      edtCompanyC.Text      := ReplaceQuote(adoQry1.FieldByName('LPMSKey_Desc').AsString);
+      edtCompanyC.Text      := ReplaceQuote(adoQry1.FieldByName('LPMSKey_Desc').AsString,ord(TYPE_READ));
       speLicCountC.Value    := adoQry1.FieldByName('LPMSKey_LicCount').AsInteger;
       speRenewalC.Value     := adoQry1.FieldByName('LPMSKey_Interval').AsInteger;
 
@@ -732,10 +712,10 @@ begin
       GetData(ord(DB_USER),tvTree.Selected.Parent.Text,tvTree.Selected.Text,'');
 
       edtDBKeyU.Text      := adoQry2.FieldByName('LPMSKey_Key').AsString;
-      edtUserNameU.Text   := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Name').AsString);
-      edtCompanyU.Text    := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Company').AsString);
-      edtEmailU.Text      := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Email').AsString);
-      edtContactU.Text    := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Contact').AsString);
+      edtUserNameU.Text   := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Name').AsString,ord(TYPE_READ));
+      edtCompanyU.Text    := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Company').AsString,ord(TYPE_READ));
+      edtEmailU.Text      := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Email').AsString,ord(TYPE_READ));
+      edtContactU.Text    := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Contact').AsString,ord(TYPE_READ));
       edtRenewalsU.Text   := adoQry2.FieldByName('LPMSKey_Renewals').AsString;
 
       if adoQry2.FieldByName('LPMSKey_Blocked').AsInteger = 0 then
@@ -756,7 +736,7 @@ begin
 
       if cbTransferU.Checked = True then begin
 
-         cbxNewPrefixU.ItemIndex := cbxNewPrefixU.Items.IndexOf(ReplaceQuote(adoQry2.FieldByName('LPMSKey_NewPrefix').AsString));
+         cbxNewPrefixU.ItemIndex := cbxNewPrefixU.Items.IndexOf(ReplaceQuote(adoQry2.FieldByName('LPMSKey_NewPrefix').AsString,ord(TYPE_READ)));
 
          if cbxNewPrefixU.ItemIndex = -1 then
             cbxNewPrefixU.ItemIndex := 0;
@@ -770,8 +750,11 @@ begin
 
 //--- Decode the Key and populate the fields contained in the key
 
+      ShortDateFormat := 'yyyy/MM/dd';
+      DateSeparator   := '/';
+
       This_Key_Priv.Key := edtKeyU.Text;
-      DaysLeft := DeCode(This_Key_Priv);
+      DaysLeft := DeCode();
 
       if DaysLeft < 0 then begin
 
@@ -779,7 +762,7 @@ begin
          cbxLicTypeU.ItemIndex := adoQry2.FieldByName('LPMSKey_LicType').AsInteger;
          dtpExpiryDateU.Date   := Now() + This_Key_Priv.DaysLeft;
          txtExpired.Caption    := 'Expired!';
-         edtPrefixU.Text       := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Prefix').AsString);
+         edtPrefixU.Text       := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Prefix').AsString,ord(TYPE_READ));
 
       end else begin
 
@@ -796,14 +779,10 @@ begin
       else
          cbAllowDuplicates.Checked := False;
 
-{
       cbCollectU.Checked  := This_Key_Priv.LPMS_Collections;
       cbDocGenU.Checked   := This_Key_Priv.LPMS_DocGen;
       cbFloatingU.Checked := This_Key_Priv.LPMS_Floating;
       cbOption4U.Checked  := This_Key_Priv.LPMS_Option4;
-
-      This_Key_Priv.Free;
-}
 
       btnNew.Enabled    := False;
       btnCancel.Enabled := False;
@@ -823,15 +802,617 @@ begin
 
 end;
 
+//---------------------------------------------------------------------------
+// User clicked on the New button
+//---------------------------------------------------------------------------
+procedure TFLPMS_Main.btnNewClick(Sender: TObject);
+var
+   ThisNode : TTreeNode;
+
+begin
+
+   if DoSave = True then begin
+
+      if Application.MessageBox('There are unsaved changes. You can:' +#10 + #10 + #10 + 'Click [Ok] to proceed and ignore the changes; or' +#10 + #10 + 'Click [Cancel] to return and attend to the changes.','LPMS Access Control Management',(MB_OKCANCEL + MB_ICONSTOP)) = ID_CANCEL then
+         Exit;
+   end;
+
+   if pnlRoot.Visible = True then begin
+
+      ThisNode := tvTree.Selected;
+      ThisNode := tvTree.Items.AddChild(ThisNode,'New Company');
+      tvTree.Selected := ThisNode;
+
+      StatusBar1.Panels.Items[2].Text := ' New';
+
+      ToolsEmail.Enabled     := False;
+      ToolsExport.Enabled    := False;
+      ToolsGenerate.Enabled  := False;
+      ActionsRefresh.Enabled := False;
+      ActionsBackup.Enabled  := False;
+      ActionsRestore.Enabled := False;
+
+      btnNew.Enabled    := False;
+      btnDelete.Enabled := False;
+      btnUpdate.Enabled := False;
+      btnCancel.Enabled := True;
+
+      pnlCompany.Visible  := True;
+      pnlUser.Visible     := False;
+      edtPrefixC.ReadOnly := False;
+
+      CanUpdate := True;
+
+      edtPrefixC.Text       := 'XXX000';
+      cbxKeyTypeC.ItemIndex := 0;
+      edtCompanyC.Clear();
+      speLicCountC.Value    := 0;
+      speRenewalC.Value     := 30;
+      cbBlockedC.Checked    := False;
+
+      CanUpdate := False;
+
+      edtPrefixC.SetFocus();
+
+   end else if pnlCompany.Visible = True then begin
+
+      ThisNode := tvTree.Selected;
+
+//--- First check to see whether the maximum number of users has been reached
+
+      if speLicCountC.Value <= ThisNode.Count then begin
+
+         Application.MessageBox('Maximum number of Licenses reached - Unable to add a New User.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Exit;
+
+      end;
+
+//--- If not then we can go ahead and add the new user
+
+      ThisNode := tvTree.Items.AddChild(ThisNode,'New User');
+      tvTree.Selected := ThisNode;
+
+      StatusBar1.Panels.Items[2].Text := ' New';
+
+      ToolsEmail.Enabled     := False;
+      ToolsExport.Enabled    := False;
+      ToolsGenerate.Enabled  := True;
+      ActionsRefresh.Enabled := False;
+      ActionsBackup.Enabled  := False;
+      ActionsRestore.Enabled := False;
+
+      btnNew.Enabled    := False;
+      btnDelete.Enabled := False;
+      btnUpdate.Enabled := False;
+      btnCancel.Enabled := True;
+
+      pnlCompany.Visible := False;
+      pnlUser.Visible    := True;
+
+      CanUpdate := True;
+
+      edtPrefixU.Text           := tvTree.Selected.Parent.Text;
+      edtUserNameU.Text         := 'New User';
+      edtCompanyU.Clear();
+      edtEmailU.Clear();
+      edtContactU.Clear();
+      cbxLicTypeU.ItemIndex     := 0;
+      edtUniqueU.Text           := '000000000000';
+      cbAllowDuplicates.Checked := False;
+      dtpExpiryDateU.Date       := (Now() + 14);
+      txtExpired.Caption        := '';
+      edtRenewalsU.Text         := '0';
+      cbBlockedU.Checked        := False;
+      cbCollectU.Checked        := False;
+      cbDocGenU.Checked         := False;
+      cbFloatingU.Checked       := False;
+      cbOption4U.Checked        := False;
+      edtKeyU.Clear();
+      cbTransferU.Checked       := False;
+      cbxNewLicU.ItemIndex      := 0;
+      cbxNewLicU.Enabled        := False;
+      cbxNewPrefixU.ItemIndex   := 0;
+      cbxNewPrefixU.Enabled     := False;
+
+      CanUpdate := False;
+
+      edtUserNameU.SetFocus();
+
+   end;
+
+end;
+
+//-----------------------------------------------------------------------------
+// User clicked on the Cancel button
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.btnCancelClick(Sender: TObject);
+begin
+
+   if pnlCompany.Visible = True then begin
+
+      if StatusBar1.Panels.Items[2].Text = ' New' then
+         tvTree.Selected.Delete();
+
+      btnDelete.Enabled := True;
+      btnUpdate.Enabled := False;
+      btnCancel.Enabled := False;
+      cbxKeyTypeC.SetFocus();
+
+      ToolsEmail.Enabled     := True;
+      ToolsExport.Enabled    := True;
+      ActionsRefresh.Enabled := True;
+      ActionsBackup.Enabled  := True;
+      ActionsRestore.Enabled := True;
+
+      edtPrefixC.ReadOnly := True;
+
+   end else if pnlUser.Visible = True then begin
+
+      if StatusBar1.Panels.Items[2].Text = ' New' then
+         tvTree.Selected.Delete();
+
+      btnDelete.Enabled := True;
+      btnUpdate.Enabled := False;
+      btnCancel.Enabled := False;
+      edtUserNameU.SetFocus();
+
+      ToolsEmail.Enabled     := True;
+      ToolsExport.Enabled    := True;
+      ActionsRefresh.Enabled := True;
+      ActionsBackup.Enabled  := True;
+      ActionsRestore.Enabled := True;
+
+   end else if pnlBackup.Visible = True then begin
+
+      btnCancel.Caption := 'Cancel';
+      btnUpdate.Caption := 'Update';
+
+      pnlBackup.Visible := False;
+
+      case PlaceHolder of
+
+         1: pnlRoot.Visible    := True;
+         2: pnlCompany.Visible := True;
+         3: pnlUser.Visible    := True;
+
+      end;
+
+   end else if pnlRestore.Visible = True then begin
+
+      btnCancel.Caption := 'Cancel';
+      btnUpdate.Caption := 'Update';
+
+      pnlRestore.Visible := False;
+
+      case PlaceHolder of
+
+         1: pnlRoot.Visible    := True;
+         2: pnlCompany.Visible := True;
+         3: pnlUser.Visible    := True;
+
+      end;
+
+   end;
+
+   tvTree.Enabled := True;
+
+   StatusBar1.Panels.Items[2].Text := ' Browse';
+   DoSave := False;
+   tvTreeClick(Sender);
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the Delete button
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.btnDeleteClick(Sender: TObject);
+var
+   NumUsers : integer;
+   SaveNode : TTreeNode;
+
+begin
+
+   if DoSave = True then begin
+
+      if Application.MessageBox('There are unsaved changes. You can:' + #10 + #10 + #10 + 'Click [Ok] to proceed and ignore the changes; or' + #10 + #10 + 'Click [Cancel] to return and attend to the changes.','LPMS Access Control Management',(MB_OKCANCEL + MB_ICONSTOP)) = ID_CANCEL then
+         Exit;
+
+   end;
+
+   tvTree.Enabled  := False;
+   btnExit.Enabled := False;
+   ToolBar1.Enabled := False;
+
+
+   if pnlCompany.Visible = True then begin
+
+      btnNew.Enabled := False;
+      OpenDB(ord(DB_OPEN));
+
+      if GetData(ord(DB_USER),tvTree.Selected.Text,'%','') = False then begin
+
+         OpenDB(ord(DB_CLOSE));
+
+         tvTree.Enabled   := True;
+         btnNew.Enabled   := True;
+         btnExit.Enabled  := True;
+         ToolBar1.Enabled := True;
+
+         Exit;
+
+      end;
+
+      NumUsers := adoQry2.RecordCount;
+
+      if Application.MessageBox(PChar('Delete ''' + tvTree.Selected.Text + ''' and ' + IntToStr(NumUsers) + ' associated Users?' + #10 + #10 + 'The Company and its associated Users will be permanently deleted and this action cannot be undone. You can:' + #10 + #10 + #10 + 'Click [Yes] to proceed with the delete action; or' + #10 + #10 + 'Click [No] to cancel the delete request.'),'LPMS Access Control Management',(MB_YESNO + MB_ICONSTOP)) = ID_NO then begin
+
+         OpenDB(ord(DB_CLOSE));
+
+         tvTree.Enabled   := True;
+         btnNew.Enabled   := True;
+         btnExit.Enabled  := True;
+         ToolBar1.Enabled := True;
+
+         Exit;
+
+      end;
+
+      if DelData(ord(DB_COMPANY),tvTree.Selected.Text,'%') = True then begin
+
+         Application.MessageBox(PChar('Company ''' + tvTree.Selected.Text + ''' and ' + IntToStr(NumUsers) + ' associated Users deleted.'),'LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
+
+         SaveNode := tvTree.Selected.Parent;
+         tvTree.Selected.Delete();
+         tvTree.Selected := SaveNode;
+
+      end;
+
+      OpenDB(ord(DB_CLOSE));
+
+   end else if (pnlUser.Visible = True) then begin
+
+      if Application.MessageBox(PChar('Delete ''' + tvTree.Selected.Text + '''?' + #10 + #10 + 'The User will be permanently deleted and this action cannot be undone. You can:' + #10 + #10 + 'Click [Yes] to proceed with the delete action; or' + #10 + #10 + 'Click [No] to cancel the delete request.'),'LPMS Access Control Management',(MB_YESNO + MB_ICONSTOP)) = ID_NO then begin
+
+         tvTree.Enabled   := True;
+         btnExit.Enabled  := True;
+         ToolBar1.Enabled := True;
+         edtUserNameU.SetFocus();
+
+         Exit;
+
+      end;
+
+      OpenDB(ord(DB_OPEN));
+
+      if DelData(ord(DB_USER),tvTree.Selected.Parent.Text,tvTree.Selected.Text) = True then begin
+
+         Application.MessageBox(PChar('User ''' + tvTree.Selected.Text + ''' deleted.'),'LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
+
+         SaveNode := tvTree.Selected.Parent;
+         tvTree.Selected.Delete();
+         tvTree.Selected := SaveNode;
+
+      end;
+
+
+      OpenDB(ord(DB_CLOSE));
+
+   end;
+
+   tvTree.Enabled   := True;
+   btnExit.Enabled  := True;
+   ToolBar1.Enabled := True;
+   tvTreeClick(Sender);
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the Update button
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.btnUpdateClick(Sender: TObject);
+var
+   Dummy        : integer;
+   Msg, MsgPart : string;
+
+begin
+
+   if pnlCompany.Visible = True then begin
+
+//--- Ensure that the Date is constructed correctly
+
+      ShortDateFormat := 'yyyy/MM/dd';
+      DateSeparator   := '/';
+
+//--- Make sure that the Company is valid and does not exist
+
+      if edtPrefixC.Text = 'XXX000' then begin
+
+         Application.MessageBox('''Prefix'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtPrefixC.SetFocus();
+         Exit;
+
+      end;
+
+      if StatusBar1.Panels.Items[2].Text = ' New' then begin
+
+         if CpyExists(edtPrefixC.Text) = True then begin
+
+            Application.MessageBox('''Prefix'' already exists.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+            edtPrefixC.SetFocus();
+            Exit;
+
+         end;
+
+      end;
+
+//--- Make sure that the required information is provided
+
+      if Trim(edtPrefixC.Text) = '' then begin
+
+         Application.MessageBox('''Prefix'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtPrefixC.SetFocus();
+         Exit;
+
+      end;
+
+      if cbxKeyTypeC.ItemIndex < 1 then begin
+
+         Application.MessageBox('''Key Type'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         cbxKeyTypeC.SetFocus();
+         Exit;
+
+      end;
+
+      if Trim(edtCompanyC.Text) = '' then begin
+
+         Application.MessageBox('''Company'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtCompanyC.SetFocus();
+         Exit;
+
+      end;
+
+
+//--- If we get here then all information is there - do the Update
+
+      if UpdateCpy() = True then
+         Application.MessageBox('Update completed.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
+
+      tvTree.Selected.Text := edtPrefixC.Text;
+
+   end else if pnlUser.Visible = True then begin
+
+//--- Ensure that the Date is constructed correctly
+
+      ShortDateFormat := 'yyyy/MM/dd';
+      DateSeparator   := '/';
+
+//--- Check whether a field that is contained in the Key changed
+
+      if DoGen = True then begin
+
+         if Application.MessageBox('A field that is contained in the Activation Key (''Unique'', ''License Type'', ''Expiry Date'' or ''Options'') changed.' + #10 + #10 + 'This will cause the values contained in the current key to be displayed and not the updated value(s). You can:' + #10 + #10 + #10 + 'Click [Ok] to proceed with the Update; or' + #10 + #10 + 'Click [Cancel] to return.' + #10 + #10 + 'HINT: Click [Cancel] and then on the ''Generate'' icon to generate a new key containing the new values.','LPMS Access Control Management',(MB_OKCANCEL + MB_ICONSTOP)) = ID_CANCEL then begin
+
+            edtUserNameU.SetFocus();
+            Exit;
+
+         end;
+
+      end;
+
+//--- Make sure that the User or the Unique Identifier does not exist
+
+      if StatusBar1.Panels.Items[2].Text = ' New' then begin
+
+         if UserExists(edtUserNameU.Text, edtPrefixU.Text) = True then begin
+
+            Application.MessageBox('''Username'' already exists for this Company.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+            edtUserNameU.SetFocus();
+            Exit;
+
+         end;
+
+      end;
+
+//--- If the Unique = '123456789ABC' then we have a floating license
+
+      if edtUniqueU.Text <> '123456789ABC' then begin
+
+         MsgPart := GetUnique(edtUniqueU.Text,ord(TYPE_TEST),Dummy);
+
+         if MsgPart <> '' then begin
+
+            if cbAllowDuplicates.Checked = False then begin
+
+               Application.MessageBox(PChar('''Unique'' already exists for ' + MsgPart),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+
+               if btnUnlock.Visible = True then
+                  edtUniqueU.SetFocus()
+               else
+                  btnLock.SetFocus();
+
+               Exit;
+
+            end;
+
+         end;
+
+      end;
+
+//--- Make sure that the required information is provided
+
+      if Trim(edtUserNameU.Text) = '' then begin
+
+         Application.MessageBox('''Username'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtUserNameU.SetFocus();
+         Exit;
+
+      end;
+
+      if Trim(edtCompanyU.Text) = '' then begin
+
+         Application.MessageBox('''Company'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtCompanyU.SetFocus();
+         Exit;
+
+      end;
+
+      if Trim(edtEmailU.Text) = '' then begin
+
+         Application.MessageBox('''Email'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtEmailU.SetFocus();
+         Exit;
+
+      end;
+
+      if Trim(edtContactU.Text) = '' then begin
+
+         Application.MessageBox('''Contact No'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtContactU.SetFocus();
+         Exit;
+
+      end;
+
+      if Length(edtUniqueU.Text) <> 12 then begin
+
+         Application.MessageBox('''Unique'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtUniqueU.SetFocus();
+         Exit;
+
+      end;
+
+      if cbxLicTypeU.ItemIndex < 1 then begin
+
+         Application.MessageBox('''License Type'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         cbxLicTypeU.SetFocus();
+         Exit;
+
+      end;
+
+      if Length(edtKeyU.Text) <> 38 then begin
+
+         Application.MessageBox('''Key'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtKeyU.SetFocus();
+         Exit;
+
+      end;
+
+      if cbTransferU.Checked = True then begin
+
+         if cbxNewLicU.ItemIndex = 0 then begin
+
+            Application.MessageBox('''New Lic Type'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+            cbxNewLicU.SetFocus();
+            Exit;
+
+         end;
+
+         if cbxNewPrefixU.ItemIndex = 0 then begin
+
+            Application.MessageBox('''New Prefix'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+            cbxNewPrefixU.SetFocus();
+            Exit;
+
+         end;
+
+      end;
+
+//--- If we get here then all information is there - do the Update
+
+      if UpdateUser() = True then
+         Application.MessageBox('Update completed.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
+
+      tvTree.Selected.Text := edtUserNameU.Text;
+
+   end else if pnlBackup.Visible = True then begin
+
+      DoBackup();
+
+   end else if pnlRestore.Visible = True then begin
+
+      if Trim(edtUserID.Text) = '' then begin
+
+         Application.MessageBox('''UserID'' is a required field - please provide then try again.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtUserID.SetFocus();
+         Exit;
+
+      end;
+
+      if Trim(edtPassword.Text) = '' then begin
+
+         Application.MessageBox('''Password'' is a required field - please provide then try again.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtPassword.SetFocus();
+         Exit;
+
+      end;
+
+      if Trim(edtHost.Text) = '' then begin
+
+         Application.MessageBox('''Host'' is a required field - please provide then try again.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtHost.SetFocus();
+         Exit;
+
+      end;
+
+      DoRestore();
+
+   end;
+
+   if ((pnlBackup.Visible = False) and (pnlRestore.Visible = False)) then begin
+
+      DoGen := False;
+      StatusBar1.Panels.Items[2].Text := ' Updated';
+      btnCancelClick(Sender);
+
+   end;
+
+end;
+
+//---------------------------------------------------------------------------
+// User clicked on the Transfer checkbox
+//---------------------------------------------------------------------------
+procedure TFLPMS_Main.cbTransferUClick(Sender: TObject);
+var
+   ThisNode : TTreeNode;
+begin
+
+   if cbTransferU.Checked = False then begin
+
+      cbxNewLicU.Enabled    := False;
+      cbxNewPrefixU.Enabled := False;
+
+   end else begin
+
+      cbxNewLicU.Enabled    := True;
+      cbxNewPrefixU.Enabled := True;
+
+      cbxNewPrefixU.Clear();
+      cbxNewPrefixU.Items.Add('--- Select ---');
+      ThisNode := tvTree.Items.GetFirstNode();
+      ThisNode := ThisNode.getFirstChild();
+
+      while ThisNode <> nil do begin
+
+         cbxNewPrefixU.Items.Add(ThisNode.Text);
+         ThisNode := ThisNode.getNextSibling();
+
+      end;
+   end;
+
+   cbxNewLicU.ItemIndex    := 0;
+   cbxNewPrefixU.ItemIndex := 0;
+
+end;
+
 //------------------------------------------------------------------------------
 // Function to load the LPMS_EncDec DLL and decode a key contained in
 // Decode_Key_Priv
 //------------------------------------------------------------------------------
-function TFLPMS_Main.DeCode(Decode_Key_Priv : REC_Key_Priv) : integer;
+function TFLPMS_Main.DeCode() : integer;
 type
-  TMyFunc = function (ThisKey : string) : string; stdcall;
+  TMyFunc = function (Decode_Key_Priv : REC_Key_Priv) : string; stdcall;
 
 var
+//   NumTokens  : integer;
    MyLibC     : TLibHandle = dynlibs.NilHandle;
    MyFunc     : TMyFunc;
    FuncResult : string;
@@ -856,19 +1437,35 @@ begin
 
    MyFunc := TMyFunc(GetProcedureAddress(MyLibC, 'DoDecode'));
 
-   FuncResult := MyFunc(Decode_Key_Priv.Key);
+   FuncResult := MyFunc(This_Key_Priv);
 
-//   Decode_Key_Priv.DaysLeft := 5;
+//--- Extract the results
 
+   EncDecTokens := TStringList.Create;
+
+   ExtractStrings(['|'], [], PChar(FuncResult), EncDecTokens);
+
+   This_Key_Priv.DaysLeft         := StrToInt(EncDecTokens.Strings[0]);
+   This_Key_Priv.Unique           := EncDecTokens.Strings[1];
+   This_Key_Priv.License          := StrToInt(EncDecTokens.Strings[2]);
+   This_Key_Priv.DBPrefix         := EncDecTokens.Strings[3];
+   This_Key_Priv.LPMS_Collections := StrToBool(EncDecTokens.Strings[4]);
+   This_Key_Priv.LPMS_DocGen      := StrToBool(EncDecTokens.Strings[5]);
+   This_Key_Priv.LPMS_Floating    := StrToBool(EncDecTokens.Strings[6]);
+   This_Key_Priv.LPMS_Option4     := StrToBool(EncDecTokens.Strings[7]);
+
+   EncDecTokens.Free;
+{
 //--- Unload the DLL
 
    if MyLibC <>  DynLibs.NilHandle then
       if FreeLibrary(MyLibC) then
          MyLibC := DynLibs.NilHandle;
+}
 
 //--- Return the Result
 
-   Result := 5;//Decode_Key_Priv.DaysLeft;
+   Result := This_Key_Priv.DaysLeft;
 
 end;
 
@@ -876,7 +1473,7 @@ end;
 // Function to load the LPMS_EncDec DLL and encode a key with the information
 // contained in Encode_Key_Values
 //------------------------------------------------------------------------------
-function TFLPMS_Main.EnCode(Encode_Key_Values : LPMS_Key_Values) : string;
+function TFLPMS_Main.EnCode() : string;
 type
   TMyFunc = function (Encode_Key_Values : LPMS_Key_Values) : string; cdecl;
 
@@ -905,13 +1502,15 @@ begin
 
    MyFunc := TMyFunc(GetProcedureAddress(MyLibC, 'DoEncode'));
 
-   FuncResult:= MyFunc(Encode_Key_Values);
+   FuncResult:= MyFunc(This_Key_Values);
 
+{
 //--- Unload the DLL
 
    if MyLibC <>  DynLibs.NilHandle then
       if FreeLibrary(MyLibC) then
          MyLibC := DynLibs.NilHandle;
+}
 
 //--- Return the Result
 
@@ -1060,7 +1659,7 @@ end;
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.btnLockRClick(Sender: TObject);
 var
-   ThisPass : UnicodeString;
+   ThisPass : string;
 
 begin
 
@@ -1186,6 +1785,130 @@ begin
 
 
    Result := True;
+
+end;
+
+//---------------------------------------------------------------------------
+// Function to delete Company and User Records from the Database
+//---------------------------------------------------------------------------
+function TFLPMS_Main.DelData(ThisType: integer; Company, User: string) : boolean;
+var
+   S1 : string;
+
+begin
+
+   case ThisType of
+
+      ord(DB_COMPANY): begin
+
+         S1 := 'DELETE FROM users WHERE LPMSKey_Prefix = ''' + Company + '''';
+         MySQLAccess(ord(DB_OTHER),S1,adoQry1);
+
+         S1 := 'DELETE FROM companies WHERE LPMSKey_Prefix = ''' + Company + '''';
+         MySQLAccess(ord(DB_OTHER),S1,adoQry1);
+
+      end;
+
+      ord (DB_USER): begin
+
+         S1 := 'DELETE FROM users WHERE LPMSKey_Name = ''' + User + ''' AND LPMSKey_Prefix = ''' + Company + '''';
+         MySQLAccess(ord(DB_OTHER),S1,adoQry2);
+
+      end;
+
+   end;
+
+   Result := True;
+
+end;
+
+//---------------------------------------------------------------------------
+// Function to check whether a company already exists
+//---------------------------------------------------------------------------
+function TFLPMS_Main.CpyExists(Prefix: string) : boolean;
+var
+
+   Count   : integer;
+   RetCode : boolean;
+   S1      : string;
+
+begin
+
+   S1 := 'SELECT LPMSKey_Prefix FROM companies WHERE LPMSKey_Prefix = ''' + Prefix + '''';
+
+   MySQLAccess(ord(DB_SELECT),S1,adoQry1);
+
+   if adoQry1.RecordCount = 0 then
+      RetCode := False
+   else
+      RetCode := True;
+
+   Result := RetCode;
+
+end;
+
+//---------------------------------------------------------------------------
+// Function to insert/update a Company record
+//---------------------------------------------------------------------------
+function TFLPMS_Main.UpdateCpy() : boolean;
+var
+   ThisResult        : boolean;
+   S1, S2, TimeStamp : string;
+
+begin
+
+   ShortDateFormat := 'yyyy/MM/dd';
+   DateSeparator   := '/';
+
+   OpenDB(ord(DB_OPEN));
+
+   if StatusBar1.Panels.Items[2].Text = ' New' then begin
+
+      TimeStamp := FormatDateTime('yyyy/MM/dd',Now()) + '+' + FormatDateTime('HH:nn:ss:zzz',Now()) + '+' + UserName;
+
+      if cbBlockedU.Checked = True then
+         S2 := '1'
+      else
+         S2 := '0';
+
+      S1 := 'INSERT INTO companies (LPMSKey_Prefix, LPMSKey_Name, LPMSKey_Desc, LPMSKey_LicCount, LPMSKey_Interval, LPMSKey_Blocked, LPMSKey_CreatedBy, LPMSKey_CreatedOn, LPMSKey_CreatedAt, LPMSKey_TimeStamp) Values(''' +
+            ReplaceQuote(edtPrefixC.Text,ord(TYPE_WRITE))  + ''', ''' +
+            cbxKeyTypeC.Text                               + ''', ''' +
+            ReplaceQuote(edtCompanyC.Text,ord(TYPE_WRITE)) + ''', '   +
+            speLicCountC.Text                              + ', '     +
+            speRenewalC.Text                               + ', '     +
+            S2                                             + ', '''   +
+            UserName                                       + ''', ''' +
+            FormatDateTime('yyyy/MM/dd',Now())             + ''', ''' +
+            FormatDateTime('HH:nn:ss',Now())               + ''', ''' +
+            ReplaceQuote(TimeStamp,ord(TYPE_WRITE))        + ''')''';
+
+      ThisResult := MySQLAccess(ord(DB_OTHER),S1,adoQry1);
+
+   end else begin
+
+      if cbBlockedC.Checked = True then
+         S2 := '1'
+      else
+         S2 := '0';
+
+      S1 := 'UPDATE companies SET LPMSKey_Name = ''' + ReplaceQuote(cbxKeyTypeC.Text,ord(TYPE_WRITE)) +
+            ''', LPMSKey_Desc = '''        + ReplaceQuote(edtCompanyC.Text,ord(TYPE_WRITE)) +
+            ''', LPMSKey_LicCount = '      + speLicCountC.Text                              +
+            ', LPMSKey_Interval = '        + speRenewalC.Text                               +
+            ', LPMSKey_Blocked = '         + S2                                             +
+            ',  LPMSKey_ModBy = '''        + UserName                                       +
+            ''', LPMSKey_ModOn = '''       + FormatDateTime('yyyy/MM/dd',Now())             +
+            ''', LPMSKey_ModAt = '''       + FormatDateTime('HH:nn:ss',Now())               +
+            ''' WHERE LPMSKey_Prefix = ''' + ReplaceQuote(edtPrefixC.Text,ord(TYPE_WRITE))  + '''';
+
+      Result := MySQLAccess(ord(DB_OTHER),S1,adoQry1);
+
+   end;
+
+   OpenDB(ord(DB_CLOSE));
+
+   Result := ThisResult;
 
 end;
 
@@ -1338,7 +2061,7 @@ begin
    end;
 
    Application.Terminate;
-   Close;
+   Exit;
 
 end;
 
@@ -1346,37 +2069,24 @@ end;
 // Function to manage replacement of single quotes and back slashes to avoid
 // SQL errors
 //---------------------------------------------------------------------------
-function TFLPMS_Main.ReplaceQuote(S1 : string) : string;
+function TFLPMS_Main.ReplaceQuote(S1 : string; ThisType: integer) : string;
 begin
 
-   S1 := AnsiReplaceStr(S1,'&quot','''');
-   S1 := AnsiReplaceStr(S1,'&slash','\');
+   if ThisType = ord(TYPE_READ) then begin
+
+      S1 := AnsiReplaceStr(S1,'&quot','''');
+      S1 := AnsiReplaceStr(S1,'&slash','\');
+
+   end else begin
+
+      S1 := AnsiReplaceStr(S1,'''','&quot');
+      S1 := AnsiReplaceStr(S1,'\','&slash');
+
+   end;
 
    Result := S1;
+
 end;
-
-{
-var
-   ThisParmStr, ThisExe : string;
-//   ReturnValue          : HINSTANCE;
-
-begin
-
-   Application.MessageBox(PChar('Unexpected Data Base error: ''' + Msg + ''' - LPMS_ACM cannot continue and will be restarted'),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
-
-   ThisExe := Application.ExeName;
-
-//--- Build the parm string then terminate this instance and restart LPMS
-
-   ThisParmStr := '-u"' + UserName + '" -p"' + Password + '" -H"' + HostName + '"';
-
-   if ShellExecute(Application, 'open', ThisExe, ThisParmStr, nil, SW_SHOWNORMAL) < 33 then
-      Application.MessageBox(PChar('Failed to invoke ''' + ThisExe + ''),'LPMS Access Control Manager',(MB_OK + MB_ICONSTOP));
-
-   Application.Terminate();
-
-   Exit;
-}
 
 //------------------------------------------------------------------------------
 
