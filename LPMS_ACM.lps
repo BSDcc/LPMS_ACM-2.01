@@ -3,7 +3,7 @@
   <ProjectSession>
     <Version Value="11"/>
     <BuildModes Active="Debug"/>
-    <Units Count="13">
+    <Units Count="14">
       <Unit0>
         <Filename Value="LPMS_ACM.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -11,7 +11,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="76"/>
+        <UsageCount Value="77"/>
       </Unit0>
       <Unit1>
         <Filename Value="lpms_login.pas"/>
@@ -20,10 +20,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Login"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="121"/>
-        <CursorPos X="24" Y="145"/>
-        <UsageCount Value="76"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="280"/>
+        <CursorPos Y="307"/>
+        <UsageCount Value="77"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="lpms_main.pas"/>
@@ -32,10 +34,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
-        <TopLine Value="1495"/>
-        <CursorPos Y="1510"/>
-        <FoldState Value=" T3pF0Y1 piZja032 pjAjT0M011 TLv309 p0;50F111("/>
-        <UsageCount Value="76"/>
+        <TopLine Value="478"/>
+        <CursorPos Y="493"/>
+        <UsageCount Value="77"/>
         <Bookmarks Count="3">
           <Item0 X="16" Y="304" ID="9"/>
           <Item1 X="37" Y="1820"/>
@@ -54,7 +55,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="94"/>
         <CursorPos X="51" Y="108"/>
-        <UsageCount Value="76"/>
+        <UsageCount Value="77"/>
       </Unit3>
       <Unit4>
         <Filename Value="lpms_show.pas"/>
@@ -66,7 +67,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="223"/>
         <CursorPos Y="138"/>
-        <UsageCount Value="72"/>
+        <UsageCount Value="73"/>
       </Unit4>
       <Unit5>
         <Filename Value="../LPMS_Backup_Manager-3.02/Source/ldbackupapp.pas"/>
@@ -105,9 +106,9 @@
       <Unit9>
         <Filename Value="LPMS_EncDec.lpr"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="219"/>
-        <CursorPos Y="135"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="178"/>
+        <CursorPos Y="232"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit9>
@@ -132,54 +133,81 @@
         <CursorPos Y="3550"/>
         <UsageCount Value="11"/>
       </Unit12>
+      <Unit13>
+        <Filename Value="/usr/lib/lazarus/2.0.6/lcl/include/customform.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3016"/>
+        <CursorPos Y="3063"/>
+        <UsageCount Value="10"/>
+      </Unit13>
     </Units>
-    <JumpHistory Count="8" HistoryIndex="7">
+    <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1510" TopLine="1495"/>
+        <Caret Line="1878" TopLine="1833"/>
       </Position1>
       <Position2>
-        <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="238" TopLine="223"/>
+        <Filename Value="lpms_main.pas"/>
+        <Caret Line="1879" TopLine="1833"/>
       </Position2>
       <Position3>
-        <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="239" TopLine="223"/>
+        <Filename Value="lpms_main.pas"/>
+        <Caret Line="1880" TopLine="1833"/>
       </Position3>
       <Position4>
-        <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="241" TopLine="223"/>
+        <Filename Value="lpms_main.pas"/>
+        <Caret Line="1886" TopLine="1838"/>
       </Position4>
       <Position5>
-        <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="242" TopLine="224"/>
+        <Filename Value="lpms_main.pas"/>
+        <Caret Line="506" TopLine="478"/>
       </Position5>
       <Position6>
-        <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="244" TopLine="226"/>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="307" TopLine="280"/>
       </Position6>
       <Position7>
-        <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="245" TopLine="227"/>
+        <Filename Value="lpms_main.pas"/>
+        <Caret Line="493" TopLine="478"/>
       </Position7>
       <Position8>
-        <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="265" TopLine="256"/>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="307" TopLine="280"/>
       </Position8>
+      <Position9>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="308" TopLine="280"/>
+      </Position9>
+      <Position10>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="310" TopLine="280"/>
+      </Position10>
+      <Position11>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="307" TopLine="280"/>
+      </Position11>
+      <Position12>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="308" TopLine="280"/>
+      </Position12>
+      <Position13>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="307" TopLine="280"/>
+      </Position13>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
       <Modes Count="1" ActiveMode="default">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="-H192.168.8.210 -pvincent1 -uroot"/>
+            <CommandLineParams Value="-H10.0.0.210 -pvincent1 -uroot"/>
           </local>
         </Mode0>
       </Modes>
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="2">
+    <BreakPoints Count="1">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -187,18 +215,14 @@
         <Source Value="lpms_main.pas"/>
         <Line Value="2422"/>
       </Item1>
-      <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="LPMS_EncDec.lpr"/>
-        <Line Value="231"/>
-      </Item2>
     </BreakPoints>
-    <Watches Count="1">
+    <Watches Count="2">
       <Item1>
-        <Expression Value="S1"/>
+        <Expression Value="ThisIdx"/>
       </Item1>
+      <Item2>
+        <Expression Value="ThisVal"/>
+      </Item2>
     </Watches>
   </Debugging>
 </CONFIG>

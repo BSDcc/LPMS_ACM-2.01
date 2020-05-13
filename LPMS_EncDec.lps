@@ -8,8 +8,8 @@
         <Filename Value="LPMS_EncDec.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="227"/>
-        <CursorPos Y="238"/>
+        <TopLine Value="203"/>
+        <CursorPos Y="222"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -21,7 +21,7 @@
         <UsageCount Value="10"/>
       </Unit1>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="LPMS_EncDec.lpr"/>
         <Caret Line="557" Column="20" TopLine="539"/>
@@ -138,21 +138,14 @@
         <Filename Value="LPMS_EncDec.lpr"/>
         <Caret Line="361" Column="3" TopLine="343"/>
       </Position29>
+      <Position30>
+        <Filename Value="LPMS_EncDec.lpr"/>
+        <Caret Line="238" TopLine="227"/>
+      </Position30>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
       <Modes Count="0" ActiveMode=""/>
     </RunParams>
   </ProjectSession>
-  <Debugging>
-    <BreakPoints Count="1">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="LPMS_EncDec.lpr"/>
-        <Line Value="238"/>
-      </Item1>
-    </BreakPoints>
-  </Debugging>
 </CONFIG>

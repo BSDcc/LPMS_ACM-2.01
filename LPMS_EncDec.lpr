@@ -14,18 +14,14 @@ library LPMS_EncDec;
 // Uses clause
 //------------------------------------------------------------------------------
 uses
-   Classes, DateUtils, SysUtils
-   {Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-   Dialogs, StdCtrls, ComCtrls, ExtCtrls, nb30, Registry,}
-
-   { you can add units after this };
+   Classes, DateUtils, SysUtils;
 
 //------------------------------------------------------------------------------
 // Define the ENUM Types and Record structures
 //------------------------------------------------------------------------------
 type
 
-   LIC_LICENSE  = (LIC_INVALID, LIC_TRIAL, LIC_BROWSE, LIC_PERSONAL, LIC_CORPORATE);
+   LIC_LICENSE  = (LIC_INVALID, LIC_TRIAL, LIC_PERSONAL, LIC_BROWSE, LIC_GENERIC);
    RES_RESULTS  = (ERR_INVALID, ERR_LENGTH, ERR_EXPIRED);
 
    REC_Key_Priv = record
@@ -72,6 +68,7 @@ type
       DBPrefix02R : char;
       Switch02    : char;
       DBPrefix04  : char;
+      Dummy       : char;
    end;
 
    REC_Key_Fields = record
@@ -90,10 +87,11 @@ type
       DBPrefix02R : char;
       Switch02    : char;
       DBPrefix04  : char;
+      Dummy       : char;
    end;
 
    REC_Key_String = record
-      Key : array[1..31] of char;
+      Key : array[1..32] of char;
    end;
 
    REC_Key_Overlay = record
@@ -132,37 +130,40 @@ var
    idx, RandomRange, Save1, Save2, Hash1, Hash2 : integer;
    Mod1, Mod2, ThisVal, ThisIdx, Month          : integer;
    WorkingDate, WorkingMonth, UnlockCode        : string;
-   KeySet                                       : array[1..31] of integer;
-   UniqueID                                     : array[1..12] of char;
-   DBPrefix                                     : array[1..6] of char;
+   KeySet                                       : array[1..32] of integer;
+   UniqueID                                     : array[1..13] of char;
+   DBPrefix                                     : array[ 1..7] of char;
    CodedKey, ScrambledKey                       : REC_Key_Overlay;
 
 begin
 
+   ShortDateFormat := 'yyyy/MM/dd';
+   DateSeparator   := '/';
+
 //--- Set all fields to 0 or false as a precaution
 
-   This_Key_priv.DaysLeft         := 0;
-   This_Key_priv.LPMS_Collections := False;
-   This_Key_priv.LPMS_DocGen      := False;
-   This_Key_priv.LPMS_Floating    := False;
-   This_Key_priv.LPMS_Options4    := False;
-   This_Key_priv.License          := ord(LIC_INVALID);
-   This_Key_priv.DBPrefix         := '';
-   This_Key_priv.Unique           := '000000000000';
+   This_Key_Priv.DaysLeft         := 0;
+   This_Key_Priv.LPMS_Collections := False;
+   This_Key_Priv.LPMS_DocGen      := False;
+   This_Key_Priv.LPMS_Floating    := False;
+   This_Key_Priv.LPMS_Options4    := False;
+   This_Key_Priv.License          := ord(LIC_INVALID);
+   This_Key_Priv.DBPrefix         := '';
+   This_Key_Priv.Unique           := '000000000000';
 
 //--- Remove the "-" characters from the supplied key and copy to Key in Strings
 
-   if (Length(This_Key_priv.Key) <> KeyLength) then begin
+   if (Length(This_Key_Priv.Key) <> KeyLength) then begin
 
       Result := ord(ERR_LENGTH) - 3;
       Exit;
 
    end;
 
-   UnlockCode := Copy(This_Key_priv.Key, 1, 4) + Copy(This_Key_priv.Key, 6, 3) +
-                 Copy(This_Key_priv.Key,10, 4) + Copy(This_Key_priv.Key,15, 4) +
-                 Copy(This_Key_priv.Key,20, 4) + Copy(This_Key_priv.Key,25, 4) +
-                 Copy(This_Key_priv.Key,30, 4) + Copy(This_Key_priv.Key,35, 4);
+   UnlockCode := Copy(This_Key_Priv.Key, 1, 4) + Copy(This_Key_Priv.Key, 6, 3) +
+                 Copy(This_Key_Priv.Key,10, 4) + Copy(This_Key_Priv.Key,15, 4) +
+                 Copy(This_Key_Priv.Key,20, 4) + Copy(This_Key_Priv.Key,25, 4) +
+                 Copy(This_Key_Priv.Key,30, 4) + Copy(This_Key_Priv.Key,35, 4);
 
    for idx := 1 to KeyShort do
       ScrambledKey.Strings.Key[idx] := char(UnlockCode[idx]);
@@ -221,7 +222,7 @@ begin
    for idx := 1 to KeyShort do begin
 
       ThisVal := integer(ScrambledKey.Strings.Key[idx]) and $0F;
-      ThisIdx := KeySet[idx];
+      ThisIdx := KeySet[idx] + 1;
       CodedKey.Strings.Key[ThisIdx] := char(ThisVal);
 
    end;
@@ -308,37 +309,37 @@ begin
 //--- Start with Switch 1 containing the Options
 
    if ((integer(CodedKey.Chars.Switch01) and $08) = $08) then
-      This_Key_priv.LPMS_Collections := True
+      This_Key_Priv.LPMS_Collections := True
    else
-      This_Key_priv.LPMS_Collections := False;
+      This_Key_Priv.LPMS_Collections := False;
 
    if ((integer(CodedKey.Chars.Switch01) and $04) = $04) then
-      This_Key_priv.LPMS_DocGen := True
+      This_Key_Priv.LPMS_DocGen := True
    else
-      This_Key_priv.LPMS_DocGen := False;
+      This_Key_Priv.LPMS_DocGen := False;
 
    if ((integer(CodedKey.Chars.Switch01) and $02) = $02) then
-      This_Key_priv.LPMS_Floating := True
+      This_Key_Priv.LPMS_Floating := True
    else
-      This_Key_priv.LPMS_Floating := False;
+      This_Key_Priv.LPMS_Floating := False;
 
    if ((integer(CodedKey.Chars.Switch01) and $01) = $01) then
-      This_Key_priv.LPMS_Options4 := True
+      This_Key_Priv.LPMS_Options4 := True
    else
-      This_Key_priv.LPMS_Options4 := False;
+      This_Key_Priv.LPMS_Options4 := False;
 
 //--- Now Switch 2 containing the license type
 
    if ((integer(CodedKey.Chars.Switch02) and $08) = $08) then
-      This_Key_priv.License := ord(LIC_TRIAL)
+      This_Key_Priv.License := ord(LIC_TRIAL)
    else if ((integer(CodedKey.Chars.Switch02) and $04) = $04) then
-      This_Key_priv.License := ord(LIC_BROWSE)
+      This_Key_Priv.License := ord(LIC_BROWSE)
    else if ((integer(CodedKey.Chars.Switch02) and $02) = $02) then
-      This_Key_priv.License := ord(LIC_PERSONAL)
+      This_Key_Priv.License := ord(LIC_PERSONAL)
    else if ((integer(CodedKey.Chars.Switch02) and $01) = $01) then
-      This_Key_priv.License := ord(LIC_CORPORATE)
+      This_Key_Priv.License := ord(LIC_GENERIC)
    else
-      This_Key_priv.License := ord(LIC_INVALID);
+      This_Key_Priv.License := ord(LIC_INVALID);
 
 //--- Extract the licensed MacAddress
 
@@ -356,8 +357,7 @@ begin
 
    end;
 
-   This_Key_priv.Unique := UniqueID;
-//   ThisMacAddr := UniqueID;
+   This_Key_Priv.Unique := UniqueID;
 
 //--- Extract the DBPrefix
 
@@ -368,7 +368,7 @@ begin
    DBPrefix[5] := char(integer(CodedKey.Chars.DBPrefix05) or $30);
    DBPrefix[6] := char(integer(CodedKey.Chars.DBPrefix06) or $30);
 
-   This_Key_priv.DBPrefix := DBPrefix;
+   This_Key_Priv.DBPrefix := DBPrefix;
 
 //--- Calculate the number of days remaining
 
@@ -380,7 +380,7 @@ begin
    end;
 
    try
-      This_Key_priv.DaysLeft := DaysBetween(Now(),(StrToDate(WorkingDate)));
+      This_Key_Priv.DaysLeft := DaysBetween(Now(),(StrToDate(WorkingDate)));
    except
 
       Result := ord(ERR_INVALID) - 3;
@@ -390,23 +390,10 @@ begin
 
 //--- Check the days left then return an appropriate result
 
-   if (This_Key_priv.DaysLeft <= 0) then
+   if (This_Key_Priv.DaysLeft <= 0) then
       Result := ord(ERR_EXPIRED) - 3
    else
-      Result := This_Key_priv.DaysLeft;
-
-{
-   This_Key_Priv.DaysLeft := 5;
-   This_Key_Priv.Unique   := '123456789ABC';
-   This_Key_Priv.License  := 2;
-   This_Key_Priv.DBPrefix := 'MPA001';
-   This_Key_Priv.LPMS_Collections := True;
-   This_Key_Priv.LPMS_DocGen := True;
-   This_Key_Priv.LPMS_Floating := True;
-   This_Key_Priv.LPMS_Option4 := True;
-
-   Result := This_Key_Priv.DaysLeft;
-}
+      Result := This_Key_Priv.DaysLeft;
 
 end;
 
