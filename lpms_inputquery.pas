@@ -105,7 +105,7 @@ begin
    if edtInput.PasswordChar = '*' then begin
 
       edtInput.PasswordChar := #00;
-      btnView.Glyph.LoadFromFile(Location + 'eye_Off_16.bmp');
+      btnView.Glyph.LoadFromFile(Location + 'eye_off_16.bmp');
 
    end else begin
 
