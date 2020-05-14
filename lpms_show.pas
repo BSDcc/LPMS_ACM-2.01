@@ -60,8 +60,7 @@ type
       procedure btnSelectClick( Sender: TObject);
       procedure FormCreate( Sender: TObject);
       procedure FormShow( Sender: TObject);
-      procedure lvRecordsSelectItem( Sender: TObject; Item: TListItem;
-         Selected: Boolean);
+      procedure lvRecordsSelectItem( Sender: TObject; Item: TListItem; Selected: Boolean);
 
 private   { Private Declarations }
 

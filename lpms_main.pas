@@ -223,6 +223,7 @@ type
    procedure cbBlockedUClick(Sender: TObject);
    procedure cbTransferUClick(Sender: TObject);
    procedure edtKeyRKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+   procedure edtPrefixCChange( Sender: TObject);
    procedure edtUniqueUChange(Sender: TObject);
    procedure edtUserNameUChange(Sender: TObject);
    procedure FileExitExecute(Sender: TObject);
@@ -260,9 +261,6 @@ type
       License          : integer;
    end;
 
-//   LPMS_Key_Values = REC_Key_Values;
-//   LPMS_Key_Priv   = REC_Key_Priv;
-
 private  { Private Declarations }
 
 {$IFDEF WINDOWS}                   // Target is Winblows
@@ -287,14 +285,10 @@ private  { Private Declarations }
 
    PlaceHolder                        : integer;
    DoSave, CanUpdate, DoGen, FirstRun : boolean;
-   ConStr1, ConStr2                   : string;
    Root                               : TTreeNode;
    This_Key_Values                    : REC_Key_Values;
    This_Key_Priv                      : REC_Key_Priv;
-//   EncDecTokens                       : TStrings;    // Holds the input/result of an Encode/Decode operation
 
-
-//   Registered, BackSpace : boolean;
 
    procedure OpenDB(ThisType: integer);
    function  GetData(ThisType: integer; Company, User, Unique: string) : boolean;
@@ -336,9 +330,9 @@ public   { Public Declarations }
    Version     : string;      // Version string passed from Login
    CopyRight   : string;      // Copyright notice passed from Login
    ThisRes     : string;      // Holds result from InoutQuery
-   ThisName    : string;      //
-   ThisCompany : string;      //
-   ThisUnique  : string;      //
+   ThisName    : string;      // Used by LPMS_Show
+   ThisCompany : string;      // Used by LPMS_Show
+   ThisUnique  : string;      // Used by LPMS_Show
 
 end;
 
@@ -1145,8 +1139,8 @@ end;
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.btnUpdateClick(Sender: TObject);
 var
-   Dummy        : integer;
-   Msg, MsgPart : string;
+   Dummy   : integer = 0;
+   MsgPart : string;
 
 begin
 
@@ -1392,6 +1386,34 @@ begin
 end;
 
 //---------------------------------------------------------------------------
+// A field on the Company screen changed
+//---------------------------------------------------------------------------
+procedure TFLPMS_Main.edtPrefixCChange(Sender: TObject);
+begin
+
+   if CanUpdate = True then
+      Exit;
+
+   btnDelete.Enabled := False;
+   btnUpdate.Enabled := True;
+   btnCancel.Enabled := True;
+
+   tvTree.Enabled         := False;
+   ToolsEmail.Enabled     := False;
+   ToolsExport.Enabled    := False;
+   ToolsGenerate.Enabled  := False;
+   ActionsRefresh.Enabled := False;
+   ActionsBackup.Enabled  := False;
+   ActionsRestore.Enabled := False;
+
+   DoSave := True;
+
+   if StatusBar1.Panels.Items[2].Text = ' Browse' then
+      StatusBar1.Panels.Items[2].Text := ' Modified';
+
+end;
+
+//---------------------------------------------------------------------------
 // A field on the Users screen changed
 //---------------------------------------------------------------------------
 procedure TFLPMS_Main.edtUserNameUChange(Sender: TObject);
@@ -1590,7 +1612,7 @@ end;
 //---------------------------------------------------------------------------
 procedure TFLPMS_Main.btnLockBClick(Sender: TObject);
 var
-   ThisPass : UnicodeString;
+   ThisPass : string;
 
 begin
 
@@ -1901,7 +1923,6 @@ end;
 function TFLPMS_Main.CpyExists(Prefix: string) : boolean;
 var
 
-   Count   : integer;
    RetCode : boolean;
    S1      : string;
 
@@ -1925,8 +1946,8 @@ end;
 //---------------------------------------------------------------------------
 function TFLPMS_Main.UpdateCpy() : boolean;
 var
-   ThisResult        : boolean;
-   S1, S2, TimeStamp : string;
+   ThisResult    : boolean;
+   S1, TimeStamp : string;
 
 begin
 
@@ -1936,37 +1957,27 @@ begin
 
       TimeStamp := FormatDateTime('yyyy/MM/dd',Now()) + '+' + FormatDateTime('HH:nn:ss:zzz',Now()) + '+' + UserName;
 
-      if cbBlockedU.Checked = True then
-         S2 := '1'
-      else
-         S2 := '0';
-
       S1 := 'INSERT INTO companies (LPMSKey_Prefix, LPMSKey_Name, LPMSKey_Desc, LPMSKey_LicCount, LPMSKey_Interval, LPMSKey_Blocked, LPMSKey_CreatedBy, LPMSKey_CreatedOn, LPMSKey_CreatedAt, LPMSKey_TimeStamp) Values(''' +
             ReplaceQuote(edtPrefixC.Text,ord(TYPE_WRITE))  + ''', ''' +
             cbxKeyTypeC.Text                               + ''', ''' +
             ReplaceQuote(edtCompanyC.Text,ord(TYPE_WRITE)) + ''', '   +
             speLicCountC.Text                              + ', '     +
             speRenewalC.Text                               + ', '     +
-            S2                                             + ', '''   +
+            BoolToStr(cbBlockedC.Checked)                  + ', '''   +
             UserName                                       + ''', ''' +
             FormatDateTime('yyyy/MM/dd',Now())             + ''', ''' +
             FormatDateTime('HH:nn:ss',Now())               + ''', ''' +
-            ReplaceQuote(TimeStamp,ord(TYPE_WRITE))        + ''')''';
+            ReplaceQuote(TimeStamp,ord(TYPE_WRITE))        + ''')';
 
       ThisResult := MySQLAccess(ord(DB_OTHER),S1,adoQry1);
 
    end else begin
 
-      if cbBlockedC.Checked = True then
-         S2 := '1'
-      else
-         S2 := '0';
-
       S1 := 'UPDATE companies SET LPMSKey_Name = ''' + ReplaceQuote(cbxKeyTypeC.Text,ord(TYPE_WRITE)) +
             ''', LPMSKey_Desc = '''        + ReplaceQuote(edtCompanyC.Text,ord(TYPE_WRITE)) +
             ''', LPMSKey_LicCount = '      + speLicCountC.Text                              +
             ', LPMSKey_Interval = '        + speRenewalC.Text                               +
-            ', LPMSKey_Blocked = '         + S2                                             +
+            ', LPMSKey_Blocked = '         + BoolToStr(cbBlockedC.Checked)                  +
             ',  LPMSKey_ModBy = '''        + UserName                                       +
             ''', LPMSKey_ModOn = '''       + FormatDateTime('yyyy/MM/dd',Now())             +
             ''', LPMSKey_ModAt = '''       + FormatDateTime('HH:nn:ss',Now())               +
@@ -1981,12 +1992,12 @@ begin
    Result := ThisResult;
 
 end;
+
 //---------------------------------------------------------------------------
 // Function to check whether a User exists
 //---------------------------------------------------------------------------
 function TFLPMS_Main.UserExists(User, Prefix: string) : boolean;
 var
-   Count   : integer;
    S1      : string;
 
 begin

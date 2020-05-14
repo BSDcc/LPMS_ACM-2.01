@@ -18,7 +18,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="49"/>
+      <BuildNr Value="53"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -58,6 +58,11 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CompilerMessages>
+              <IgnoredMessages idx5071="True" idx5024="True"/>
+            </CompilerMessages>
+          </Other>
         </CompilerOptions>
       </Item2>
       <Item3 Name="Release">

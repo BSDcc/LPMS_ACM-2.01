@@ -37,6 +37,17 @@ type
       KeyDate          : string;
    end;
 
+   REC_Key_Values = record
+      Unique           : string;
+      ExpDate          : string;
+      DBPrefix         : string;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Options4    : boolean;
+      License          : integer;
+   end;
+
    REC_Key_Chars = record
       ExpDateYL   : char;
       ExpDateYR   : char;
@@ -100,17 +111,6 @@ type
          2: (Fields  : REC_Key_Fields);
    end;
 
-   REC_Key_Values = record
-      Unique           : string;
-      ExpDate          : string;
-      DBPrefix         : string;
-      LPMS_Collections : boolean;
-      LPMS_DocGen      : boolean;
-      LPMS_Floating    : boolean;
-      LPMS_Options4    : boolean;
-      License          : integer;
-   end;
-
 //------------------------------------------------------------------------------
 // Function to decode a key contained in the parameter passed and return a
 // string containing DaysLeft , Unique, License and DBPrefix
@@ -132,7 +132,7 @@ var
    WorkingDate, WorkingMonth, UnlockCode        : string;
    KeySet                                       : array[1..31] of integer;
    UniqueID                                     : array[1..12] of char;
-   DBPrefix                                     : array[ 1..6] of char;
+   DBPrefix                                     : array[1..6]  of char;
    This_Key_Priv                                : REC_Key_Priv;
    CodedKey, ScrambledKey                       : REC_Key_Overlay;
 
@@ -154,7 +154,7 @@ begin
 
 //--- Remove the "-" characters from the supplied key and copy to Key in Strings
 
-   if (Length(Decode_Key_Priv.Key) <> KeyLength) then begin
+   if Length(Decode_Key_Priv.Key) <> KeyLength then begin
 
       This_Key_Priv.DaysLeft := ord(ERR_LENGTH) - 3;
       Result := This_Key_Priv;
@@ -170,20 +170,14 @@ begin
    for idx := 1 to KeyShort do
       ScrambledKey.Strings.Key[idx] := char(UnlockCode[idx]);
 
-//--- Replace all '#' with '0'
+//--- Replace all '#' with '0' and '?' with '@'
 
    for idx := 1 to KeyShort do begin
 
-      if (ScrambledKey.Strings.Key[idx] = '#') then
+      if ScrambledKey.Strings.Key[idx] = '#' then
          ScrambledKey.Strings.Key[idx] := '0';
 
-   end;
-
-//--- Replace all '?' with '@'
-
-   for idx := 1 to KeyShort do begin
-
-      if (ScrambledKey.Strings.Key[idx] = '?') then
+      if ScrambledKey.Strings.Key[idx] = '?' then
          ScrambledKey.Strings.Key[idx] := '@';
 
    end;
@@ -259,7 +253,7 @@ begin
 
    Mod2 := Hash2 mod 11;
 
-   if (Save1 <> Mod1) then begin
+   if Save1 <> Mod1 then begin
 
       This_Key_Priv.DaysLeft := ord(ERR_INVALID) - 3;
       Result := This_Key_Priv;
@@ -267,7 +261,7 @@ begin
 
    end;
 
-   if (Save2 <> Mod2) then begin
+   if Save2 <> Mod2 then begin
 
       This_Key_Priv.DaysLeft := ord(ERR_INVALID) - 3;
       Result := This_Key_Priv;
@@ -280,19 +274,13 @@ begin
 
 //--- Start with the Date
 
-   if (shortint(CodedKey.Chars.ExpDateM) = $0A) then begin
-
-      WorkingMonth := '10';
-
-   end else if (shortint(CodedKey.Chars.ExpDateM) = $0B) then begin
-
-      WorkingMonth := '11';
-
-   end else if (shortint(CodedKey.Chars.ExpDateM) = $0C) then begin
-
-      WorkingMonth := '12';
-
-   end else begin
+   if shortint(CodedKey.Chars.ExpDateM) = $0A then
+      WorkingMonth := '10'
+   else if shortint(CodedKey.Chars.ExpDateM) = $0B then
+      WorkingMonth := '11'
+   else if shortint(CodedKey.Chars.ExpDateM) = $0C then
+      WorkingMonth := '12'
+   else begin
 
       Month := integer(CodedKey.Chars.ExpDateM) or $30;
       WorkingMonth := '0' + char(Month);
@@ -305,43 +293,42 @@ begin
    CodedKey.Chars.ExpDateDR := char(integer(CodedKey.Chars.ExpDateDR) or $30);
 
    WorkingDate := '20' + string(CodedKey.Chars.ExpDateYL) +
-                 string(CodedKey.Chars.ExpDateYR) + '/' + WorkingMonth +
-                 '/' + string(CodedKey.Chars.ExpDateDL) +
-                 string(CodedKey.Chars.ExpDateDR);
-
+                  string(CodedKey.Chars.ExpDateYR) + '/' + WorkingMonth +
+                  '/' + string(CodedKey.Chars.ExpDateDL) +
+                  string(CodedKey.Chars.ExpDateDR);
 
 //--- Extract the switches
 //--- Start with Switch 1 containing the Options
 
-   if ((integer(CodedKey.Chars.Switch01) and $08) = $08) then
+   if (integer(CodedKey.Chars.Switch01) and $08) = $08 then
       This_Key_Priv.LPMS_Collections := True
    else
       This_Key_Priv.LPMS_Collections := False;
 
-   if ((integer(CodedKey.Chars.Switch01) and $04) = $04) then
+   if (integer(CodedKey.Chars.Switch01) and $04) = $04 then
       This_Key_Priv.LPMS_DocGen := True
    else
       This_Key_Priv.LPMS_DocGen := False;
 
-   if ((integer(CodedKey.Chars.Switch01) and $02) = $02) then
+   if (integer(CodedKey.Chars.Switch01) and $02) = $02 then
       This_Key_Priv.LPMS_Floating := True
    else
       This_Key_Priv.LPMS_Floating := False;
 
-   if ((integer(CodedKey.Chars.Switch01) and $01) = $01) then
+   if (integer(CodedKey.Chars.Switch01) and $01) = $01 then
       This_Key_Priv.LPMS_Options4 := True
    else
       This_Key_Priv.LPMS_Options4 := False;
 
 //--- Now Switch 2 containing the license type
 
-   if ((integer(CodedKey.Chars.Switch02) and $08) = $08) then
+   if (integer(CodedKey.Chars.Switch02) and $08) = $08 then
       This_Key_Priv.License := ord(LIC_TRIAL)
-   else if ((integer(CodedKey.Chars.Switch02) and $04) = $04) then
+   else if (integer(CodedKey.Chars.Switch02) and $04) = $04 then
       This_Key_Priv.License := ord(LIC_BROWSE)
-   else if ((integer(CodedKey.Chars.Switch02) and $02) = $02) then
+   else if (integer(CodedKey.Chars.Switch02) and $02) = $02 then
       This_Key_Priv.License := ord(LIC_PERSONAL)
-   else if ((integer(CodedKey.Chars.Switch02) and $01) = $01) then
+   else if (integer(CodedKey.Chars.Switch02) and $01) = $01 then
       This_Key_Priv.License := ord(LIC_GENERIC)
    else
       This_Key_Priv.License := ord(LIC_INVALID);
@@ -350,7 +337,7 @@ begin
 
    for idx := 1 to UniqueLen do begin
 
-      if (integer(CodedKey.Fields.Unique[idx]) > $09) then begin
+      if integer(CodedKey.Fields.Unique[idx]) > $09 then begin
 
          CodedKey.Fields.Unique[idx] := char(integer(CodedKey.Fields.Unique[idx]) or $40);
          CodedKey.Fields.Unique[idx] := char(integer(CodedKey.Fields.Unique[idx]) - 9);
@@ -379,7 +366,7 @@ begin
 
    This_Key_Priv.KeyDate := WorkingDate;
 
-   if (WorkingDate < FormatDateTime(DefaultFormatSettings.ShortDateFormat,Date())) then begin
+   if WorkingDate < FormatDateTime(DefaultFormatSettings.ShortDateFormat,Date()) then begin
 
       This_Key_Priv.DaysLeft := ord(ERR_EXPIRED) - 3;
       Result := This_Key_Priv;
@@ -413,7 +400,7 @@ var
    This_Key_Values : REC_Key_Values;
 begin
 
-   This_Key_Values.Unique := 'ABCD-EFG-HIJK-LMNO-PQRS-TUVW-XUZ1-2345';
+   This_Key_Values.Unique := '8HRH-?#?-431A-#?KP-DQBR-U27K-JPTP-KARM';
 
    Result := This_Key_Values;
 
