@@ -114,17 +114,11 @@ type
 // Function to decode a key contained in the parameter passed and return a
 // string containing DaysLeft , Unique, License and DBPrefix
 //------------------------------------------------------------------------------
-function DoDecode(var This_Key_Priv: REC_Key_Priv): integer; cdecl;
+function DoDecode(Decode_Key_Priv: REC_Key_Priv): REC_Key_Priv; stdcall;
 const
    KeyLength : integer = 38;
    KeyShort  : integer = 31;
    UniqueLen : integer = 12;
-
-{
-   KeySet1 : array[1..31] of integer = (4,8,0,13,30,28,26,19,21,9,25,14,10,20,15,5,11,16,2,6,3,17,22,18,24,7,12,23,1,29,27);
-   KeySet2 : array[1..31] of integer = (12,13,3,23,29,27,28,14,10,1,15,8,16,6,9,7,17,25,22,18,4,11,19,5,24,20,21,2,0,26,30);
-   KeySet3 : array[1..31] of integer = (7,1,25,10,27,29,30,14,4,23,15,12,16,5,21,2,18,17,0,8,19,6,22,3,24,9,20,11,13,28,26);
-}
 
    KeySet1 : array[1..31] of integer = (5,9,1,14,31,29,27,20,22,10,26,15,11,21,16,6,12,17,3,7,4,18,23,19,25,8,13,24,2,30,28);
    KeySet2 : array[1..31] of integer = (13,14,4,24,30,28,29,15,11,2,16,9,17,7,10,8,18,26,23,19,5,12,20,6,25,21,22,3,1,27,31);
@@ -132,11 +126,13 @@ const
 
 var
    idx, RandomRange, Save1, Save2, Hash1, Hash2 : integer;
-   Mod1, Mod2, ThisVal, ThisIdx, Month          : integer;
+   Mod1, Mod2, ThisIdx, Month                   : integer;
+   ThisVal                                      : shortint;
    WorkingDate, WorkingMonth, UnlockCode        : string;
    KeySet                                       : array[1..31] of integer;
    UniqueID                                     : array[1..12] of char;
    DBPrefix                                     : array[ 1..6] of char;
+   This_Key_Priv                                : REC_Key_Priv;
    CodedKey, ScrambledKey                       : REC_Key_Overlay;
 
 begin
@@ -157,17 +153,18 @@ begin
 
 //--- Remove the "-" characters from the supplied key and copy to Key in Strings
 
-   if (Length(This_Key_Priv.Key) <> KeyLength) then begin
+   if (Length(Decode_Key_Priv.Key) <> KeyLength) then begin
 
-      Result := ord(ERR_LENGTH) - 3;
+      This_Key_Priv.DaysLeft := ord(ERR_LENGTH) - 3;
+      Result := This_Key_Priv;
       Exit;
 
    end;
 
-   UnlockCode := Copy(This_Key_Priv.Key, 1, 4) + Copy(This_Key_Priv.Key, 6, 3) +
-                 Copy(This_Key_Priv.Key,10, 4) + Copy(This_Key_Priv.Key,15, 4) +
-                 Copy(This_Key_Priv.Key,20, 4) + Copy(This_Key_Priv.Key,25, 4) +
-                 Copy(This_Key_Priv.Key,30, 4) + Copy(This_Key_Priv.Key,35, 4);
+   UnlockCode := Copy(Decode_Key_Priv.Key, 1, 4) + Copy(Decode_Key_Priv.Key, 6, 3) +
+                 Copy(Decode_Key_Priv.Key,10, 4) + Copy(Decode_Key_Priv.Key,15, 4) +
+                 Copy(Decode_Key_Priv.Key,20, 4) + Copy(Decode_Key_Priv.Key,25, 4) +
+                 Copy(Decode_Key_Priv.Key,30, 4) + Copy(Decode_Key_Priv.Key,35, 4);
 
    for idx := 1 to KeyShort do
       ScrambledKey.Strings.Key[idx] := char(UnlockCode[idx]);
@@ -196,7 +193,8 @@ begin
 
    if (RandomRange < 0) or (RandomRange > 2) then begin
 
-      Result := ord(ERR_INVALID) - 3;
+      This_Key_Priv.DaysLeft := ord(ERR_INVALID) - 3;
+      Result := This_Key_Priv;
       Exit;
 
    end;
@@ -225,7 +223,7 @@ begin
 
    for idx := 1 to KeyShort do begin
 
-      ThisVal := integer(ScrambledKey.Strings.Key[idx]) and $0F;
+      ThisVal := shortint(ScrambledKey.Strings.Key[idx]) and $0F;
       ThisIdx := KeySet[idx];
       CodedKey.Strings.Key[ThisIdx] := char(ThisVal);
 
@@ -262,14 +260,16 @@ begin
 
    if (Save1 <> Mod1) then begin
 
-      Result := ord(ERR_INVALID) - 3;
+      This_Key_Priv.DaysLeft := ord(ERR_INVALID) - 3;
+      Result := This_Key_Priv;
       Exit;
 
    end;
 
    if (Save2 <> Mod2) then begin
 
-      Result := ord(ERR_INVALID) - 3;
+      This_Key_Priv.DaysLeft := ord(ERR_INVALID) - 3;
+      Result := This_Key_Priv;
       Exit;
 
    end;
@@ -378,7 +378,8 @@ begin
 
    if (WorkingDate < FormatDateTime('yyyy/MM/dd',Date())) then begin
 
-      Result := ord(ERR_EXPIRED) - 3;
+      This_Key_Priv.DaysLeft := ord(ERR_EXPIRED) - 3;
+      Result := This_Key_Priv;
       Exit;
 
    end;
@@ -387,17 +388,13 @@ begin
       This_Key_Priv.DaysLeft := DaysBetween(Now(),(StrToDate(WorkingDate)));
    except
 
-      Result := ord(ERR_INVALID) - 3;
+      This_Key_Priv.DaysLeft := ord(ERR_INVALID) - 3;
+      Result := This_Key_Priv;
       Exit;
 
    end;
 
-//--- Check the days left then return an appropriate result
-
-   if (This_Key_Priv.DaysLeft <= 0) then
-      Result := ord(ERR_EXPIRED) - 3
-   else
-      Result := This_Key_Priv.DaysLeft;
+   Result := This_Key_Priv;
 
 end;
 
@@ -408,12 +405,15 @@ exports
 // Function to encode a key with the values contained in This_Key_Values and
 // return the encoded Key
 //------------------------------------------------------------------------------
-function DoEncode(var This_Key_Values: REC_Key_Values): boolean; cdecl;
+function DoEncode(Decode_Key_Values: REC_Key_Values): REC_Key_Values; stdcall;
+var
+   This_Key_Values : REC_Key_Values;
 begin
 
    This_Key_Values.Unique := 'ABCD-EFG-HIJK-LMNO-PQRS-TUVW-XUZ1-2345';
 
-   Result := True;
+   Result := This_Key_Values;
+
 end;
 
 exports

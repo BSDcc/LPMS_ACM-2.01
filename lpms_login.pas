@@ -25,7 +25,7 @@ uses
 {$ENDIF}
 
    Classes, SysUtils, sqldb, Forms, Controls, Graphics, Dialogs, StdCtrls,
-   ExtCtrls, ComCtrls, LCLType, FileInfo,
+   ExtCtrls, ComCtrls, LCLType, FileInfo, DynLibs,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    winpeimagereader, mysql56conn;
@@ -71,6 +71,7 @@ type
    StatusBar1: TStatusBar;
    timTimer: TTimer;
    procedure btnLoginClick( Sender: TObject);
+   procedure FormClose( Sender: TObject; var CloseAction: TCloseAction);
    procedure FormCreate( Sender: TObject);
    procedure FormShow( Sender: TObject);
    procedure timTimerTimer( Sender: TObject);
@@ -111,7 +112,8 @@ public   { Public Declarations }
    LoginCount                                           : integer;
    AutoLogin                                            : boolean;
    CopyRight, UserName, Password, Version, DTDLocation  : string;
-   AutoUser, AutoPass, AutoHost                         : string;
+   AutoUser, AutoPass, AutoHost, Path                   : string;
+   MyLibC                                               : TLibHandle;
 
 end;
 
@@ -173,7 +175,6 @@ begin
    Version := 'Version ' + Major + '.' + Minor + '.' + VerRelease + ' [' + Build + ']';
 {$ENDIF}
 
-
    AutoLogin := False;
 
 //--- Check whether any paramters were passed and retrieve if so
@@ -213,6 +214,23 @@ begin
    Options.Free;
    Params.Free;
 
+//--- Load the DLL used to do Encoding and Decoding of Keys
+
+   MyLibC := DynLibs.NilHandle;
+   Path   := ExtractFilePath(Application.ExeName);
+
+   MyLibC := LoadLibrary(Path + 'liblpms_encdec.' + SharedSuffix);
+
+//--- Check whether the DLL was loaded successfully
+
+   if MyLibC = DynLibs.NilHandle then begin
+
+      Application.MessageBox('FATAL: Unexpected/Unhandled error: ''Unable to load required Dynamic Load Library'' - LPMS_ACM cannot continue.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+      Application.Terminate;
+      Exit;
+
+   end;
+
 end;
 
 //------------------------------------------------------------------------------
@@ -233,6 +251,20 @@ begin
 
    end else
       edtUserID.SetFocus();
+
+end;
+
+//------------------------------------------------------------------------------
+// Executed when the Form is finally closed
+//------------------------------------------------------------------------------
+procedure TFLPMS_Login. FormClose( Sender: TObject; var CloseAction: TCloseAction);
+begin
+
+//--- Unload the Encode/Decode DLL if it was loaded successfully
+
+      if MyLibC <>  DynLibs.NilHandle then
+         if FreeLibrary(MyLibC) then
+            MyLibC := DynLibs.NilHandle;
 
 end;
 

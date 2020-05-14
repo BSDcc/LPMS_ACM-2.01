@@ -6,6 +6,7 @@ object FLPMS_Login: TFLPMS_Login
   Caption = 'FLPMS_Login'
   ClientHeight = 184
   ClientWidth = 430
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter

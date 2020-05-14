@@ -258,8 +258,8 @@ type
       License          : integer;
    end;
 
-   LPMS_Key_Values = REC_Key_Values;
-   LPMS_Key_Priv   = REC_Key_Priv;
+//   LPMS_Key_Values = REC_Key_Values;
+//   LPMS_Key_Priv   = REC_Key_Priv;
 
 private  { Private Declarations }
 
@@ -287,12 +287,12 @@ private  { Private Declarations }
    DoSave, CanUpdate, DoGen, FirstRun : boolean;
    ConStr1, ConStr2                   : string;
    Root                               : TTreeNode;
-   This_Key_Values                    : LPMS_Key_Values;
-   This_Key_Priv                      : LPMS_Key_Priv;
-   EncDecTokens                       : TStrings;    // Holds the input/result of an Encode/Decode operation
+   This_Key_Values                    : REC_Key_Values;
+   This_Key_Priv                      : REC_Key_Priv;
+//   EncDecTokens                       : TStrings;    // Holds the input/result of an Encode/Decode operation
 
 
-   Registered, BackSpace : boolean;
+//   Registered, BackSpace : boolean;
 
    procedure OpenDB(ThisType: integer);
    function  GetData(ThisType: integer; Company, User, Unique: string) : boolean;
@@ -348,7 +348,7 @@ var
 
 implementation
 
-   uses LPMS_InputQuery;
+   uses LPMS_Login, LPMS_InputQuery;
 
 {$R *.lfm}
 
@@ -363,8 +363,8 @@ begin
    DoSave     := False;
    CanUpdate  := False;
    DoGen      := False;
-   BackSpace  := False;
-   Registered := False;
+//   BackSpace  := False;
+//   Registered := False;
    FirstRun   := True;
 
 {$IFDEF WINDOWS}                    // Target is Winblows
@@ -1465,6 +1465,7 @@ begin
          ThisNode := ThisNode.getNextSibling();
 
       end;
+
    end;
 
    cbxNewLicU.ItemIndex    := 0;
@@ -1478,42 +1479,18 @@ end;
 //------------------------------------------------------------------------------
 function TFLPMS_Main.DeCode() : integer;
 type
-  TMyFunc = function (var Decode_Key_Priv : REC_Key_Priv) : integer; cdecl;
+  TMyFunc = function (Decode_Key_Priv : REC_Key_Priv) : REC_Key_Priv; stdcall;
 
 var
-   MyLibC           : TLibHandle = DynLibs.NilHandle;
    MyFunc           : TMyFunc;
-//   FuncResult       : integer;
-   Path             : string;
 
 begin
 
-//--- DLLs created by Lazarus has 'lib' prefixed to the name and 'SharedSuffix'
-//--- makes the name platform independent
-
-   Path   := ExtractFilePath(Application.ExeName);
-   MyLibC := LoadLibrary(Path + 'liblpms_encdec.' + SharedSuffix);
-
-//--- Check whether the DLL was loaded successfully
-
-   if MyLibC = DynLibs.NilHandle then begin
-
-      LPMS_ACM_Abort('Unable to load Dynamic Link Library');
-      Exit;
-
-   end;
-
 //--- Call and execute the DoDecode function in the DLL
 
-   MyFunc := TMyFunc(GetProcedureAddress(MyLibC, 'DoDecode'));
+   MyFunc := TMyFunc(GetProcedureAddress(FLPMS_Login.MyLibC, 'DoDecode'));
 
-   {Result := }MyFunc(This_Key_Priv);
-
-//--- Unload the DLL
-
-   if MyLibC <>  DynLibs.NilHandle then
-      if FreeLibrary(MyLibC) then
-         MyLibC := DynLibs.NilHandle;
+   This_Key_Priv := MyFunc(This_Key_Priv);
 
 //--- Return the Result
 
@@ -1527,50 +1504,25 @@ end;
 //------------------------------------------------------------------------------
 function TFLPMS_Main.EnCode() : boolean;
 type
-  TMyFunc = function (var Encode_Key_Values : LPMS_Key_Values) : boolean; cdecl;
+  TMyFunc = function (Encode_Key_Values : REC_Key_Values) : REC_Key_Values; stdcall;
 
 var
-   MyLibC           : TLibHandle = DynLibs.NilHandle;
-   MyFunc           : TMyFunc;
-//   FuncResult       : boolean;
-   Path             : string;
+   MyFunc : TMyFunc;
 
 begin
 
-//--- DLLs created by Lazarus has 'lib' prefixed to the name and 'SharedSuffix'
-//--- makes the name platform independent
-
-   Path   := ExtractFilePath(Application.ExeName);
-   MyLibC := LoadLibrary(Path + 'liblpms_encdec.' + SharedSuffix);
-
-//--- Check whether the DLL was loaded successfully
-
-   if MyLibC = DynLibs.NilHandle then begin
-
-      LPMS_ACM_Abort('Unable to load Dynamic Link Library');
-      Exit;
-
-   end;
-
 //--- Call and execute the DoDecode function in the DLL
 
-   MyFunc := TMyFunc(GetProcedureAddress(MyLibC, 'DoEncode'));
+   MyFunc := TMyFunc(GetProcedureAddress(FLPMS_Login.MyLibC, 'DoEncode'));
 
-   Result:= MyFunc(This_Key_Values);
+   This_Key_Values := MyFunc(This_Key_Values);
 
-{
-//--- Unload the DLL
+//--- If the encoding was successful Unique will contain the Key
 
-   if MyLibC <>  DynLibs.NilHandle then
-      if FreeLibrary(MyLibC) then
-         MyLibC := DynLibs.NilHandle;
-}
-
-{
-//--- Return the Result
-
-   Result := FuncResult;
-}
+   if This_Key_Values.Unique = '000000000000' then
+      Result := False
+   else
+      Result := True;
 
 end;
 
