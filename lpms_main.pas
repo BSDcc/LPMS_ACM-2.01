@@ -1507,40 +1507,17 @@ begin
 
    MyFunc := TMyFunc(GetProcedureAddress(MyLibC, 'DoDecode'));
 
-   Result := MyFunc(This_Key_Priv);
+   {Result := }MyFunc(This_Key_Priv);
 
-//--- Extract the results
-
-{
-   EncDecTokens := TStringList.Create;
-
-   ExtractStrings(['|'], [], PChar(FuncResult), EncDecTokens);
-
-   This_Key_Priv.DaysLeft         := StrToInt(EncDecTokens.Strings[0]);
-   This_Key_Priv.Unique           := EncDecTokens.Strings[1];
-   This_Key_Priv.License          := StrToInt(EncDecTokens.Strings[2]);
-   This_Key_Priv.DBPrefix         := EncDecTokens.Strings[3];
-   This_Key_Priv.LPMS_Collections := StrToBool(EncDecTokens.Strings[4]);
-   This_Key_Priv.LPMS_DocGen      := StrToBool(EncDecTokens.Strings[5]);
-   This_Key_Priv.LPMS_Floating    := StrToBool(EncDecTokens.Strings[6]);
-   This_Key_Priv.LPMS_Option4     := StrToBool(EncDecTokens.Strings[7]);
-
-   EncDecTokens.Free;
-}
-
-{
 //--- Unload the DLL
 
    if MyLibC <>  DynLibs.NilHandle then
       if FreeLibrary(MyLibC) then
          MyLibC := DynLibs.NilHandle;
-}
 
-{
 //--- Return the Result
 
    Result := This_Key_Priv.DaysLeft;
-}
 
 end;
 
