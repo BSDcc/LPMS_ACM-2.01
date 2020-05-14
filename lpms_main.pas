@@ -23,7 +23,7 @@ uses
    Process, DynLibs,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
-   mysql56conn;
+   mysql56conn, sqldb;
 {$ENDIF}
 
 {$IFDEF LINUX}                       // Target is Linux
@@ -208,6 +208,7 @@ type
    ToolsGenerate: TAction;
    tvTree: TTreeView;
    txtExpired: TStaticText;
+   txtInvalid: TStaticText;
    procedure ActionsBackupExecute( Sender: TObject);
    procedure ActionsRefreshExecute( Sender: TObject);
    procedure ActionsRestoreExecute( Sender: TObject);
@@ -245,6 +246,7 @@ type
       License          : integer;
       DBPrefix         : string;
       Unique           : string;
+      KeyDate          : string;
    end;
 
    REC_Key_Values = record
@@ -363,9 +365,10 @@ begin
    DoSave     := False;
    CanUpdate  := False;
    DoGen      := False;
-//   BackSpace  := False;
-//   Registered := False;
    FirstRun   := True;
+
+   DefaultFormatSettings.ShortDateFormat := 'yyyy/MM/dd';
+   DefaultFormatSettings.DateSeparator   := '/';
 
 {$IFDEF WINDOWS}                    // Target is Winblows
    sqlCon  := TMySQL56Connection.Create(nil);
@@ -623,9 +626,7 @@ end;
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.tvTreeClick(Sender: TObject);
 var
-   idx, DaysLeft : integer;
-   KeyName       : string;
-//   This_Key_Priv : REC_Key_Priv;
+   DaysLeft : integer;
 
 begin
 
@@ -730,14 +731,14 @@ begin
       else
          cbBlockedU.Checked := True;
 
-      edtKeyU.Text        := adoQry2.FieldByName('LPMSKey_Activation').AsString;
+      edtKeyU.Text := adoQry2.FieldByName('LPMSKey_Activation').AsString;
 
       if adoQry2.FieldByName('LPMSKey_Transfer').AsInteger = 0 then
          cbTransferU.Checked := False
       else
          cbTransferU.Checked := True;
 
-//      cbTransferUClick(Sender);
+      cbTransferUClick(Sender);
 
 //--- Extract and set the Transfer details
 
@@ -757,9 +758,6 @@ begin
 
 //--- Decode the Key and populate the fields contained in the key
 
-      ShortDateFormat := 'yyyy/MM/dd';
-      DateSeparator   := '/';
-
       This_Key_Priv.Key := edtKeyU.Text;
       DaysLeft := DeCode();
 
@@ -767,16 +765,33 @@ begin
 
          edtUniqueU.Text       := adoQry2.FieldByName('LPMSKey_Unique').AsString;
          cbxLicTypeU.ItemIndex := adoQry2.FieldByName('LPMSKey_LicType').AsInteger;
-         dtpExpiryDateU.Date   := Now() + This_Key_Priv.DaysLeft;
-         txtExpired.Caption    := 'Expired!';
+
+         if Trim(This_Key_Priv.KeyDate) <> '' then
+            dtpExpiryDateU.Date := StrToDate(This_Key_Priv.KeyDate)
+         else
+            dtpExpiryDateU.Date := Now();
+
+         if DaysLeft = -1 then begin
+
+            txtExpired.Caption := ' ** Key has Expired!';
+            txtInvalid.Caption := '';
+
+         end else begin
+
+            txtExpired.Caption := '';
+            txtInvalid.Caption := ' ** Key is Invalid';
+
+         end;
+
          edtPrefixU.Text       := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Prefix').AsString,ord(TYPE_READ));
 
       end else begin
 
          edtUniqueU.Text       := This_Key_Priv.Unique;
          cbxLicTypeU.ItemIndex := This_Key_Priv.License;
-         dtpExpiryDateU.Date   := Now() + DaysLeft;
+         dtpExpiryDateU.Date   := StrToDate(This_Key_Priv.KeyDate);
          txtExpired.Caption    := '';
+         txtInvalid.Caption    := '';
          edtPrefixU.Text       := This_Key_Priv.DBPrefix;
 
       end;
@@ -802,7 +817,6 @@ begin
       edtUserNameU.SetFocus();
 
    end;
-
 
    OpenDB(ord(DB_CLOSE));
    CanUpdate := False;
@@ -1138,11 +1152,6 @@ begin
 
    if pnlCompany.Visible = True then begin
 
-//--- Ensure that the Date is constructed correctly
-
-      ShortDateFormat := 'yyyy/MM/dd';
-      DateSeparator   := '/';
-
 //--- Make sure that the Company is valid and does not exist
 
       if edtPrefixC.Text = 'XXX000' then begin
@@ -1200,11 +1209,6 @@ begin
       tvTree.Selected.Text := edtPrefixC.Text;
 
    end else if pnlUser.Visible = True then begin
-
-//--- Ensure that the Date is constructed correctly
-
-      ShortDateFormat := 'yyyy/MM/dd';
-      DateSeparator   := '/';
 
 //--- Check whether a field that is contained in the Key changed
 
@@ -1708,9 +1712,6 @@ begin
 
    end;
 
-   ShortDateFormat := 'yyyy/MM/dd';
-   DateSeparator   := '/';
-
    ThisDate := FormatDateTime('yyyy/MM/dd',Now());
 
    if DateToStr(dtpExpiryDateU.Date) <= ThisDate then begin
@@ -1929,9 +1930,6 @@ var
 
 begin
 
-   ShortDateFormat := 'yyyy/MM/dd';
-   DateSeparator   := '/';
-
    OpenDB(ord(DB_OPEN));
 
    if StatusBar1.Panels.Items[2].Text = ' New' then begin
@@ -2067,37 +2065,16 @@ end;
 //---------------------------------------------------------------------------
 function TFLPMS_Main.UpdateUser() : boolean;
 var
-   Renewals                                           : integer;
-//   Result                                             : boolean;
-   S1{, AllowDup, Block, Transfer}, TimeStamp, ThisPref : string;
+   Renewals                 : integer;
+   S1, TimeStamp, ThisPref  : string;
 
 begin
-
-   ShortDateFormat := 'yyyy/MM/dd';
-   DateSeparator := '/';
 
    OpenDB(ord(DB_OPEN));
 
 //--- Increase the value of Renewals
 
    Renewals := StrToInt(edtRenewalsU.Text) + 1;
-
-{
-   if cbAllowDuplicates.Checked = True then
-      AllowDup := '1'
-   else
-      AllowDup := '0';
-
-   if cbBlockedU.Checked = True then
-      Block := '1'
-   else
-      Block := '0';
-
-   if cbTransferU.Checked = True then
-      Transfer := '1'
-   else
-      Transfer := '0';
-}
 
 //--- Now do the insert or Update
 
@@ -2118,27 +2095,22 @@ begin
             ReplaceQuote(edtPrefixU.Text,ord(TYPE_WRITE))    + ''', ''' +
             ReplaceQuote(edtUniqueU.Text,ord(TYPE_WRITE))    + ''', '   +
             IntToStr(cbxLicTypeU.ItemIndex)                  + ', '     +
-//            AllowDup                                            + ', '''   +
             BoolToStr(cbAllowDuplicates.Checked)             + ', '''   +
             FormatDateTime('yyyy/MM/dd',dtpExpiryDateU.Date) + ''', ''' +
             ReplaceQuote(edtKeyU.Text,ord(TYPE_WRITE))       + ''', '   +
             BoolToStr(cbBlockedU.Checked)                    + ', '     +
-//            Block                                               + ', '     +
             IntToStr(Renewals)                               + ', '''   +
             UserName                                         + ''', ''' +
             FormatDateTime('yyyy/MM/dd',Now())               + ''', ''' +
             FormatDateTime('HH:mm:ss',Now())                 + ''', ''' +
             ReplaceQuote(TimeStamp,ord(TYPE_WRITE))          + ''', '   +
             BoolToStr(cbTransferU.Checked)                   + ', '''   +
-//            Transfer                                            + ', '''   +
             ReplaceQuote(ThisPref,ord(TYPE_WRITE))           + ''', '   +
             IntToStr(cbxNewLicU.ItemIndex)                   + ')';
 
       Result := MySQLAccess(ord(DB_OTHER),S1,adoQry1);
 
    end else begin
-
-//      Renewals := StrToInt(edtRenewalsU.Text);
 
       if cbxNewPrefixU.ItemIndex = 0 then
          ThisPref := edtPrefixU.Text

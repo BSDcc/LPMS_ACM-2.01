@@ -137,6 +137,7 @@ implementation
 procedure TFLPMS_Login.FormCreate(Sender: TObject);
 var
    idx             : integer;
+   DLLName         : string;
    Options, Params : TStringList;
 
 begin
@@ -219,7 +220,13 @@ begin
    MyLibC := DynLibs.NilHandle;
    Path   := ExtractFilePath(Application.ExeName);
 
-   MyLibC := LoadLibrary(Path + 'liblpms_encdec.' + SharedSuffix);
+{$IFDEF WINDOWS}
+   DLLName := 'LPMS_EncDec.';
+{$ELSE}
+   DLLName := 'liblpms_encdec.';
+{$ENDIF}
+
+   MyLibC := LoadLibrary(Path + DLLName + SharedSuffix);
 
 //--- Check whether the DLL was loaded successfully
 

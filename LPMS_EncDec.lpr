@@ -34,6 +34,7 @@ type
       License          : integer;
       DBPrefix         : string;
       Unique           : string;
+      KeyDate          : string;
    end;
 
    REC_Key_Chars = record
@@ -134,13 +135,11 @@ var
    DBPrefix                                     : array[ 1..6] of char;
    This_Key_Priv                                : REC_Key_Priv;
    CodedKey, ScrambledKey                       : REC_Key_Overlay;
-   MyFormatSettings                             : TFormatSettings;
 
 begin
 
-   MyFormatSettings := DefaultFormatSettings;
-   MyFormatSettings.ShortDateFormat := 'yyyy/MM/dd';
-   MyFormatSettings.DateSeparator   := '/';
+   DefaultFormatSettings.ShortDateFormat := 'yyyy/MM/dd';
+   DefaultFormatSettings.DateSeparator   := '/';
 
 //--- Set all fields to 0 or false as a precaution
 
@@ -378,7 +377,9 @@ begin
 
 //--- Calculate the number of days remaining
 
-   if (WorkingDate < FormatDateTime(MyFormatSettings.ShortDateFormat,Date())) then begin
+   This_Key_Priv.KeyDate := WorkingDate;
+
+   if (WorkingDate < FormatDateTime(DefaultFormatSettings.ShortDateFormat,Date())) then begin
 
       This_Key_Priv.DaysLeft := ord(ERR_EXPIRED) - 3;
       Result := This_Key_Priv;
