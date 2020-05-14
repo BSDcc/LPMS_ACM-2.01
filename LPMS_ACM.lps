@@ -20,7 +20,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Login"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="212"/>
         <CursorPos Y="228"/>
@@ -107,9 +106,10 @@
       </Unit8>
       <Unit9>
         <Filename Value="LPMS_EncDec.lpr"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="116"/>
-        <CursorPos X="60" Y="130"/>
+        <TopLine Value="369"/>
+        <CursorPos Y="381"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit9>
@@ -276,7 +276,7 @@
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="1">
+    <BreakPoints Count="2">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -284,6 +284,13 @@
         <Source Value="lpms_main.pas"/>
         <Line Value="2351"/>
       </Item1>
+      <Item2>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="LPMS_EncDec.lpr"/>
+        <Line Value="381"/>
+      </Item2>
     </BreakPoints>
     <Watches Count="5">
       <Item1>
