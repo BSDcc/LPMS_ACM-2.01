@@ -118,7 +118,9 @@ type
    edtTable: TEdit;
    edtUniqueF: TEdit;
    edtKeyR: TEdit;
+   edtServerR: TEdit;
    edtUniqueR: TEdit;
+   edtPasswordR: TEdit;
    edtUniqueU: TEdit;
    edtUserID: TEdit;
    edtUserNameU: TEdit;
@@ -160,6 +162,8 @@ type
    Label3: TLabel;
    Label30: TLabel;
    Label31: TLabel;
+   Label32: TLabel;
+   Label33: TLabel;
    Label4: TLabel;
    Label5: TLabel;
    Label6: TLabel;
@@ -213,17 +217,25 @@ type
    procedure ActionsRefreshExecute( Sender: TObject);
    procedure ActionsRestoreExecute( Sender: TObject);
    procedure btnCancelClick(Sender: TObject);
+   procedure btnClearClick( Sender: TObject);
+   procedure btnDecodeRClick( Sender: TObject);
    procedure btnDeleteClick(Sender: TObject);
+   procedure btnEncodeRClick( Sender: TObject);
+   procedure btnFindRClick( Sender: TObject);
    procedure btnLockBClick( Sender: TObject);
+   procedure btnLockClick( Sender: TObject);
    procedure btnLockRClick( Sender: TObject);
    procedure btnNewClick(Sender: TObject);
    procedure btnUnlockBClick( Sender: TObject);
+   procedure btnUnlockClick( Sender: TObject);
    procedure btnUnlockRClick( Sender: TObject);
    procedure btnUpdateClick(Sender: TObject);
    procedure cbBlockedUClick(Sender: TObject);
    procedure cbTransferUClick(Sender: TObject);
+   procedure edtKeyRChange( Sender: TObject);
    procedure edtKeyRKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
    procedure edtPrefixCChange( Sender: TObject);
+   procedure edtUniqueFChange( Sender: TObject);
    procedure edtUniqueUChange(Sender: TObject);
    procedure edtUserNameUChange(Sender: TObject);
    procedure FileExitExecute(Sender: TObject);
@@ -321,6 +333,9 @@ type
               TYPE_READ,           // Reading from the database - &quote to '''
               TYPE_WRITE);         // Writing to the database - ''' to &quote
 
+   RE_RSLT = (ERR_INVALID,         // The content of the Key is invalid
+              ERR_LENGTH,          // The length of the Key is wrong
+              ERR_EXPIRED);        // The Key has expired
 
 public   { Public Declarations }
 
@@ -344,7 +359,7 @@ var
 
 implementation
 
-   uses LPMS_Login, LPMS_InputQuery;
+   uses LPMS_Login, LPMS_InputQuery, LPMS_Show;
 
 {$R *.lfm}
 
@@ -765,7 +780,7 @@ begin
          else
             dtpExpiryDateU.Date := Now();
 
-         if DaysLeft = -1 then begin
+         if DaysLeft = ord(ERR_EXPIRED) - 3 then begin
 
             txtExpired.Caption := ' ** Key has Expired!';
             txtInvalid.Caption := '';
@@ -817,9 +832,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // User clicked on the New button
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 procedure TFLPMS_Main.btnNewClick(Sender: TObject);
 var
    ThisNode : TTreeNode;
@@ -1385,9 +1400,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // A field on the Company screen changed
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 procedure TFLPMS_Main.edtPrefixCChange(Sender: TObject);
 begin
 
@@ -1413,9 +1428,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // A field on the Users screen changed
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 procedure TFLPMS_Main.edtUserNameUChange(Sender: TObject);
 begin
 
@@ -1440,9 +1455,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // A field contained in the Key Changed
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 procedure TFLPMS_Main.edtUniqueUChange(Sender: TObject);
 begin
 
@@ -1454,17 +1469,17 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // User clicked on a checkbox on the User panel
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 procedure TFLPMS_Main.cbBlockedUClick(Sender: TObject);
 begin
    edtUserNameUChange(Sender);
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // User clicked on the Transfer checkbox
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 procedure TFLPMS_Main.cbTransferUClick(Sender: TObject);
 var
    ThisNode : TTreeNode;
@@ -1496,6 +1511,279 @@ begin
 
    cbxNewLicU.ItemIndex    := 0;
    cbxNewPrefixU.ItemIndex := 0;
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the button to clear the 'Key:' field on the Root Screen
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main. btnClearClick( Sender: TObject);
+begin
+
+   edtKeyR.Clear();
+   edtKeyR.SetFocus();
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the Decode button
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main. btnDecodeRClick( Sender: TObject);
+var
+   DaysLeft : integer;
+
+begin
+
+   This_Key_Priv.Key := edtKeyR.Text;
+   DaysLeft          := DeCode();
+
+   if (DaysLeft = ord(ERR_INVALID) - 3) or (DaysLeft = ord(ERR_LENGTH) - 3) then begin
+
+      Application.MessageBox('Unlock Key is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+      Exit;
+
+   end else if DaysLeft = ord(ERR_EXPIRED) - 3 then
+      Application.MessageBox('Unlock Key has expired.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+
+   edtPrefixR.Text       := This_Key_Priv.DBPrefix;
+   edtUniqueR.Text       := This_Key_Priv.Unique;
+   dtpExpiryR.Date       := StrToDate(This_Key_Priv.KeyDate);
+   cbxLicTypeR.ItemIndex := This_Key_Priv.License;
+   cbCollectR.Checked    := This_Key_Priv.LPMS_Collections;
+   cbDocGenR.Checked     := This_Key_Priv.LPMS_DocGen;
+   cbFloatingR.Checked   := This_Key_Priv.LPMS_Floating;
+   cbOption4R.Checked    := This_Key_Priv.LPMS_Option4;
+   edtUniqueF.Text       := This_Key_Priv.Unique;
+
+   edtKeyR.SetFocus();
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the Encode button
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main. btnEncodeRClick( Sender: TObject);
+var
+   ThisDate, ThisPass : string;
+begin
+
+   if UpperCase(edtUniqueR.Text) = '123456789ABC' then begin
+
+      Application.MessageBox('Dynamic encoding not allowed when ''Unique:'' is ''123456789ABC''.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+      edtUniqueR.SetFocus();
+      Exit;
+
+   end;
+
+   ThisPass := InputQueryM('LPMS Access Control Management','Pass phrase:',ord(TYPE_PASSWORD));
+
+   if ThisPass <> 'BlueCrane Software Development CC' then
+      Exit;
+
+   ThisDate := FormatDateTime('yyyy/MM/dd',Now());
+
+   if DateToStr(dtpExpiryR.Date) <= ThisDate then begin
+
+      Application.MessageBox('Invalid date - Please provide a future date.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+      dtpExpiryR.SetFocus();
+      Exit;
+
+   end;
+
+   This_Key_Values.ExpDate          := DateToStr(dtpExpiryR.Date);
+   This_Key_Values.DBPrefix         := edtPrefixR.Text;
+   This_Key_Values.Unique           := edtUniqueR.Text;
+   This_Key_Values.License          := cbxLicTypeR.ItemIndex;
+   This_Key_Values.LPMS_Collections := cbCollectR.Checked;
+   This_Key_Values.LPMS_DocGen      := cbDocGenR.Checked;
+   This_Key_Values.LPMS_Floating    := cbFloatingR.Checked;
+   This_Key_Values.LPMS_Options4    := cbOption4R.Checked;
+
+   if EnCode() = True then begin
+
+      edtKeyR.Text := This_Key_Values.Unique;
+      edtKeyR.SetFocus();
+
+   end else
+      Application.MessageBox('Unlock Key generation failed.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+
+   ToolsEmail.Enabled := True;
+   Exit;
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the Find button on the Root panel
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main. btnFindRClick( Sender: TObject);
+var
+   UniqueCount                          : integer = 0;
+   Loop, Found                          : boolean;
+   FoundName, FoundCompany, FoundUnique : string;
+   ThisCpy, ThisUser                    : TTreeNode;
+
+begin
+
+//--- Check whether the provided Unique ID is valid
+
+   if Length(edtUniqueF.Text) <> 12 then begin
+
+      Application.MessageBox('Unique Identifier is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+      edtUniqueF.SetFocus();
+      Exit;
+
+   end;
+
+   GetUnique(edtUniqueF.Text,ord(TYPE_XFER),UniqueCount);
+
+   if UniqueCount = 0 then begin
+
+      Application.MessageBox(PChar('Unique Identifier ''' + edtUniqueF.Text + ''' not found.'),'LPMS Access Control Management',(MB_OK + MB_ICONWARNING));
+      edtUniqueF.SetFocus();
+      Exit;
+
+   end else if UniqueCount > 1 then begin
+
+      ThisName    := '';
+      ThisCompany := '';
+      ThisUnique  := '';
+
+      FLPMS_Main.Hide();
+
+      FLPMS_Show := TFLPMS_Show.Create(Application);
+      FLPMS_Show.ThisUnique := edtUniqueF.Text;
+      FLPMS_Show.ShowModal();
+      FLPMS_Show.Destroy;
+
+      FLPMS_Main.Show();
+
+      if ThisName = '' then
+         Exit;
+
+   end else begin
+
+      GetData(ord(DB_UNIQUE),'','',edtUniqueF.Text);
+      ThisName    := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Name').AsString,ord(TYPE_READ));
+      ThisCompany := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Company').AsString,ord(TYPE_READ));
+      ThisUnique  := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Unique').AsString,ord(TYPE_READ));
+
+   end;
+
+   tvTree.Selected := Root;
+   ThisCpy := tvTree.Selected.getFirstChild();
+   Found := False;
+
+   while ThisCpy <> nil do begin
+
+      Loop := True;
+      ThisUser := ThisCpy.getFirstChild();
+
+      while Loop = True do begin
+
+         if ThisUser = nil then
+            Loop := False
+         else begin
+
+            GetData(ord(DB_USER),ThisCpy.Text,ThisUser.Text,'');
+            FoundName    := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Name').AsString,ord(TYPE_READ));
+            FoundCompany := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Company').AsString,ord(TYPE_READ));
+            FoundUnique  := ReplaceQuote(adoQry2.FieldByName('LPMSKey_Unique').AsString,ord(TYPE_READ));
+
+            if (ThisName = FoundName) and (ThisCompany = FoundCompany) and (ThisUnique = FoundUnique) then begin
+
+               tvTree.Selected := ThisUser;
+               Loop  := False;
+               Found := True;
+               break;
+
+            end else
+               ThisUser := ThisUser.getNextSibling();
+
+         end;
+
+      end;
+
+      if Found = True then
+         break
+      else
+         ThisCpy := ThisCpy.getNextSibling();
+
+   end;
+
+   tvTreeClick(Sender);
+
+end;
+
+//------------------------------------------------------------------------------
+// A field related to a key on the Root panel changed
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main. edtKeyRChange( Sender: TObject);
+var
+   ThisCount : integer;
+   ThisKey   : string;
+
+begin
+
+   if CanUpdate = True then
+      Exit;
+
+   btnDecodeR.Enabled := False;
+   btnEncodeR.Enabled := False;
+
+
+   if edtKeyR.Focused() = True then begin
+
+//--- If the backspace key was pressed then we don't do any processing here
+
+{
+      if BackSpace = True then begin
+
+         BackSpace := False;
+         Exit;
+
+      end;
+}
+
+      ThisCount := Length(edtKeyR.Text);
+      ThisKey   := edtKeyR.Text;
+
+      if ThisCount in [4,8,13,18,23,28,33] then
+         ThisKey := ThisKey + '-';
+
+      if ThisCount in [6,10,15,20,25,30] then begin
+
+         if Copy(edtKeyR.Text,ThisCount,1) = '-' then
+            ThisKey := Copy(edtKeyR.Text, 1, ThisCount - 1);
+
+      end;
+
+      edtKeyR.Text := ThisKey;
+      edtKeyR.SelStart := Length(edtKeyR.Text);
+
+   end;
+
+
+   if Length(edtKeyR.Text) = 38 then
+      btnDecodeR.Enabled := True;
+
+   if (Length(edtPrefixR.Text) = 6) and (Length(edtUniqueR.Text) = 12) and (cbxLicTypeR.ItemIndex > 0) then
+      btnEncodeR.Enabled := True;
+
+end;
+
+//------------------------------------------------------------------------------
+// A field related to Unique has changed on the Root screen
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main. edtUniqueFChange( Sender: TObject);
+begin
+
+   if CanUpdate = True then
+      Exit;
+
+   btnFindR.Enabled := False;
+
+   if Length(edtUniqueF.Text) = 12 then
+      btnFindR.Enabled := True;
 
 end;
 
@@ -1592,9 +1880,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // User click on the Unlock button on the Backup screen
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 procedure TFLPMS_Main.btnUnlockBClick(Sender: TObject);
 begin
 
@@ -1607,9 +1895,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // User click on the Lock button on the Backup screen
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 procedure TFLPMS_Main.btnLockBClick(Sender: TObject);
 var
    ThisPass : string;
@@ -1626,6 +1914,44 @@ begin
       edtRecord.Enabled  := True;
       btnUpdate.Enabled  := True;
       btnUpdate.SetFocus();
+
+   end;
+
+end;
+
+//------------------------------------------------------------------------------
+// User click on the Unlock button on the User screen
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.btnUnlockClick(Sender: TObject);
+begin
+
+   btnUnlock.Visible         := False;
+   btnLock.Visible           := True;
+   edtUniqueU.Enabled        := False;
+   cbAllowDuplicates.Enabled := False;
+
+   edtUserNameU.SetFocus();
+
+end;
+
+//------------------------------------------------------------------------------
+// User click on the Lock button on the User screen
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.btnLockClick(Sender: TObject);
+var
+   ThisPass : string;
+begin
+
+   ThisPass := InputQueryM('LPMS Access Control Management','Pass phrase:',ord(TYPE_PASSWORD));
+
+   if ThisPass = 'BlueCrane Software Development CC' then begin
+
+      btnUnlock.Visible         := True;
+      btnLock.Visible           := False;
+      edtUniqueU.Enabled        := True;
+      cbAllowDuplicates.Enabled := True;
+
+      edtUniqueU.SetFocus();
 
    end;
 
@@ -1775,7 +2101,7 @@ begin
       Application.MessageBox('Unlock Key generation successful.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
       edtUserNameUChange(Sender);
       edtUserNameU.SetFocus();
-      DoGen := false;
+      DoGen := False;
 
    end else
       Application.MessageBox('Unlock Key generation failed.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
@@ -1794,7 +2120,93 @@ end;
 // User clicked on the Send Email button
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.ToolsEmailExecute(Sender: TObject);
+type
+  TMyFunc = function (From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string) : boolean; stdcall;
+
+var
+   MyFunc       : TMyFunc;
+
+   SendResult   : boolean;     // Receives the result of the send attempt
+
+   From         : string;      // Email address of the Sender
+   ToStr        : string;      // To addresses, comma delimited
+   CcStr        : string;      // Cc addresses, comma delimited
+   BccStr       : string;      // Bcc addresses, comma delimited
+   Subject      : string;      // Email Subject
+   Body         : string;      // Body of the email
+   Attach       : string;      // '|' delimited string containing files to be attached
+   SMTPStr      : string;      // '|' delimited string containing the SMTP parameters
+
 begin
+
+   if (pnlBackup.Visible = True) or (pnlRestore.Visible = True) then
+      Exit;
+
+   From    := 'registration@bluecrane.cc';
+   ToStr   := edtEmailU.Text;
+   CcStr   := '';
+   BccStr  := 'registration@bluecrane.cc';
+   Subject := 'LPMS Activation Key';
+   Attach  := '';
+   SMTPStr := edtServerR.Text + '|registration@bluecrane.cc|' + edtPasswordR.Text + '|';
+
+   Body    := 'Dear ' + edtUserNameU.Text + ',|' +
+              ' |' +
+              'Attached below is your new/updated LPMS Activation Key which expires on ' + DateToStr(dtpExpiryDateU.Date) + ':|' +
+              ' |' +
+              '   ' + edtKeyU.Text + '|' +
+              ' |' +
+              'To activate LPMS with this key please do the following:|' +
+              ' |' +
+              '1.  Run LPMS_FirstRun.|' +
+              '    1.1. Click on Start;|' +
+              '    1.2. Click on Programs;|' +
+              '    1.3. Click on BlueCrane Software; and|' +
+              '    1.4. Click on LPMS_FirstRun|' +
+              '2.  If your release is a multi-company release then:|' +
+              '    2.1. Enter ''' + edtPrefixU.Text + ''' in the field next to ''DBPrefix:'';|' +
+              '    2.2. Select ''Multi Company Support''; and|' +
+              '    2.3. Click on ''Ok'' button to proceed|' +
+              '3.  If your release is not a multi-company release simply click on the ''Ok'' button|' +
+              '4.  Click on the ''Maintenance'' tab|' +
+              '5.  Enter ''' + edtPrefixU.Text + ''' in the field next to ''Prefix:''|' +
+              '6.  Copy the key above and paste in the field next to ''Key:''|' +
+              '7.  Click on the ''Update'' button, then on the ''OK'' button and then on the ''Close'' button |' +
+              '8.  Start LPMS. |' +
+              ' |' +
+              'Please contact BlueCrane Software Development should you have any queries or experience any problems.|' +
+              ' |' +
+              'Sincerely|' +
+              'LPMS Support|' +
+              ' |' +
+              ' |' +
+              'BlueCrane Software Development CC|' +
+              ' |' +
+              '17 Church Street, Lamberts Bay, Western Cape, 8130|' +
+              'PO Box 204, Lamberts Bay, 8130|' +
+              'Tel: 027-432-2561|' +
+              'Fax: 086-585-9545|' +
+              'www.bluecrane.cc|' +
+              ' |' +
+              'Sent from LPMS ACM (c) 2009-' + FormatDateTime('yyyy',Now()) + ' BlueCrane Software Development CC|';
+
+//--- Call and execute the SendMimeMail function in the DLL
+
+   MyFunc := TMyFunc(GetProcedureAddress(FLPMS_Login.MyLibC, 'SendMimeMail'));
+
+   if MyFunc(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr) = False then
+      Application.MessageBox('Sending Email failed! Please check Email set-up details.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP))
+   else
+      Application.MessageBox('Send Email completed.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
+
+{
+
+   if cbEditEmail.Checked = True then
+      emlSend.Flags << sfDialog
+   else
+      emlSend.Flags >> sfDialog;
+
+}
 
 end;
 
@@ -1883,9 +2295,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Function to delete Company and User Records from the Database
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 function TFLPMS_Main.DelData(ThisType: integer; Company, User: string) : boolean;
 var
    S1 : string;
@@ -1917,9 +2329,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Function to check whether a company already exists
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 function TFLPMS_Main.CpyExists(Prefix: string) : boolean;
 var
 
@@ -1941,9 +2353,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Function to insert/update a Company record
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 function TFLPMS_Main.UpdateCpy() : boolean;
 var
    ThisResult    : boolean;
@@ -1993,9 +2405,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Function to check whether a User exists
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 function TFLPMS_Main.UserExists(User, Prefix: string) : boolean;
 var
    S1      : string;
@@ -2016,9 +2428,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Function to find a Unique identifier in the database
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 function TFLPMS_Main.GetUnique(Unique: string; ThisType: integer; var UniqueCount: integer) : string;
 var
    Count                : integer;
@@ -2071,9 +2483,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Function to insert/update a User record
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 function TFLPMS_Main.UpdateUser() : boolean;
 var
    Renewals                 : integer;
@@ -2261,9 +2673,9 @@ begin
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Function to handle MySQL connection problems
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 procedure TFLPMS_Main.LPMS_ACM_Abort(Msg: string);
 var
    idx     : integer;
@@ -2336,10 +2748,10 @@ end;
 
 end;
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Function to manage replacement of single quotes and back slashes to avoid
 // SQL errors
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 function TFLPMS_Main.ReplaceQuote(S1 : string; ThisType: integer) : string;
 begin
 

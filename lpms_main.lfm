@@ -1,7 +1,7 @@
 object FLPMS_Main: TFLPMS_Main
-  Left = 417
+  Left = 471
   Height = 591
-  Top = 87
+  Top = 90
   Width = 849
   Caption = 'FLPMS_Main'
   ClientHeight = 570
@@ -658,6 +658,569 @@ object FLPMS_Main: TFLPMS_Main
         Top = 474
         Width = 636
         Align = alBottom
+      end
+      object pnlCompany: TPanel
+        Left = 2
+        Height = 472
+        Top = 2
+        Width = 632
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 472
+        ClientWidth = 632
+        TabOrder = 1
+        object Label1: TLabel
+          Left = 8
+          Height = 17
+          Top = 16
+          Width = 35
+          Caption = 'Prefix:'
+          ParentColor = False
+        end
+        object Label2: TLabel
+          Left = 8
+          Height = 17
+          Top = 48
+          Width = 53
+          Caption = 'Key Type:'
+          ParentColor = False
+        end
+        object Label3: TLabel
+          Left = 8
+          Height = 17
+          Top = 80
+          Width = 56
+          Caption = 'Company:'
+          ParentColor = False
+        end
+        object Label4: TLabel
+          Left = 8
+          Height = 17
+          Top = 112
+          Width = 81
+          Caption = 'License Count:'
+          ParentColor = False
+        end
+        object Label5: TLabel
+          Left = 8
+          Height = 17
+          Top = 144
+          Width = 89
+          Caption = 'Renewal Period:'
+          ParentColor = False
+        end
+        object edtPrefixC: TEdit
+          Left = 116
+          Height = 27
+          Top = 12
+          Width = 121
+          OnChange = edtPrefixCChange
+          ReadOnly = True
+          TabOrder = 0
+        end
+        object edtCompanyC: TEdit
+          Left = 116
+          Height = 27
+          Top = 76
+          Width = 506
+          Anchors = [akTop, akLeft, akRight]
+          OnChange = edtPrefixCChange
+          TabOrder = 2
+        end
+        object cbxKeyTypeC: TComboBox
+          Left = 116
+          Height = 27
+          Top = 44
+          Width = 121
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '--- Select ---'
+            'Development'
+            'Trial'
+            'Production'
+          )
+          OnChange = edtPrefixCChange
+          TabOrder = 1
+          Text = '--- Select ---'
+        end
+        object cbBlockedC: TCheckBox
+          Left = 116
+          Height = 21
+          Top = 172
+          Width = 70
+          Caption = ' Blocked'
+          OnClick = edtPrefixCChange
+          TabOrder = 3
+        end
+        object speRenewalC: TSpinEdit
+          Left = 116
+          Height = 27
+          Top = 140
+          Width = 121
+          MaxValue = 999
+          MinValue = 1
+          OnChange = edtPrefixCChange
+          TabOrder = 4
+          Value = 1
+        end
+        object speLicCountC: TSpinEdit
+          Left = 116
+          Height = 27
+          Top = 108
+          Width = 121
+          MaxValue = 999
+          MinValue = 1
+          OnChange = edtPrefixCChange
+          TabOrder = 5
+          Value = 1
+        end
+      end
+      object pnlUser: TPanel
+        Left = 2
+        Height = 472
+        Top = 2
+        Width = 632
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 472
+        ClientWidth = 632
+        TabOrder = 2
+        object Label6: TLabel
+          Left = 8
+          Height = 17
+          Top = 16
+          Width = 35
+          Caption = 'Prefix:'
+          ParentColor = False
+        end
+        object Label8: TLabel
+          Left = 8
+          Height = 17
+          Top = 112
+          Width = 34
+          Caption = 'Email:'
+          ParentColor = False
+        end
+        object Label10: TLabel
+          Left = 8
+          Height = 17
+          Top = 273
+          Width = 56
+          Caption = 'Renewals:'
+          ParentColor = False
+        end
+        object Label7: TLabel
+          Left = 8
+          Height = 17
+          Top = 80
+          Width = 56
+          Caption = 'Company:'
+          ParentColor = False
+        end
+        object Label11: TLabel
+          Left = 8
+          Height = 17
+          Top = 144
+          Width = 65
+          Caption = 'Contact No:'
+          ParentColor = False
+        end
+        object Label12: TLabel
+          Left = 8
+          Height = 17
+          Top = 48
+          Width = 62
+          Caption = 'Username:'
+          ParentColor = False
+        end
+        object Label13: TLabel
+          Left = 8
+          Height = 17
+          Top = 176
+          Width = 43
+          Caption = 'Unique:'
+          ParentColor = False
+        end
+        object Label14: TLabel
+          Left = 8
+          Height = 17
+          Top = 208
+          Width = 75
+          Caption = 'License Type:'
+          ParentColor = False
+        end
+        object Label15: TLabel
+          Left = 8
+          Height = 17
+          Top = 240
+          Width = 67
+          Caption = 'Expiry Date:'
+          ParentColor = False
+        end
+        object Label16: TLabel
+          Left = 8
+          Height = 17
+          Top = 323
+          Width = 46
+          Caption = 'Options:'
+          ParentColor = False
+        end
+        object Label9: TLabel
+          Left = 8
+          Height = 17
+          Top = 349
+          Width = 23
+          Caption = 'Key:'
+          ParentColor = False
+        end
+        object Label17: TLabel
+          Left = 8
+          Height = 17
+          Top = 403
+          Width = 76
+          Caption = 'New Lic Type:'
+          ParentColor = False
+        end
+        object Label18: TLabel
+          Left = 8
+          Height = 17
+          Top = 435
+          Width = 63
+          Caption = 'New Prefix:'
+          ParentColor = False
+        end
+        object edtPrefixU: TEdit
+          Left = 106
+          Height = 27
+          Top = 12
+          Width = 121
+          ReadOnly = True
+          TabOrder = 0
+        end
+        object edtEmailU: TEdit
+          Left = 106
+          Height = 27
+          Top = 108
+          Width = 424
+          Anchors = [akTop, akLeft, akRight]
+          MaxLength = 255
+          OnChange = edtUserNameUChange
+          TabOrder = 4
+        end
+        object cbBlockedU: TCheckBox
+          Left = 106
+          Height = 21
+          Top = 298
+          Width = 70
+          Caption = ' Blocked'
+          OnClick = cbBlockedUClick
+          TabOrder = 15
+        end
+        object edtCompanyU: TEdit
+          Left = 106
+          Height = 27
+          Top = 76
+          Width = 516
+          Anchors = [akTop, akLeft, akRight]
+          MaxLength = 255
+          OnChange = edtUserNameUChange
+          TabOrder = 3
+        end
+        object edtContactU: TEdit
+          Left = 106
+          Height = 27
+          Top = 140
+          Width = 121
+          MaxLength = 50
+          OnChange = edtUserNameUChange
+          TabOrder = 6
+        end
+        object edtUserNameU: TEdit
+          Left = 106
+          Height = 27
+          Top = 44
+          Width = 516
+          Anchors = [akTop, akLeft, akRight]
+          MaxLength = 255
+          OnChange = edtUserNameUChange
+          TabOrder = 2
+        end
+        object edtUniqueU: TEdit
+          Left = 106
+          Height = 27
+          Top = 172
+          Width = 121
+          CharCase = ecUppercase
+          Enabled = False
+          MaxLength = 12
+          OnChange = edtUniqueUChange
+          TabOrder = 7
+        end
+        object cbxLicTypeU: TComboBox
+          Left = 106
+          Height = 23
+          Top = 204
+          Width = 121
+          AutoSize = False
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '--- Select ---'
+            'Trial'
+            'Personal'
+            'Browse'
+            'Generic'
+          )
+          OnChange = edtUniqueUChange
+          Style = csDropDownList
+          TabOrder = 11
+          Text = '--- Select ---'
+        end
+        object dtpExpiryDateU: TDateTimePicker
+          Left = 106
+          Height = 27
+          Top = 236
+          Width = 121
+          CenturyFrom = 1941
+          DateDisplayOrder = ddoYMD
+          MaxDate = 2958465
+          MinDate = -53780
+          AutoSize = False
+          TabOrder = 12
+          TrailingSeparator = False
+          TextForNullDate = 'NULL'
+          LeadingZeros = True
+          Kind = dtkDate
+          TimeFormat = tf24
+          TimeDisplay = tdHMS
+          DateMode = dmComboBox
+          Date = 41437
+          Time = 0.839549525473558
+          UseDefaultSeparators = True
+          HideDateTimeParts = []
+          MonthNames = 'Long'
+          OnChange = edtUniqueUChange
+        end
+        object edtRenewalsU: TEdit
+          Left = 106
+          Height = 27
+          Top = 269
+          Width = 60
+          ReadOnly = True
+          TabOrder = 14
+        end
+        object cbCollectU: TCheckBox
+          Left = 106
+          Height = 21
+          Top = 320
+          Width = 87
+          Caption = ' Collections'
+          OnChange = edtUniqueUChange
+          TabOrder = 16
+        end
+        object cbDocGenU: TCheckBox
+          Left = 216
+          Height = 21
+          Top = 320
+          Width = 104
+          Caption = ' Doc Generate'
+          OnChange = edtUniqueUChange
+          TabOrder = 17
+        end
+        object cbFloatingU: TCheckBox
+          Left = 336
+          Height = 21
+          Top = 320
+          Width = 70
+          Caption = ' Floating'
+          OnChange = edtUniqueUChange
+          TabOrder = 18
+        end
+        object edtKeyU: TEdit
+          Left = 106
+          Height = 27
+          Top = 345
+          Width = 297
+          OnChange = edtUserNameUChange
+          ReadOnly = True
+          TabOrder = 20
+        end
+        object cbTransferU: TCheckBox
+          Left = 106
+          Height = 21
+          Top = 374
+          Width = 73
+          Caption = ' Transfer'
+          OnClick = cbTransferUClick
+          TabOrder = 21
+        end
+        object cbxNewLicU: TComboBox
+          Left = 106
+          Height = 27
+          Top = 399
+          Width = 121
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '--- Select ---'
+            'Trial'
+            'Personal'
+            'Browse'
+            'Generic'
+          )
+          OnChange = edtUserNameUChange
+          TabOrder = 22
+          Text = '--- Select ---'
+        end
+        object cbxNewPrefixU: TComboBox
+          Left = 106
+          Height = 27
+          Top = 431
+          Width = 121
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '--- Select ---'
+          )
+          OnChange = edtUserNameUChange
+          TabOrder = 23
+          Text = '--- Select ---'
+        end
+        object btnLock: TBitBtn
+          Left = 233
+          Height = 23
+          Top = 172
+          Width = 22
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000130B0000130B00000000000000000001FF00FFFF00FF
+            FF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BDFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F229D8FF32DCFF25
+            D5FF18CFFF0BBBF20081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FF0081BD00BDFF35DDFF44E3FF37DEFF21B8E1056A9D12CBFF06B8F20081
+            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF41E2FF55EBFF49
+            E6FF1570900031541AB1DC18CFFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FF0081BD00BDFF49E6FF64F0FF5AEDFF124E64001D330A53722AD8FF0081
+            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF51EAFF70F6FF68
+            F3FF3BA0B10015242C9AB13DE1FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FF0081BD00BDFF56EBFF7AFAFF74F7FF64E3EF3792A359EDFF4EE9FF0081
+            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD59DCEF808080769A9FC5
+            FEFFBCFCFFACFAFF84F6FF5EEFFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FF0081BD0B80AC808080769A9F59EDFF6CF2FF7FF7FF8080808EFAFF0081
+            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD8080805D8A970C
+            B0E615BDEE4CA9BD8080804DC4D90081BDFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FF8080806981890081BD0081BD38819D8080800081BDFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF808080818181FF
+            00FFFF00FF818181808080FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FF808080D5D4D4808080808080797877808080FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF808080A3A3A3D7
+            D7D78888888C8C8C808080FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF808080808080808080808080FF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+          }
+          OnClick = btnLockClick
+          TabOrder = 9
+        end
+        object btnUnlock: TBitBtn
+          Left = 233
+          Height = 23
+          Top = 172
+          Width = 22
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000130B0000130B00000000000000000001FF00FFFF00FF
+            FF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BDFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F229D8FF32DCFF25
+            D5FF18CFFF0BBBF20081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FF0081BD00BDFF35DDFF44E3FF37DEFF21B8E1056A9D12CBFF06B8F20081
+            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF41E2FF55EBFF49
+            E6FF1570900031541AB1DC18CFFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FF0081BD00BDFF49E6FF64F0FF5AEDFF124E64001D330A53722AD8FF0081
+            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF51EAFF70F6FF68
+            F3FF3BA0B10015242C9AB13DE1FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FF0081BD00BDFF56EBFF7AFAFF74F7FF64E3EF3792A359EDFF4EE9FF0081
+            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD59DCEF4C849663A0B8C5
+            FEFFBCFCFFACFAFF84F6FF5EEFFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FF0081BD0B80AC002843075D8959EDFF6CF2FF7FF7FF9ADCDE8EFAFF0081
+            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD0081BD0C
+            B0E615BDEE8F8E8E79726E4DC4D90081BDFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD8F8E8E79726E0081BDFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFA7958F89736CFF
+            00FFFF00FF8F8E8E79726EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFA19D9A79726EFF00FFFF00FF8F8E8E79726EFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF79726ED5D4D4FF
+            00FFFF00FF8F8E8E79726EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FF79726EA3A3A3D7D7D78888888C8C8C79726EFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF79726E79
+            726E79726E79726EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+          }
+          OnClick = btnUnlockClick
+          TabOrder = 8
+        end
+        object cbOption4U: TCheckBox
+          Left = 456
+          Height = 21
+          Top = 320
+          Width = 73
+          Caption = ' Option 4'
+          OnChange = edtUniqueUChange
+          TabOrder = 19
+        end
+        object txtExpired: TStaticText
+          Left = 233
+          Height = 18
+          Top = 240
+          Width = 4
+          AutoSize = True
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 13
+        end
+        object edtDBKeyU: TEdit
+          Left = 250
+          Height = 27
+          Top = 12
+          Width = 121
+          TabOrder = 1
+          Visible = False
+        end
+        object cbEditEmail: TCheckBox
+          Left = 537
+          Height = 21
+          Top = 110
+          Width = 81
+          Anchors = [akTop, akRight]
+          Caption = ' Edit email'
+          TabOrder = 5
+        end
+        object cbAllowDuplicates: TCheckBox
+          Left = 265
+          Height = 21
+          Top = 174
+          Width = 118
+          Caption = ' Allow Duplicates'
+          Enabled = False
+          OnChange = edtUniqueUChange
+          TabOrder = 10
+        end
+        object txtInvalid: TStaticText
+          Left = 408
+          Height = 18
+          Top = 349
+          Width = 4
+          AutoSize = True
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 24
+        end
       end
       object pnlRoot: TPanel
         Left = 2
@@ -1387,9 +1950,9 @@ object FLPMS_Main: TFLPMS_Main
           }
         end
         object Label19: TLabel
-          Left = 34
+          Left = 18
           Height = 17
-          Top = 124
+          Top = 104
           Width = 23
           Caption = 'Key:'
           ParentColor = False
@@ -1397,7 +1960,7 @@ object FLPMS_Main: TFLPMS_Main
         object Label20: TLabel
           Left = 106
           Height = 17
-          Top = 156
+          Top = 136
           Width = 35
           Caption = 'Prefix:'
           ParentColor = False
@@ -1405,7 +1968,7 @@ object FLPMS_Main: TFLPMS_Main
         object Label21: TLabel
           Left = 106
           Height = 17
-          Top = 188
+          Top = 168
           Width = 43
           Caption = 'Unique:'
           ParentColor = False
@@ -1413,7 +1976,7 @@ object FLPMS_Main: TFLPMS_Main
         object Label22: TLabel
           Left = 106
           Height = 17
-          Top = 220
+          Top = 200
           Width = 67
           Caption = 'Expiry Date:'
           ParentColor = False
@@ -1421,15 +1984,15 @@ object FLPMS_Main: TFLPMS_Main
         object Label23: TLabel
           Left = 106
           Height = 17
-          Top = 280
+          Top = 260
           Width = 61
           Caption = 'Priveleges:'
           ParentColor = False
         end
         object Label24: TLabel
-          Left = 34
+          Left = 18
           Height = 17
-          Top = 364
+          Top = 314
           Width = 43
           Caption = 'Unique:'
           ParentColor = False
@@ -1437,15 +2000,15 @@ object FLPMS_Main: TFLPMS_Main
         object Label25: TLabel
           Left = 106
           Height = 17
-          Top = 252
+          Top = 232
           Width = 75
           Caption = 'License Type:'
           ParentColor = False
         end
         object StaticText1: TStaticText
-          Left = 34
+          Left = 18
           Height = 29
-          Top = 34
+          Top = 30
           Width = 323
           AutoSize = True
           Caption = 'LPMS Access Control Manager'
@@ -1458,15 +2021,16 @@ object FLPMS_Main: TFLPMS_Main
         object btnDecodeR: TButton
           Left = 459
           Height = 23
-          Top = 120
+          Top = 100
           Width = 75
           Caption = 'Decode'
+          OnClick = btnDecodeRClick
           TabOrder = 2
         end
         object dtpExpiryR: TDateTimePicker
           Left = 192
           Height = 27
-          Top = 216
+          Top = 196
           Width = 127
           CenturyFrom = 1941
           DateDisplayOrder = ddoYMD
@@ -1486,85 +2050,95 @@ object FLPMS_Main: TFLPMS_Main
           UseDefaultSeparators = True
           HideDateTimeParts = []
           MonthNames = 'Long'
+          OnChange = edtKeyRChange
         end
         object edtUniqueR: TEdit
           Left = 192
           Height = 27
-          Top = 184
+          Top = 164
           Width = 127
           CharCase = ecUppercase
           MaxLength = 12
+          OnChange = edtKeyRChange
           TabOrder = 5
         end
         object edtPrefixR: TEdit
           Left = 192
           Height = 27
-          Top = 152
+          Top = 132
           Width = 127
           MaxLength = 6
+          OnChange = edtKeyRChange
           TabOrder = 4
         end
         object cbCollectR: TCheckBox
           Left = 192
           Height = 21
-          Top = 278
+          Top = 258
           Width = 87
           Caption = ' Collections'
+          OnClick = edtKeyRChange
           TabOrder = 8
         end
         object cbDocGenR: TCheckBox
           Left = 303
           Height = 21
-          Top = 278
+          Top = 258
           Width = 104
           Caption = ' Doc Generate'
+          OnClick = edtKeyRChange
           TabOrder = 9
         end
         object cbOption4R: TCheckBox
           Left = 525
           Height = 21
-          Top = 278
+          Top = 258
           Width = 73
           Caption = ' Option 4'
+          OnClick = edtKeyRChange
           TabOrder = 11
         end
         object cbFloatingR: TCheckBox
           Left = 424
           Height = 21
-          Top = 278
+          Top = 258
           Width = 70
           Caption = ' Floating'
+          OnClick = edtKeyRChange
           TabOrder = 10
         end
         object btnEncodeR: TButton
           Left = 540
           Height = 23
-          Top = 120
+          Top = 100
           Width = 75
           Caption = 'Encode'
+          OnClick = btnEncodeRClick
           TabOrder = 3
         end
         object edtUniqueF: TEdit
           Left = 106
           Height = 27
-          Top = 360
+          Top = 310
           Width = 213
           CharCase = ecUppercase
           MaxLength = 12
+          OnChange = edtUniqueFChange
           TabOrder = 12
         end
         object btnFindR: TButton
           Left = 329
           Height = 23
-          Top = 360
+          Top = 310
           Width = 75
           Caption = 'Find'
+          OnClick = btnFindRClick
           TabOrder = 13
         end
         object cbxLicTypeR: TComboBox
           Left = 192
           Height = 23
-          Top = 248
+          Top = 228
           Width = 127
           AutoSize = False
           ItemHeight = 0
@@ -1575,16 +2149,18 @@ object FLPMS_Main: TFLPMS_Main
             'Browse'
             'Generic'
           )
+          OnChange = edtKeyRChange
           Style = csDropDownList
           TabOrder = 7
         end
         object edtKeyR: TEdit
           Left = 106
           Height = 27
-          Top = 120
+          Top = 100
           Width = 310
           CharCase = ecUppercase
           MaxLength = 38
+          OnChange = edtKeyRChange
           OnKeyDown = edtKeyRKeyDown
           TabOrder = 1
         end
@@ -1592,7 +2168,7 @@ object FLPMS_Main: TFLPMS_Main
           Left = 420
           Height = 23
           Hint = 'Click to generate a new key'
-          Top = 120
+          Top = 100
           Width = 23
           Caption = 'Generate'
           Glyph.Data = {
@@ -1623,568 +2199,42 @@ object FLPMS_Main: TFLPMS_Main
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
           }
+          OnClick = btnClearClick
           ShowCaption = False
         end
-      end
-      object pnlCompany: TPanel
-        Left = 2
-        Height = 472
-        Top = 2
-        Width = 632
-        Align = alClient
-        BevelOuter = bvNone
-        ClientHeight = 472
-        ClientWidth = 632
-        TabOrder = 1
-        object Label1: TLabel
-          Left = 8
+        object Label32: TLabel
+          Left = 18
           Height = 17
-          Top = 16
-          Width = 35
-          Caption = 'Prefix:'
+          Top = 372
+          Width = 74
+          Caption = 'Email Server:'
           ParentColor = False
         end
-        object Label2: TLabel
-          Left = 8
-          Height = 17
-          Top = 48
-          Width = 53
-          Caption = 'Key Type:'
-          ParentColor = False
-        end
-        object Label3: TLabel
-          Left = 8
-          Height = 17
-          Top = 80
-          Width = 56
-          Caption = 'Company:'
-          ParentColor = False
-        end
-        object Label4: TLabel
-          Left = 8
-          Height = 17
-          Top = 112
-          Width = 81
-          Caption = 'License Count:'
-          ParentColor = False
-        end
-        object Label5: TLabel
-          Left = 8
-          Height = 17
-          Top = 144
-          Width = 89
-          Caption = 'Renewal Period:'
-          ParentColor = False
-        end
-        object edtPrefixC: TEdit
-          Left = 116
-          Height = 27
-          Top = 12
-          Width = 121
-          OnChange = edtPrefixCChange
-          ReadOnly = True
-          TabOrder = 0
-        end
-        object edtCompanyC: TEdit
-          Left = 116
-          Height = 27
-          Top = 76
-          Width = 506
-          Anchors = [akTop, akLeft, akRight]
-          OnChange = edtPrefixCChange
-          TabOrder = 2
-        end
-        object cbxKeyTypeC: TComboBox
-          Left = 116
-          Height = 27
-          Top = 44
-          Width = 121
-          ItemHeight = 0
-          ItemIndex = 0
-          Items.Strings = (
-            '--- Select ---'
-            'Development'
-            'Trial'
-            'Production'
-          )
-          OnChange = edtPrefixCChange
-          TabOrder = 1
-          Text = '--- Select ---'
-        end
-        object cbBlockedC: TCheckBox
-          Left = 116
-          Height = 21
-          Top = 172
-          Width = 70
-          Caption = ' Blocked'
-          OnClick = edtPrefixCChange
-          TabOrder = 3
-        end
-        object speRenewalC: TSpinEdit
-          Left = 116
-          Height = 27
-          Top = 140
-          Width = 121
-          MaxValue = 999
-          MinValue = 1
-          OnChange = edtPrefixCChange
-          TabOrder = 4
-          Value = 1
-        end
-        object speLicCountC: TSpinEdit
-          Left = 116
-          Height = 27
-          Top = 108
-          Width = 121
-          MaxValue = 999
-          MinValue = 1
-          OnChange = edtPrefixCChange
-          TabOrder = 5
-          Value = 1
-        end
-      end
-      object pnlUser: TPanel
-        Left = 2
-        Height = 472
-        Top = 2
-        Width = 632
-        Align = alClient
-        BevelOuter = bvNone
-        ClientHeight = 472
-        ClientWidth = 632
-        TabOrder = 2
-        object Label6: TLabel
-          Left = 8
-          Height = 17
-          Top = 16
-          Width = 35
-          Caption = 'Prefix:'
-          ParentColor = False
-        end
-        object Label8: TLabel
-          Left = 8
-          Height = 17
-          Top = 112
-          Width = 34
-          Caption = 'Email:'
-          ParentColor = False
-        end
-        object Label10: TLabel
-          Left = 8
-          Height = 17
-          Top = 273
-          Width = 56
-          Caption = 'Renewals:'
-          ParentColor = False
-        end
-        object Label7: TLabel
-          Left = 8
-          Height = 17
-          Top = 80
-          Width = 56
-          Caption = 'Company:'
-          ParentColor = False
-        end
-        object Label11: TLabel
-          Left = 8
-          Height = 17
-          Top = 144
-          Width = 65
-          Caption = 'Contact No:'
-          ParentColor = False
-        end
-        object Label12: TLabel
-          Left = 8
-          Height = 17
-          Top = 48
-          Width = 62
-          Caption = 'Username:'
-          ParentColor = False
-        end
-        object Label13: TLabel
-          Left = 8
-          Height = 17
-          Top = 176
-          Width = 43
-          Caption = 'Unique:'
-          ParentColor = False
-        end
-        object Label14: TLabel
-          Left = 8
-          Height = 17
-          Top = 208
-          Width = 75
-          Caption = 'License Type:'
-          ParentColor = False
-        end
-        object Label15: TLabel
-          Left = 8
-          Height = 17
-          Top = 240
-          Width = 67
-          Caption = 'Expiry Date:'
-          ParentColor = False
-        end
-        object Label16: TLabel
-          Left = 8
-          Height = 17
-          Top = 323
-          Width = 46
-          Caption = 'Options:'
-          ParentColor = False
-        end
-        object Label9: TLabel
-          Left = 8
-          Height = 17
-          Top = 349
-          Width = 23
-          Caption = 'Key:'
-          ParentColor = False
-        end
-        object Label17: TLabel
-          Left = 8
-          Height = 17
-          Top = 403
-          Width = 76
-          Caption = 'New Lic Type:'
-          ParentColor = False
-        end
-        object Label18: TLabel
-          Left = 8
-          Height = 17
-          Top = 435
-          Width = 63
-          Caption = 'New Prefix:'
-          ParentColor = False
-        end
-        object edtPrefixU: TEdit
+        object edtServerR: TEdit
           Left = 106
           Height = 27
-          Top = 12
-          Width = 121
-          ReadOnly = True
-          TabOrder = 0
-        end
-        object edtEmailU: TEdit
-          Left = 106
-          Height = 27
-          Top = 108
-          Width = 424
-          Anchors = [akTop, akLeft, akRight]
-          MaxLength = 255
-          OnChange = edtUserNameUChange
-          TabOrder = 4
-        end
-        object cbBlockedU: TCheckBox
-          Left = 106
-          Height = 21
-          Top = 298
-          Width = 70
-          Caption = ' Blocked'
-          OnClick = cbBlockedUClick
-          TabOrder = 15
-        end
-        object edtCompanyU: TEdit
-          Left = 106
-          Height = 27
-          Top = 76
-          Width = 516
-          Anchors = [akTop, akLeft, akRight]
-          MaxLength = 255
-          OnChange = edtUserNameUChange
-          TabOrder = 3
-        end
-        object edtContactU: TEdit
-          Left = 106
-          Height = 27
-          Top = 140
-          Width = 121
-          MaxLength = 50
-          OnChange = edtUserNameUChange
-          TabOrder = 6
-        end
-        object edtUserNameU: TEdit
-          Left = 106
-          Height = 27
-          Top = 44
-          Width = 516
-          Anchors = [akTop, akLeft, akRight]
-          MaxLength = 255
-          OnChange = edtUserNameUChange
-          TabOrder = 2
-        end
-        object edtUniqueU: TEdit
-          Left = 106
-          Height = 27
-          Top = 172
-          Width = 121
-          CharCase = ecUppercase
-          Enabled = False
-          MaxLength = 12
-          OnChange = edtUniqueUChange
-          TabOrder = 7
-        end
-        object cbxLicTypeU: TComboBox
-          Left = 106
-          Height = 23
-          Top = 204
-          Width = 121
-          AutoSize = False
-          ItemHeight = 0
-          ItemIndex = 0
-          Items.Strings = (
-            '--- Select ---'
-            'Trial'
-            'Personal'
-            'Browse'
-            'Generic'
-          )
-          OnChange = edtUniqueUChange
-          Style = csDropDownList
-          TabOrder = 11
-          Text = '--- Select ---'
-        end
-        object dtpExpiryDateU: TDateTimePicker
-          Left = 106
-          Height = 27
-          Top = 236
-          Width = 121
-          CenturyFrom = 1941
-          DateDisplayOrder = ddoYMD
-          MaxDate = 2958465
-          MinDate = -53780
-          AutoSize = False
-          TabOrder = 12
-          TrailingSeparator = False
-          TextForNullDate = 'NULL'
-          LeadingZeros = True
-          Kind = dtkDate
-          TimeFormat = tf24
-          TimeDisplay = tdHMS
-          DateMode = dmComboBox
-          Date = 41437
-          Time = 0.839549525473558
-          UseDefaultSeparators = True
-          HideDateTimeParts = []
-          MonthNames = 'Long'
-          OnChange = edtUniqueUChange
-        end
-        object edtRenewalsU: TEdit
-          Left = 106
-          Height = 27
-          Top = 269
-          Width = 60
-          ReadOnly = True
+          Top = 368
+          Width = 310
+          OnChange = edtUniqueFChange
           TabOrder = 14
         end
-        object cbCollectU: TCheckBox
-          Left = 106
-          Height = 21
-          Top = 320
-          Width = 87
-          Caption = ' Collections'
-          OnChange = edtUniqueUChange
-          TabOrder = 16
+        object Label33: TLabel
+          Left = 18
+          Height = 17
+          Top = 404
+          Width = 57
+          Caption = 'Password:'
+          ParentColor = False
         end
-        object cbDocGenU: TCheckBox
-          Left = 216
-          Height = 21
-          Top = 320
-          Width = 104
-          Caption = ' Doc Generate'
-          OnChange = edtUniqueUChange
-          TabOrder = 17
-        end
-        object cbFloatingU: TCheckBox
-          Left = 336
-          Height = 21
-          Top = 320
-          Width = 70
-          Caption = ' Floating'
-          OnChange = edtUniqueUChange
-          TabOrder = 18
-        end
-        object edtKeyU: TEdit
+        object edtPasswordR: TEdit
           Left = 106
           Height = 27
-          Top = 345
-          Width = 297
-          OnChange = edtUserNameUChange
-          ReadOnly = True
-          TabOrder = 20
-        end
-        object cbTransferU: TCheckBox
-          Left = 106
-          Height = 21
-          Top = 374
-          Width = 73
-          Caption = ' Transfer'
-          OnClick = cbTransferUClick
-          TabOrder = 21
-        end
-        object cbxNewLicU: TComboBox
-          Left = 106
-          Height = 27
-          Top = 399
-          Width = 121
-          ItemHeight = 0
-          ItemIndex = 0
-          Items.Strings = (
-            '--- Select ---'
-            'Trial'
-            'Personal'
-            'Browse'
-            'Generic'
-          )
-          OnChange = edtUserNameUChange
-          TabOrder = 22
-          Text = '--- Select ---'
-        end
-        object cbxNewPrefixU: TComboBox
-          Left = 106
-          Height = 27
-          Top = 431
-          Width = 121
-          ItemHeight = 0
-          ItemIndex = 0
-          Items.Strings = (
-            '--- Select ---'
-          )
-          OnChange = edtUserNameUChange
-          TabOrder = 23
-          Text = '--- Select ---'
-        end
-        object btnLock: TBitBtn
-          Left = 233
-          Height = 23
-          Top = 172
-          Width = 22
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000130B0000130B00000000000000000001FF00FFFF00FF
-            FF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BDFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F229D8FF32DCFF25
-            D5FF18CFFF0BBBF20081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FF0081BD00BDFF35DDFF44E3FF37DEFF21B8E1056A9D12CBFF06B8F20081
-            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF41E2FF55EBFF49
-            E6FF1570900031541AB1DC18CFFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FF0081BD00BDFF49E6FF64F0FF5AEDFF124E64001D330A53722AD8FF0081
-            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF51EAFF70F6FF68
-            F3FF3BA0B10015242C9AB13DE1FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FF0081BD00BDFF56EBFF7AFAFF74F7FF64E3EF3792A359EDFF4EE9FF0081
-            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD59DCEF808080769A9FC5
-            FEFFBCFCFFACFAFF84F6FF5EEFFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FF0081BD0B80AC808080769A9F59EDFF6CF2FF7FF7FF8080808EFAFF0081
-            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD8080805D8A970C
-            B0E615BDEE4CA9BD8080804DC4D90081BDFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FF8080806981890081BD0081BD38819D8080800081BDFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF808080818181FF
-            00FFFF00FF818181808080FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FF808080D5D4D4808080808080797877808080FF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF808080A3A3A3D7
-            D7D78888888C8C8C808080FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FF808080808080808080808080FF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-          }
-          TabOrder = 9
-        end
-        object btnUnlock: TBitBtn
-          Left = 233
-          Height = 23
-          Top = 172
-          Width = 22
-          Glyph.Data = {
-            36030000424D3603000000000000360000002800000010000000100000000100
-            18000000000000030000130B0000130B00000000000000000001FF00FFFF00FF
-            FF00FFFF00FF0081BD0081BD0081BD0081BD0081BD0081BDFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00B1F229D8FF32DCFF25
-            D5FF18CFFF0BBBF20081BD0081BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FF0081BD00BDFF35DDFF44E3FF37DEFF21B8E1056A9D12CBFF06B8F20081
-            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF41E2FF55EBFF49
-            E6FF1570900031541AB1DC18CFFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FF0081BD00BDFF49E6FF64F0FF5AEDFF124E64001D330A53722AD8FF0081
-            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD00BDFF51EAFF70F6FF68
-            F3FF3BA0B10015242C9AB13DE1FF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FF0081BD00BDFF56EBFF7AFAFF74F7FF64E3EF3792A359EDFF4EE9FF0081
-            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD59DCEF4C849663A0B8C5
-            FEFFBCFCFFACFAFF84F6FF5EEFFF0081BDFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FF0081BD0B80AC002843075D8959EDFF6CF2FF7FF7FF9ADCDE8EFAFF0081
-            BDFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD0081BD0C
-            B0E615BDEE8F8E8E79726E4DC4D90081BDFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FF0081BD0081BD8F8E8E79726E0081BDFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFA7958F89736CFF
-            00FFFF00FF8F8E8E79726EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFA19D9A79726EFF00FFFF00FF8F8E8E79726EFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF79726ED5D4D4FF
-            00FFFF00FF8F8E8E79726EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FF79726EA3A3A3D7D7D78888888C8C8C79726EFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF79726E79
-            726E79726E79726EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-          }
-          TabOrder = 8
-        end
-        object cbOption4U: TCheckBox
-          Left = 456
-          Height = 21
-          Top = 320
-          Width = 73
-          Caption = ' Option 4'
-          OnChange = edtUniqueUChange
-          TabOrder = 19
-        end
-        object txtExpired: TStaticText
-          Left = 233
-          Height = 18
-          Top = 240
-          Width = 4
-          AutoSize = True
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentFont = False
-          TabOrder = 13
-        end
-        object edtDBKeyU: TEdit
-          Left = 250
-          Height = 27
-          Top = 12
-          Width = 121
-          TabOrder = 1
-          Visible = False
-        end
-        object cbEditEmail: TCheckBox
-          Left = 537
-          Height = 21
-          Top = 110
-          Width = 81
-          Anchors = [akTop, akRight]
-          Caption = ' Edit email'
-          TabOrder = 5
-        end
-        object cbAllowDuplicates: TCheckBox
-          Left = 265
-          Height = 21
-          Top = 174
-          Width = 118
-          Caption = ' Allow Duplicates'
-          Enabled = False
-          OnChange = edtUniqueUChange
-          TabOrder = 10
-        end
-        object txtInvalid: TStaticText
-          Left = 408
-          Height = 18
-          Top = 349
-          Width = 4
-          AutoSize = True
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentFont = False
-          TabOrder = 24
+          Top = 400
+          Width = 214
+          EchoMode = emPassword
+          OnChange = edtKeyRChange
+          PasswordChar = '*'
+          TabOrder = 15
         end
       end
     end

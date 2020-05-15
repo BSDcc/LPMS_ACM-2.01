@@ -3,14 +3,15 @@
   <ProjectSession>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="2">
+    <Units Count="4">
       <Unit0>
         <Filename Value="LPMS_EncDec.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="388"/>
-        <CursorPos X="69" Y="403"/>
-        <UsageCount Value="22"/>
+        <TopLine Value="412"/>
+        <CursorPos X="16" Y="442"/>
+        <FoldState Value=" T3k40~I1R"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -20,127 +21,143 @@
         <CursorPos Y="11"/>
         <UsageCount Value="10"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="../SendEmail-1.00/SendEmail.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="202"/>
+        <CursorPos X="40" Y="227"/>
+        <UsageCount Value="10"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/synapse40.1/laz_synapse.lpk"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="XML"/>
+      </Unit3>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="19" Column="60"/>
+        <Caret Line="455" Column="13" TopLine="444"/>
       </Position1>
       <Position2>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="455" Column="13" TopLine="444"/>
+        <Caret Line="19" Column="49"/>
       </Position2>
       <Position3>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="19" Column="49"/>
+        <Caret Line="17" Column="37"/>
       </Position3>
       <Position4>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="17" Column="37"/>
+        <Caret Line="455" Column="21" TopLine="444"/>
       </Position4>
       <Position5>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="455" Column="21" TopLine="444"/>
+        <Caret Line="17" Column="32"/>
       </Position5>
       <Position6>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="17" Column="32"/>
+        <Caret Line="509" Column="25" TopLine="490"/>
       </Position6>
       <Position7>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="509" Column="25" TopLine="490"/>
+        <Caret Line="135" Column="15" TopLine="131"/>
       </Position7>
       <Position8>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="135" Column="15" TopLine="131"/>
+        <Caret Line="361" Column="3" TopLine="343"/>
       </Position8>
       <Position9>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="361" Column="3" TopLine="343"/>
+        <Caret Line="238" TopLine="227"/>
       </Position9>
       <Position10>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="238" TopLine="227"/>
+        <Caret Line="139" Column="73" TopLine="128"/>
       </Position10>
       <Position11>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="139" Column="73" TopLine="128"/>
+        <Caret Line="159" TopLine="145"/>
       </Position11>
       <Position12>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="159" TopLine="145"/>
+        <Caret Line="166" Column="34" TopLine="144"/>
       </Position12>
       <Position13>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="166" Column="34" TopLine="144"/>
+        <Caret Line="197" TopLine="184"/>
       </Position13>
       <Position14>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="197" TopLine="184"/>
+        <Caret Line="264" TopLine="250"/>
       </Position14>
       <Position15>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="264" TopLine="250"/>
+        <Caret Line="272" TopLine="258"/>
       </Position15>
       <Position16>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="272" TopLine="258"/>
+        <Caret Line="380" Column="48" TopLine="368"/>
       </Position16>
       <Position17>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="380" Column="48" TopLine="368"/>
+        <Caret Line="392" TopLine="378"/>
       </Position17>
       <Position18>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="392" TopLine="378"/>
+        <Caret Line="411" Column="65" TopLine="396"/>
       </Position18>
       <Position19>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="411" Column="65" TopLine="396"/>
+        <Caret Line="24" Column="19" TopLine="15"/>
       </Position19>
       <Position20>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="24" Column="19" TopLine="15"/>
+        <Caret Line="25" Column="19" TopLine="16"/>
       </Position20>
       <Position21>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="25" Column="19" TopLine="16"/>
+        <Caret Line="24" Column="19" TopLine="15"/>
       </Position21>
       <Position22>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="24" Column="19" TopLine="15"/>
+        <Caret Line="141" Column="4" TopLine="131"/>
       </Position22>
       <Position23>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="141" Column="4" TopLine="131"/>
+        <Caret Line="137" Column="52" TopLine="129"/>
       </Position23>
       <Position24>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="137" Column="52" TopLine="129"/>
+        <Caret Column="66"/>
       </Position24>
       <Position25>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Column="66"/>
+        <Caret Line="137" Column="58" TopLine="123"/>
       </Position25>
       <Position26>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="137" Column="58" TopLine="123"/>
+        <Caret Line="141" Column="37" TopLine="127"/>
       </Position26>
       <Position27>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="141" Column="37" TopLine="127"/>
+        <Caret Line="142" Column="36" TopLine="128"/>
       </Position27>
       <Position28>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="142" Column="36" TopLine="128"/>
+        <Caret Line="143" Column="12" TopLine="129"/>
       </Position28>
       <Position29>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="143" Column="12" TopLine="129"/>
+        <Caret Line="381" Column="69" TopLine="367"/>
       </Position29>
       <Position30>
         <Filename Value="LPMS_EncDec.lpr"/>
-        <Caret Line="381" Column="69" TopLine="367"/>
+        <Caret Line="268" TopLine="247"/>
       </Position30>
     </JumpHistory>
     <RunParams>

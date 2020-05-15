@@ -14,17 +14,24 @@ library LPMS_EncDec;
 // Uses clause
 //------------------------------------------------------------------------------
 uses
-   Classes, DateUtils, SysUtils;
+   Classes, DateUtils, SysUtils, SMTPSend, MimeMess, MimePart, SynaUtil;
 
 //------------------------------------------------------------------------------
 // Define the ENUM Types and Record structures
 //------------------------------------------------------------------------------
 type
 
-   LIC_LICENSE  = (LIC_INVALID, LIC_TRIAL, LIC_PERSONAL, LIC_BROWSE, LIC_GENERIC);
-   RES_RESULTS  = (ERR_INVALID, ERR_LENGTH, ERR_EXPIRED);
+   LIC_LICENSE  = (LIC_INVALID,      // Used as a place holder
+                   LIC_TRIAL,        // Generate a Trial License
+                   LIC_PERSONAL,     // Generate a normal production license
+                   LIC_BROWSE,       // Generate a Browse only license
+                   LIC_GENERIC);     // Generate a non Legal Firm license
 
-   REC_Key_Priv = record
+   RES_RESULTS  = (ERR_INVALID,      // The supplied license key is invalid
+                   ERR_LENGTH,       // The length of the supplied license key is wrong
+                   ERR_EXPIRED);     // The supplied license key has expired
+
+   REC_Key_Priv = record             // DoDeCode - Populated with data from a supplied license key
       Key              : string;
       DaysLeft         : integer;
       LPMS_Collections : boolean;
@@ -37,8 +44,8 @@ type
       KeyDate          : string;
    end;
 
-   REC_Key_Values = record
-      Unique           : string;
+   REC_Key_Values = record           // DoEncode - Required fields to generate a license key
+      Unique           : string;     // If successful the License Key is stored in Unique
       ExpDate          : string;
       DBPrefix         : string;
       LPMS_Collections : boolean;
@@ -48,7 +55,7 @@ type
       License          : integer;
    end;
 
-   REC_Key_Chars = record
+   REC_Key_Chars = record            // Overlay giving access to individual characters in the License Key
       ExpDateYL   : char;
       ExpDateYR   : char;
       ExpDateM    : char;
@@ -82,7 +89,7 @@ type
       DBPrefix04  : char;
    end;
 
-   REC_Key_Fields = record
+   REC_Key_Fields = record           // Overlay giving access to individual fields in the License Key
       ExpDate     : array[1..5] of char;
       DBPrefix01L : char;
       DBPrefix02L : char;
@@ -100,20 +107,29 @@ type
       DBPrefix04  : char;
    end;
 
-   REC_Key_String = record
+   REC_Key_String = record           // Overlay giving access to the License Key as a whole string
       Key : array[1..31] of char;
    end;
 
-   REC_Key_Overlay = record
+   REC_Key_Overlay = record          // Defines the above three overlays to contain the same storage space
       case integer of
          0: (Strings : REC_Key_String);
          1: (Chars   : REC_Key_Chars);
          2: (Fields  : REC_Key_Fields);
    end;
 
+//==============================================================================
+// Various Support functions
+//==============================================================================
+
+//==============================================================================
+// End of Support Functions
+// Start of callable DLL functions
+//==============================================================================
+
 //------------------------------------------------------------------------------
 // Function to decode a key contained in the parameter passed and return a
-// string containing DaysLeft , Unique, License and DBPrefix
+// fully populated REC_Key_Priv structure
 //------------------------------------------------------------------------------
 function DoDecode(Decode_Key_Priv: REC_Key_Priv): REC_Key_Priv; stdcall;
 const
@@ -393,7 +409,8 @@ exports
 
 //------------------------------------------------------------------------------
 // Function to encode a key with the values contained in This_Key_Values and
-// return the encoded Key
+// return a fully porpulated REC_Key_Values structure with the encoded Key
+// inthe 'Unique' field
 //------------------------------------------------------------------------------
 function DoEncode(Decode_Key_Values: REC_Key_Values): REC_Key_Values; stdcall;
 var
@@ -407,7 +424,162 @@ begin
 end;
 
 exports
-  DoEncode;
+   DoEncode;
+
+
+//------------------------------------------------------------------------------
+// Function to extract swithces '-?' and values from a stringlist of passed
+// command line parameters
+//------------------------------------------------------------------------------
+function cmdlOptions(): integer; stdcall;
+begin
+
+   Result := 0;
+
+end;
+
+exports
+   cmdlOptions;
+
+//------------------------------------------------------------------------------
+// Function to use MIME to send an email via SMTP
+//------------------------------------------------------------------------------
+function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; stdcall;
+var
+   idx          : integer;     // Used for adding attachments
+   NumErrors    : integer;     // Keesp track whether there were errors during send
+
+   SendResult   : boolean;     // Result returned by the SMTP send function
+
+   SMTPHost     : string;      // SMTP Host name
+   SMTPUser     : string;      // SMTP User name
+   SMTPPasswd   : string;      // SMTP Password
+   AddrId       : string;      // Holds an extracted email address
+   ThisStr      : string;      // Used in the transformation of the address lists
+
+   SMTPParms    : TStringList; // Final list of SMTP parameters
+   Content      : TStringList; // Final string list containing the body of the email
+   AttachList   : TStringList; // Final list of attahcments
+   Mime         : TMimeMess;   // Mail message in MIME format
+   MimePtr      : TMimePart;   // Pointer to the MIME messsage being constructed
+
+begin
+
+//--- Extract the SMTP Parameters
+
+   SMTPParms := TStringList.Create;
+   ExtractStrings(['|'],[' '],PChar(SMTPStr),SMTPParms);
+
+   SMTPHost   := SMTPParms.Strings[0];
+   SMTPUser   := SMTPParms.Strings[1];
+   SMTPPasswd := SMTPParms.Strings[2];
+
+//--- Extract the List of files to be attached
+
+   AttachList := TStringList.Create;
+   ExtractStrings(['|'],[' '],PChar(Attach),AttachList);
+
+//--- Extract the body of the email
+
+   Content := TStringList.Create;
+   ExtractStrings(['|'],['*'],PChar(Body),Content);
+
+   Mime := TMimeMess.Create;
+
+   try
+
+//--- Set the headers. The various address lists (To, Cc and Bcc) can contain
+//--- more than 1 address but these must be seperted by commas and there should
+//--- be no spaces between addresses. The Bcc address list is not added to the
+//--- Header as the data in the Header is not used to determine who to send the
+//--- email to.
+
+      ThisStr := ToStr;
+
+      repeat
+
+         AddrId := Trim(FetchEx(ThisStr, ',', '"'));
+
+         if AddrId <> '' then
+            Mime.Header.ToList.Append(AddrId);
+
+      until ThisStr = '';
+
+      ThisStr := CcStr;
+
+      repeat
+
+         AddrId := Trim(FetchEx(ThisStr, ',', '"'));
+
+         if AddrId <> '' then
+            Mime.Header.CCList.Append(AddrId);
+
+      until ThisStr = '';
+
+      Mime.Header.Subject := Subject;
+      Mime.Header.From    := From;
+      Mime.Header.ReplyTo := From;
+
+//--- Create a MultiPart part
+
+      MimePtr := Mime.AddPartMultipart('mixed',Nil);
+
+//--- Add the mail text as the first part
+
+      Mime.AddPartText(Content,MimePtr);
+
+//--- Add all atachments
+
+      if AttachList.Count > 0 then begin
+
+         for idx := 0 to AttachList.Count - 1 do
+            Mime.AddPartBinaryFromFile(AttachList[idx],MimePtr);
+
+      end;
+
+//--- Compose the message to comply with MIME requirements
+
+      Mime.EncodeMessage;
+
+//--- Now the messsage can be sent to each of the recipients (To, Cc and Bcc)
+//--- using SendToRaw
+
+      NumErrors := 0;
+      ThisStr  := ToStr + ',' + CcStr + ',' + BccStr;
+
+      repeat
+
+         AddrId := Trim(FetchEx( ThisStr, ',', '"'));
+
+         if AddrId <> '' then begin
+            SendResult := SendToRaw(From, AddrId, SMTPHost, Mime.Lines, SMTPUser, SMTPPasswd);
+
+            if SendResult = False then
+               Inc(NumErrors);
+
+         end;
+
+      until ThisStr = '';
+
+   finally
+      Mime.Free;
+   end;
+
+
+//--- Delete the lists we used
+
+   AttachList.Free;
+   SMTPParms.Free;
+   Content.Free;
+
+   if NumErrors > 0 then
+      Result := False
+   else
+      Result := True;
+
+end;
+
+exports
+   SendMimeMail;
 
 end.
-
