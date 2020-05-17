@@ -86,7 +86,6 @@ object FLPMS_Show: TFLPMS_Show
     Top = 8
     Width = 686
     Anchors = [akTop, akLeft, akRight]
-    Caption = 'LPMS Definitions containing xxxxxxxxxxxx as a Unique Identifier'
     Font.Color = clWindowText
     Font.Height = -16
     Font.Name = 'Tahoma'

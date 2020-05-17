@@ -348,6 +348,8 @@ public   { Public Declarations }
    ThisName    : string;      // Used by LPMS_Show
    ThisCompany : string;      // Used by LPMS_Show
    ThisUnique  : string;      // Used by LPMS_Show
+   SMTPHost    : string;      // SMTP Host for sending emails
+   SMTPPass    : string;      // SMTP Password for sending emails
 
 end;
 
@@ -483,7 +485,9 @@ begin
    ToolsGenerate.Enabled := False;
    ToolsEmail.Enabled    := False;
 
-   dtpExpiryR.Date := Now();
+   dtpExpiryR.Date   := Now();
+   edtServerR.Text   := SMTPHost;
+   edtPasswordR.Text := SMTPPass;
    edtKeyR.SetFocus();
 
 end;
@@ -514,6 +518,9 @@ begin
    end;
 
    OpenDB(ord(DB_CLOSE));
+
+   FLPMS_Login.SMTPHost := edtServerR.Text;
+   FLPMS_Login.SMTPPass := edtPasswordR.Text;
 
 end;
 
@@ -2125,8 +2132,6 @@ type
 
 var
    MyFunc       : TMyFunc;
-
-   SendResult   : boolean;     // Receives the result of the send attempt
 
    From         : string;      // Email address of the Sender
    ToStr        : string;      // To addresses, comma delimited

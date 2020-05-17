@@ -25,7 +25,7 @@ uses
 {$ENDIF}
 
    Classes, SysUtils, sqldb, Forms, Controls, Graphics, Dialogs, StdCtrls,
-   ExtCtrls, ComCtrls, LCLType, FileInfo, DynLibs,
+   ExtCtrls, ComCtrls, LCLType, FileInfo, DynLibs, INIFiles,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    winpeimagereader, mysql56conn;
@@ -103,17 +103,24 @@ private  { Private Declarations }
    {$ENDIF}
 {$ENDIF}
 
-   function  cmdlOpt(OptList : string; Options, Parms : TStringList) : integer;
+//   function  cmdlOpt(OptList : string; Options, Parms : TStringList) : integer;
    function  DoLogin() : boolean;
    procedure GetVersion();
+   function  MaskField(InputField: string; MaskType: integer) : string;
+
+
+type
+
+   MASK_TYPES   = (MA_MASK,          // Encode the input field
+                   MA_UNMASK);       // Decode the input field
 
 public   { Public Declarations }
 
-   LoginCount                                           : integer;
-   AutoLogin                                            : boolean;
-   CopyRight, UserName, Password, Version, DTDLocation  : string;
-   AutoUser, AutoPass, AutoHost, Path                   : string;
-   MyLibC                                               : TLibHandle;
+   LoginCount                                             : integer;
+   AutoLogin                                              : boolean;
+   CopyRight, UserName, Password, Version, DTDLocation    : string;
+   AutoUser, AutoPass, AutoHost, Path, SMTPHost, SMTPPass : string;
+   MyLibC                                                 : TLibHandle;
 
 end;
 
@@ -135,12 +142,19 @@ implementation
 // Executed after the form is created
 //------------------------------------------------------------------------------
 procedure TFLPMS_Login.FormCreate(Sender: TObject);
+type
+   TMyFunc = function (OptList : string; CmdLine, ParmStr : TStringList): integer; stdcall;
+
 var
-   idx             : integer;
-   DLLName         : string;
-   Options, Params : TStringList;
+   idx, NumParms    : integer;
+   DLLName, INILoc  : string;
+   Params, Args     : TStringList;
+   IniFile          : TINIFile;
+   MyFunc           : TMyFunc;
 
 begin
+
+   AutoLogin := False;
 
 {$IFDEF WINDOWS}                    // Target is Winblows
    sqlCon  := TMySQL56Connection.Create(nil);
@@ -176,46 +190,7 @@ begin
    Version := 'Version ' + Major + '.' + Minor + '.' + VerRelease + ' [' + Build + ']';
 {$ENDIF}
 
-   AutoLogin := False;
-
-//--- Check whether any paramters were passed and retrieve if so
-
-   Options := TStringList.Create;
-   Params  := TStringList.Create;
-
-   if cmdlOpt('u:p:H:',Options,Params) > 0 then begin
-
-      for idx := 0 to Options.Count - 1 do begin
-
-         if Options.Strings[idx] = 'u' then begin
-
-            AutoUser  := Params.Strings[idx];
-            AutoLogin := true;
-
-         end;
-
-         if Options.Strings[idx] = 'p' then begin
-
-            AutoPass  := Params.Strings[idx];
-            AutoLogin := true;
-
-         end;
-
-         if Options.Strings[idx] = 'H' then begin
-
-            AutoHost  := Params.Strings[idx];
-            AutoLogin := true;
-
-         end;
-
-      end;
-
-   end;
-
-   Options.Free;
-   Params.Free;
-
-//--- Load the DLL used to do Encoding and Decoding of Keys
+//--- Load the Utility DLL
 
    MyLibC := DynLibs.NilHandle;
    Path   := ExtractFilePath(Application.ExeName);
@@ -237,6 +212,82 @@ begin
       Exit;
 
    end;
+
+//--- Check whether any paramters were passed and retrieve if so
+
+   try
+
+      Params  := TStringList.Create;     // Will be freed automatically when the DLL is unloaded
+      Args    := TStringList.Create;
+
+      for idx := 1 to ParamCount do
+         Args.Add(ParamStr(idx));
+
+//--- Call and execute the cmdlOptions function in the DLL
+
+      MyFunc := TMyFunc(GetProcedureAddress(FLPMS_Login.MyLibC, 'cmdlOptions'));
+
+      NumParms := MyFunc('u:p:H:', Args, Params);
+
+      if NumParms > 0 then begin
+
+         idx      := 0;
+         NumParms := NumParms * 2;
+
+         while idx < Params.Count do begin
+
+            if Params.Strings[idx] = 'u' then begin
+
+               AutoUser  := Params.Strings[idx + 1];
+               AutoLogin := true;
+
+            end;
+
+            if Params.Strings[idx] = 'p' then begin
+
+               AutoPass  := Params.Strings[idx + 1];
+               AutoLogin := true;
+
+            end;
+
+            if Params.Strings[idx] = 'H' then begin
+
+               AutoHost  := Params.Strings[idx + 1];
+               AutoLogin := true;
+
+            end;
+
+            idx := idx + 2;
+
+         end;
+
+      end;
+
+   finally
+
+//      Params.Destroy;
+      Args.Free;
+
+   end;
+
+//--- Get the SMTP parameters from the INI file and store for later use
+
+   INILoc := ExtractFilePath(Application.ExeName) + 'LPMS_ACM.ini';
+
+   if FileExists(INILoc) = True then begin
+
+      IniFile := TINIFile.Create(INILoc);
+
+      SMTPHost := IniFile.ReadString('Config','SMTPHost','');
+      SMTPPass := IniFile.ReadString('Config','SMTPPass','');
+
+      IniFile.Destroy;
+
+   end;
+
+//--- Unmask the Password
+
+   SMTPPass := MaskField(SMTPPass,ord(MA_UNMASK));
 
 end;
 
@@ -265,9 +316,28 @@ end;
 // Executed when the Form is finally closed
 //------------------------------------------------------------------------------
 procedure TFLPMS_Login. FormClose( Sender: TObject; var CloseAction: TCloseAction);
+var
+   INILoc  : string;
+   IniFile : TINIFile;
+
 begin
 
-//--- Unload the Encode/Decode DLL if it was loaded successfully
+//--- Mask the SMTP Password before it is written to the INI File
+
+   SMTPPass := MaskField(SMTPPass,ord(MA_MASK));
+
+//--- Write the current SMTP parameters to the INI file
+
+   INILoc := ExtractFilePath(Application.ExeName) + 'LPMS_ACM.ini';
+
+   IniFile := TINIFile.Create(INILoc);
+
+   IniFile.WriteString('Config','SMTPHost',SMTPHost);
+   IniFile.WriteString('Config','SMTPPass',SMTPPass);
+
+   IniFile.Destroy;
+
+//--- Unload the Utility DLL if it was loaded successfully
 
       if MyLibC <>  DynLibs.NilHandle then
          if FreeLibrary(MyLibC) then
@@ -289,7 +359,7 @@ end;
 //------------------------------------------------------------------------------
 // Executed when the User clicks on the Login button
 //------------------------------------------------------------------------------
-procedure TFLPMS_Login. btnLoginClick( Sender: TObject);
+procedure TFLPMS_Login.btnLoginClick(Sender: TObject);
 begin
 
    Inc(LoginCount);
@@ -341,6 +411,8 @@ begin
       FLPMS_Main.HostName  := edtHostName.Text;
       FLPMS_Main.Version   := Version;
       FLPMS_Main.CopyRight := CopyRight;
+      FLPMS_Main.SMTPHost  := SMTPHost;
+      FLPMS_Main.SMTPPass  := SMTPPass;
 
       FLPMS_Main.ShowModal();
       FLPMS_Main.Destroy;
@@ -483,6 +555,101 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+// Function to mask/unmask a field written to a plain text file
+//------------------------------------------------------------------------------
+function TFLPMS_Login.MaskField(InputField: string; MaskType: integer) : string;
+var
+   idx1             : integer;
+   S2               : string;
+   S1               : array[1..64] of char;
+   Hi1, Hi2, HL, Lo : Word;
+
+begin
+
+   case MaskType of
+
+//--- Mask the Input Field
+
+      ord(MA_MASK): begin
+
+         S1   := InputField;
+         S2   := '';
+         idx1 := 1;
+
+         while (S1[idx1] <> #0) do begin
+
+//--- Get copies of the current character
+
+            Hi1 := Word(S1[idx1]);
+            Lo  := Word(S1[idx1]);
+
+//--- Move the 4 high bits to the right and mask out the four left bits
+
+            Hi1 := Hi1 shr 4;
+            Lo  := Lo and %00001111;
+
+//--- Turn the Hi and Lo parts into displayable characters
+
+            Hi1 := Hi1 or %01000000;
+            Lo  := Lo  or %01000000;
+
+//--- Add them to the result string
+
+            S2 := S2 + char(Hi1) + char(Lo);
+
+            inc(idx1);
+
+         end;
+
+         Result := S2;
+
+      end;
+
+//--- Unmask the input field
+
+      ord(MA_UNMASK) : begin
+
+         S1   := InputField;
+         S2   := '';
+         idx1 := 1;
+
+         while (S1[idx1] <> #0) do begin
+
+//--- Get copies of the next 2 characters
+
+            Hi1 := Word(S1[idx1]);
+            Inc(idx1);
+            Hi2 := Word(S1[idx1]);
+            Inc(idx1);
+
+//--- Move the 4 low bits of the first to the left and mask the 4 low bits then
+//--- mask the 4 high bits of the second
+
+            Hi1 := Hi1 shl 4;
+            Hi1 := Hi1 and %11110000;
+            Hi2 := Hi2 and %00001111;
+
+//--- Merge the 2 characters
+
+            HL := Hi1 or Hi2;
+
+//--- Add it to the result string
+
+            S2 := S2 + char(HL);
+
+         end;
+
+         Result := S2;
+
+      end;
+
+   end;
+
+end;
+
+
+{
+//------------------------------------------------------------------------------
 // Function to extract and return the parameters that were passed on the
 // command line when the application was invoked.
 //
@@ -574,6 +741,7 @@ begin
    Result := Parms.Count;
 
 end;
+}
 
 //------------------------------------------------------------------------------
 

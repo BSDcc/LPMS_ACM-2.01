@@ -31,6 +31,11 @@ type
                    ERR_LENGTH,       // The length of the supplied license key is wrong
                    ERR_EXPIRED);     // The supplied license key has expired
 
+{
+   MASK_TYPES   = (MA_MASK,          // Encode the input field
+                   MA_UNMASK);       // Decode the input field
+}
+
    REC_Key_Priv = record             // DoDeCode - Populated with data from a supplied license key
       Key              : string;
       DaysLeft         : integer;
@@ -409,8 +414,8 @@ exports
 
 //------------------------------------------------------------------------------
 // Function to encode a key with the values contained in This_Key_Values and
-// return a fully porpulated REC_Key_Values structure with the encoded Key
-// inthe 'Unique' field
+// return a fully populated REC_Key_Values structure with the encoded Key
+// in the 'Unique' field
 //------------------------------------------------------------------------------
 function DoEncode(Decode_Key_Values: REC_Key_Values): REC_Key_Values; stdcall;
 var
@@ -426,20 +431,205 @@ end;
 exports
    DoEncode;
 
+//---------------------------------------------------------------------------
+// Function to extract and return the parameters that were passed on the
+// command line when the application was invoked.
+//
+// An Option list of "H:L:mu:" would expect a command line similar to:
+//   -H followed by a parameter e.g. -Hwww.sourcingmethods.com
+//   -L followed by a parameter e.g. -L1
+//   -m
+//   -u followed by a parameter e.g. -uFrancois
+//
+// The calling function must create the following TStringList variables:
+//
+//   CmdLine  - StringList containing the command line aruguments each as a
+//              string
+//   ParmList - Will contain argument and value as 2 consequtive strings for
+//              each argument on the command line
+//
+// The function returns:
+//
+//   0   if no command line parameters were passed
+//   ' ' in the second string of a pair if a value was expected but not found
+//   #   in the second string of a pair if an unknown parameter was found
+//   Empty stringlist if the switch '-' could not be found
+//   The number of parameters found if no error were found
+//---------------------------------------------------------------------------
+function cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; stdcall;
+var
+   idx1, idx2, ParmCount : integer;
+   Found                 : boolean;
+   ThisParm, ThisOption  : string;
 
-//------------------------------------------------------------------------------
-// Function to extract swithces '-?' and values from a stringlist of passed
-// command line parameters
-//------------------------------------------------------------------------------
-function cmdlOptions(): integer; stdcall;
 begin
 
-   Result := 0;
+   ParmCount := CmdLine.Count;
+
+   if ParmCount < 1 then begin
+
+      ParmStr.Clear;
+      Result := 0;
+      Exit;
+
+   end;
+
+//--- Extract the parameters that were passed from ParamList
+
+   for idx1 := 0 to ParmCount - 1 do begin
+
+      ThisParm := CmdLine[idx1];
+
+//--- First character of the argument must be the switch character ('-')
+
+      if ThisParm.SubString(0,1) <> '-' then begin
+
+         ParmStr.Clear;
+         Result := -1;
+         Exit;
+
+      end;
+
+//--- Extract the second character and search for it in OptList
+
+      ThisOption := ThisParm.SubString(1,1);
+      Found := False;
+
+      for idx2 := 0 to OptList.Length do begin
+
+         if OptList.SubString(idx2,1) = ThisOption then begin
+
+            Found := True;
+            ParmStr.Add(ThisOption);
+
+//--- If this Option is followed by ":" in the OptList then a parameter is
+//    expected. Extract the parameter if it is expected
+
+            if OptList.SubString(idx2 + 1,1) = ':' then begin
+
+               if ThisParm.Length < 3 then
+                  ParmStr.Add(' ')
+               else
+                  ParmStr.Add(ThisParm.SubString(2, ThisParm.Length - 1));
+
+            end else
+               ParmStr.Add(' ');
+
+         end;
+
+      end;
+
+      if Found = False then begin
+         ParmStr.Add(ThisOption);
+         ParmStr.Add('#');
+      end;
+
+   end;
+
+   Result := ParmCount;
 
 end;
 
 exports
    cmdlOptions;
+
+{
+//------------------------------------------------------------------------------
+// Function to Mask/Unmask a field that will be stored in a plain file
+//------------------------------------------------------------------------------
+function MaskField(InputField: string; MaskType: integer): string; stdcall;
+var
+   idx1             : integer;
+   S2               : string;
+   S1               : array[1..64] of char;
+   Hi1, Hi2, HL, Lo : Word;
+
+begin
+
+   case MaskType of
+
+//--- Mask the Input Field
+
+      ord(MA_MASK): begin
+
+         S1   := InputField;
+         Result   := '';
+         idx1 := 1;
+
+         while (S1[idx1] <> #0) do begin
+
+//--- Get copies of the current character
+
+            Hi1 := Word(S1[idx1]);
+            Lo  := Word(S1[idx1]);
+
+//--- Move the 4 high bits to the right and mask out the four left bits
+
+            Hi1 := Hi1 shr 4;
+            Lo  := Lo and %00001111;
+
+//--- Turn the Hi and Lo parts into displayable characters
+
+            Hi1 := Hi1 or %01000000;
+            Lo  := Lo  or %01000000;
+
+//--- Add them to the result string
+
+            Result := Result + char(Hi1) + char(Lo);
+
+            inc(idx1);
+
+         end;
+
+//         Result := S2;
+
+      end;
+
+//--- Unmask the input field
+
+      ord(MA_UNMASK) : begin
+
+         S1   := InputField;
+         Result   := '';
+         idx1 := 1;
+
+         while (S1[idx1] <> #0) do begin
+
+      //--- Get copies of the next 2 characters
+
+            Hi1 := Word(S1[idx1]);
+            Inc(idx1);
+            Hi2 := Word(S1[idx1]);
+            Inc(idx1);
+
+      //--- Move the 4 low bits of the first to the left and mask the 4 low bits then
+      //--- mask the 4 high bits of the second
+
+            Hi1 := Hi1 shl 4;
+            Hi1 := Hi1 and %11110000;
+            Hi2 := Hi2 and %00001111;
+
+      //--- Merge the 2 characters
+
+            HL := Hi1 or Hi2;
+
+      //--- Add it to the result string
+
+            Result := Result + char(HL);
+
+         end;
+
+//         Result := S2;
+
+      end;
+
+   end;
+
+end;
+
+exports
+   MaskField;
+}
 
 //------------------------------------------------------------------------------
 // Function to use MIME to send an email via SMTP
