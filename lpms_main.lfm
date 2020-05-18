@@ -1,8 +1,9 @@
 object FLPMS_Main: TFLPMS_Main
-  Left = 387
+  Left = 369
   Height = 591
-  Top = 116
+  Top = 152
   Width = 849
+  ActiveControl = Panel1
   Caption = 'FLPMS_Main'
   ClientHeight = 570
   ClientWidth = 849

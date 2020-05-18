@@ -22,17 +22,17 @@ interface
 uses
    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
    Menus, ActnList, StdCtrls, Buttons, Spin, DateTimePicker, StrUtils, LCLType,
-   Process,
+   Process, sqldb,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
-   mysql56conn, sqldb;
+   mysql56conn;
 {$ENDIF}
 
 {$IFDEF LINUX}                       // Target is Linux
    {$IFDEF CPUARMHF}                 // Running on ARM (Raspbian) architecture
-      mysql55conn, sqldb;
+      mysql55conn;
    {$ELSE}                           // Running on Intel architecture
-      mysql57conn, sqldb;
+      mysql57conn;
    {$ENDIF}
 {$ENDIF}
 
@@ -2140,7 +2140,11 @@ begin
    FLPMS_Main.Hide();
 
    FLPMS_Excel := TFLPMS_Excel.Create(Application);
-//   FLPMS_Excel.ThisUnique := edtUniqueF.Text;
+
+   FLPMS_Excel.Host     := HostName;
+   FLPMS_Excel.UserID   := UserName;
+   FLPMS_Excel.Password := Password;
+
    FLPMS_Excel.ShowModal();
    FLPMS_Excel.Destroy;
 

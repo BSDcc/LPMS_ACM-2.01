@@ -1,63 +1,99 @@
 object FLPMS_Excel: TFLPMS_Excel
-  Left = 390
-  Height = 482
-  Top = 143
-  Width = 974
+  Left = 164
+  Height = 650
+  Top = 70
+  Width = 1200
   Caption = 'FLPMS_Excel'
-  ClientHeight = 482
-  ClientWidth = 974
+  ClientHeight = 650
+  ClientWidth = 1200
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '2.0.6.0'
   object Panel1: TPanel
     Left = 0
-    Height = 50
+    Height = 40
     Top = 0
-    Width = 974
+    Width = 1200
     Align = alTop
     BevelOuter = bvNone
-    ClientHeight = 50
-    ClientWidth = 974
+    ClientHeight = 40
+    ClientWidth = 1200
     TabOrder = 0
     object Bevel3: TBevel
       Left = 0
       Height = 2
       Top = 0
-      Width = 974
+      Width = 1200
       Align = alTop
     end
     object Bevel4: TBevel
       Left = 0
       Height = 2
-      Top = 48
-      Width = 974
+      Top = 38
+      Width = 1200
       Align = alBottom
+    end
+    object StaticText1: TStaticText
+      Left = 8
+      Height = 27
+      Top = 8
+      Width = 546
+      AutoSize = True
+      Caption = 'LPMS Access Control Manager - Company and User definition export'
+      Font.Height = -16
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+    end
+    object Label2: TLabel
+      Left = 1010
+      Height = 17
+      Top = 12
+      Width = 41
+      Anchors = [akTop, akRight]
+      Caption = 'Sheets:'
+      ParentColor = False
+    end
+    object cbxSheets: TComboBox
+      Left = 1066
+      Height = 25
+      Top = 8
+      Width = 126
+      Anchors = [akTop, akRight]
+      ItemHeight = 0
+      Items.Strings = (
+        '-'
+      )
+      OnSelect = cbxSheetsSelect
+      Style = csDropDownList
+      TabOrder = 1
     end
   end
   object Panel2: TPanel
     Left = 0
-    Height = 392
-    Top = 50
-    Width = 974
+    Height = 570
+    Top = 40
+    Width = 1200
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 392
-    ClientWidth = 974
+    ClientHeight = 570
+    ClientWidth = 1200
     TabOrder = 1
     object Panel4: TPanel
       Left = 0
-      Height = 392
+      Height = 570
       Top = 0
       Width = 8
       Align = alLeft
       BevelOuter = bvNone
-      ClientHeight = 392
+      ClientHeight = 570
       ClientWidth = 8
       TabOrder = 0
       object Bevel2: TBevel
         Left = 6
-        Height = 392
+        Height = 570
         Top = 0
         Width = 2
         Align = alRight
@@ -65,54 +101,45 @@ object FLPMS_Excel: TFLPMS_Excel
     end
     object Panel5: TPanel
       Left = 8
-      Height = 392
+      Height = 570
       Top = 0
-      Width = 958
+      Width = 1184
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 392
-      ClientWidth = 958
+      ClientHeight = 570
+      ClientWidth = 1184
       TabOrder = 1
       object wsgGrid: TsWorksheetGrid
         Left = 0
-        Height = 392
+        Height = 570
         Top = 0
-        Width = 958
-        AutoCalc = True
+        Width = 1184
         FrozenCols = 0
         FrozenRows = 0
-        ReadFormulas = True
+        ReadFormulas = False
         TextOverflow = True
-        WorkbookSource = wbsSource
+        WorkbookSource = wsgGrid.internal
         Align = alClient
         AutoAdvance = aaDown
         DefaultColWidth = 64
-        DefaultRowHeight = 22
-        Font.Color = clBlack
-        Font.Height = -13
-        Font.Name = 'Arial'
-        MouseWheelOption = mwGrid
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSizing, goColSizing, goThumbTracking, goDblClickAutoSize, goCellHints]
-        ParentFont = False
+        DefaultRowHeight = 24
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSizing, goColSizing, goDblClickAutoSize, goSmoothScroll]
         TabOrder = 0
-        TitleFont.Color = clBlack
-        TitleFont.Height = -13
-        TitleFont.Name = 'Arial'
       end
     end
     object Panel6: TPanel
-      Left = 966
-      Height = 392
+      Left = 1192
+      Height = 570
       Top = 0
       Width = 8
       Align = alRight
       BevelOuter = bvNone
-      ClientHeight = 392
+      ClientHeight = 570
       ClientWidth = 8
       TabOrder = 2
       object Bevel5: TBevel
         Left = 0
-        Height = 392
+        Height = 570
         Top = 0
         Width = 2
         Align = alLeft
@@ -122,18 +149,18 @@ object FLPMS_Excel: TFLPMS_Excel
   object Panel3: TPanel
     Left = 0
     Height = 40
-    Top = 442
-    Width = 974
+    Top = 610
+    Width = 1200
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 40
-    ClientWidth = 974
+    ClientWidth = 1200
     TabOrder = 2
     object Bevel1: TBevel
       Left = 0
       Height = 2
       Top = 0
-      Width = 974
+      Width = 1200
       Align = alTop
     end
     object cbOpen: TCheckBox
@@ -141,7 +168,6 @@ object FLPMS_Excel: TFLPMS_Excel
       Height = 21
       Top = 12
       Width = 144
-      Anchors = [akTop, akRight]
       Caption = 'Open File after Export'
       TabOrder = 0
     end
@@ -174,7 +200,6 @@ object FLPMS_Excel: TFLPMS_Excel
       Top = 8
       Width = 75
       Caption = 'Export'
-      Default = True
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
         2000000000000004000064000000640000000000000000000000000000000000
@@ -215,10 +240,11 @@ object FLPMS_Excel: TFLPMS_Excel
       TabOrder = 2
     end
     object btnReturn: TBitBtn
-      Left = 891
+      Left = 1117
       Height = 25
       Top = 8
       Width = 75
+      Anchors = [akTop, akRight]
       Caption = 'Return'
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -259,28 +285,86 @@ object FLPMS_Excel: TFLPMS_Excel
       OnClick = btnReturnClick
       TabOrder = 3
     end
-  end
-  object wbsSource: TsWorkbookSource
-    Options = []
-    left = 584
-    top = 176
-  end
-  object alList: TActionList
-    left = 504
-    top = 176
-    object FileSaveAs: TFileSaveAs
-      Category = 'File'
-      Caption = 'Save &As ...'
-      Dialog.DefaultExt = '.xlsx'
-      Dialog.InitialDir = '~'
-      Dialog.Options = [ofOverwritePrompt, ofOldStyleDialog, ofEnableSizing, ofViewDetail]
-      Hint = 'Save As'
-      BeforeExecute = FileSaveAsBeforeExecute
-      OnAccept = FileSaveAsAccept
+    object btnOpen: TBitBtn
+      Left = 1032
+      Height = 25
+      Top = 8
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'Open'
+      Default = True
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        20000000000000040000640000006400000000000000000000000274AC4D0274
+        ACFF0274ACFF0274ACFF0274ACFF0274ACFF0274ACFF0274ACFF0274ACFF0274
+        ACFF0274ACFF0274ACFF0274ACFF0274ACFF00000000000000000274ACFF138A
+        C4FF279ED5FF4BBFF7FF4BBFF7FF4ABFF7FF4ABFF7FF4ABFF7FF4ABFF6FF4ABF
+        F7FF4ABFF6FF4BC0F7FF2398CCFF0274ACFF0274AC4D000000000274ACFF33AA
+        E0FF0F84BCFF54C7F8FF54C7F8FF54C7F7FF53C7F8FF54C7F7FF54C7F8FF54C7
+        F8FF54C7F8FF53C7F7FF279DCEFF6ACBE5FF0274ACFF000000000274ACFF57CA
+        F8FF0274ACFF5ED1FAFF5ED1FAFF5ED1FAFF5ED1FAFF5ED1FAFF5ED1FAFF5FD1
+        FAFF5ED1F8FF5ED1F8FF2CA1CEFF99EDF7FF0274ACFF000000000274ACFF5ED3
+        FAFF0B81B7FF4BC1E9FF69DCFAFF6ADCFAFF69DCFBFF69DCFBFF6ADCFBFF69DC
+        FBFF69DCFAFF6ADDFBFF2FA6CFFF9FF0F7FF0274ACFF0274AC4D0274ACFF68DA
+        FBFF2BA4D1FF27A0CCFF74E5FBFF74E5FBFF74E5FBFF74E5FCFF74E5FCFF74E5
+        FBFF40AB8BFF055E0CFF28989FFFA3F4F7FF52BBD7FF0274ACFF0274ACFF70E3
+        FBFF5CD1EFFF097EB2FF7AEAFCFF79EBFCFF7AEBFCFF7AEBFCFF7AEBFEFF42AF
+        8BFF05660AFF149A27FF056314FF9EE6E1FFA4EAF2FF0274ACFF0274ACFF7AEB
+        FEFF7AEBFCFF0A7FB5FF0274ACFF0274ACFF0274ACFF0274ACFF02685FFF0668
+        0DFF21B13CFF1FB138FF159A27FF03601CFF02729FFF0274ACFF0274ACFF83F2
+        FEFF82F3FEFF82F3FEFF83F2FCFF83F3FEFF82F3FEFF48B28BFF086A0FFF2BBD
+        4DFF29BF4AFF24B841FF1FB239FF159C28FF015603CF015603100274ACFFFEFE
+        FEFF89FAFFFF89FAFEFF89FAFEFF8AF8FEFF55C29DFF015603FF086B0FFF0A70
+        13FF24AF41FF29BF4BFF1FAB39FF066B0DFF035B05FF015603CF0274AC4D0274
+        ACFFFEFEFEFF8FFEFFFF8FFEFFFF8FFEFFFF0274ACFF0274ACFF0274ACFF0265
+        49FF24AC41FF2FC655FF1B9D32FF015603800000000000000000000000000274
+        AC4D0274ACFF0274ACFF0274ACFF0274ACFF0274AC4D00000000000000000156
+        038028B149FF35CE5FFF0F7E1CFF015603300000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000156
+        03BF39CE65FF36CB62FF035D07DF000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000015603401383
+        23FF3ED76DFF0F7B1CFF01560350000000000000000000000000000000000000
+        0000000000000000000000000000000000000156033001560380096C11FF35C5
+        5CFF138323FF0156039F00000000000000000000000000000000000000000000
+        0000000000000000000000000000015603DF015603FF035D07FF0C7416FF0156
+        03CF015603500000000000000000000000000000000000000000
+      }
+      OnClick = btnOpenClick
+      TabOrder = 4
+    end
+    object cbClose: TCheckBox
+      Left = 838
+      Height = 21
+      Top = 12
+      Width = 180
+      Anchors = [akTop, akRight]
+      Caption = 'Close this Dialog upon Open'
+      TabOrder = 5
     end
   end
-  object imgSmall: TImageList
+  object sqlQry1: TSQLQuery
+    FieldDefs = <>
+    Transaction = sqlTran
+    Params = <>
     left = 432
-    top = 176
+    top = 256
+  end
+  object sqlQry2: TSQLQuery
+    FieldDefs = <>
+    Transaction = sqlTran
+    Params = <>
+    left = 504
+    top = 256
+  end
+  object sqlTran: TSQLTransaction
+    Active = False
+    left = 584
+    top = 256
+  end
+  object dlgSelDir: TSelectDirectoryDialog
+    InitialDir = '~'
+    Options = [ofNoTestFileCreate, ofEnableSizing, ofViewDetail]
+    left = 656
+    top = 256
   end
 end
