@@ -18,7 +18,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="58"/>
+      <BuildNr Value="67"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -103,18 +103,21 @@
       <FormatVersion Value="2"/>
       <Modes Count="0"/>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="4">
       <Item1>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="laz_fpspreadsheet_visual"/>
       </Item1>
       <Item2>
-        <PackageName Value="FCL"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item2>
       <Item3>
-        <PackageName Value="LCL"/>
+        <PackageName Value="FCL"/>
       </Item3>
+      <Item4>
+        <PackageName Value="LCL"/>
+      </Item4>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="LPMS_ACM.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -151,6 +154,14 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Show"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="lpms_excel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FLPMS_Excel"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="LPMS_Excel"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

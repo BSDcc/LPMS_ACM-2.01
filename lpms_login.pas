@@ -25,7 +25,7 @@ uses
 {$ENDIF}
 
    Classes, SysUtils, sqldb, Forms, Controls, Graphics, Dialogs, StdCtrls,
-   ExtCtrls, ComCtrls, LCLType, FileInfo, DynLibs, INIFiles,
+   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    winpeimagereader, mysql56conn;
@@ -103,16 +103,8 @@ private  { Private Declarations }
    {$ENDIF}
 {$ENDIF}
 
-//   function  cmdlOpt(OptList : string; Options, Parms : TStringList) : integer;
    function  DoLogin() : boolean;
    procedure GetVersion();
-   function  MaskField(InputField: string; MaskType: integer) : string;
-
-
-type
-
-   MASK_TYPES   = (MA_MASK,          // Encode the input field
-                   MA_UNMASK);       // Decode the input field
 
 public   { Public Declarations }
 
@@ -120,7 +112,11 @@ public   { Public Declarations }
    AutoLogin                                              : boolean;
    CopyRight, UserName, Password, Version, DTDLocation    : string;
    AutoUser, AutoPass, AutoHost, Path, SMTPHost, SMTPPass : string;
-   MyLibC                                                 : TLibHandle;
+
+type
+
+   MASK_TYPES   = (MA_MASK,          // Encode the input field
+                   MA_UNMASK);       // Decode the input field
 
 end;
 
@@ -129,6 +125,14 @@ end;
 //------------------------------------------------------------------------------
 var
    FLPMS_Login: TFLPMS_Login;
+
+{$IFDEF WINDOWS}
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; cdecl; external 'BSD_Utilities';
+   function  MaskField(InputField: string; MaskType: integer): string; cdecl; external 'BSD_Utilities';
+{$ELSE}
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; cdecl; external 'libbsd_utilities';
+   function  MaskField(InputField: string; MaskType: integer): string; cdecl; external 'libbsd_utilities';
+{$ENDIF}
 
 implementation
 
@@ -142,15 +146,11 @@ implementation
 // Executed after the form is created
 //------------------------------------------------------------------------------
 procedure TFLPMS_Login.FormCreate(Sender: TObject);
-type
-   TMyFunc = function (OptList : string; CmdLine, ParmStr : TStringList): integer; stdcall;
-
 var
-   idx, NumParms    : integer;
-   DLLName, INILoc  : string;
-   Params, Args     : TStringList;
-   IniFile          : TINIFile;
-   MyFunc           : TMyFunc;
+   idx, NumParms  : integer;
+   INILoc         : string;
+   Params, Args   : TStringList;
+   IniFile        : TINIFile;
 
 begin
 
@@ -190,44 +190,19 @@ begin
    Version := 'Version ' + Major + '.' + Minor + '.' + VerRelease + ' [' + Build + ']';
 {$ENDIF}
 
-//--- Load the Utility DLL
-
-   MyLibC := DynLibs.NilHandle;
-   Path   := ExtractFilePath(Application.ExeName);
-
-{$IFDEF WINDOWS}
-   DLLName := 'LPMS_EncDec.';
-{$ELSE}
-   DLLName := 'liblpms_encdec.';
-{$ENDIF}
-
-   MyLibC := LoadLibrary(Path + DLLName + SharedSuffix);
-
-//--- Check whether the DLL was loaded successfully
-
-   if MyLibC = DynLibs.NilHandle then begin
-
-      Application.MessageBox('FATAL: Unexpected/Unhandled error: ''Unable to load required Dynamic Load Library'' - LPMS_ACM cannot continue.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
-      Application.Terminate;
-      Exit;
-
-   end;
-
 //--- Check whether any paramters were passed and retrieve if so
 
    try
 
-      Params  := TStringList.Create;     // Will be freed automatically when the DLL is unloaded
+      Params  := TStringList.Create;
       Args    := TStringList.Create;
 
       for idx := 1 to ParamCount do
          Args.Add(ParamStr(idx));
 
-//--- Call and execute the cmdlOptions function in the DLL
+//--- Call and execute the cmdlOptions function in the BSD_Utilities DLL
 
-      MyFunc := TMyFunc(GetProcedureAddress(FLPMS_Login.MyLibC, 'cmdlOptions'));
-
-      NumParms := MyFunc('u:p:H:', Args, Params);
+      NumParms := cmdlOptions('u:p:H:', Args, Params);
 
       if NumParms > 0 then begin
 
@@ -265,7 +240,7 @@ begin
 
    finally
 
-//      Params.Destroy;
+      Params.Destroy;
       Args.Free;
 
    end;
@@ -336,12 +311,6 @@ begin
    IniFile.WriteString('Config','SMTPPass',SMTPPass);
 
    IniFile.Destroy;
-
-//--- Unload the Utility DLL if it was loaded successfully
-
-      if MyLibC <>  DynLibs.NilHandle then
-         if FreeLibrary(MyLibC) then
-            MyLibC := DynLibs.NilHandle;
 
 end;
 
@@ -554,6 +523,7 @@ begin
 
 end;
 
+{
 //------------------------------------------------------------------------------
 // Function to mask/unmask a field written to a plain text file
 //------------------------------------------------------------------------------
@@ -646,7 +616,7 @@ begin
    end;
 
 end;
-
+}
 
 {
 //------------------------------------------------------------------------------

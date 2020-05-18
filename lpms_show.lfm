@@ -1,7 +1,7 @@
 object FLPMS_Show: TFLPMS_Show
-  Left = 289
+  Left = 500
   Height = 353
-  Top = 250
+  Top = 203
   Width = 702
   Caption = 'FLPMS_Show'
   ClientHeight = 353

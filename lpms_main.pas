@@ -5,6 +5,8 @@
 // Platform...: Lazarus (Winblows, Linux, Raspbian & macOS)
 // Author.....: Francois De Bruin Meyer (BlueCrane Software Development CC)
 //------------------------------------------------------------------------------
+// Description: This is the main module for the LPMS_ACM utility
+//------------------------------------------------------------------------------
 // History....: 10 May 2020 - Adapt from LPMS C++ version
 //------------------------------------------------------------------------------
 
@@ -20,7 +22,7 @@ interface
 uses
    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
    Menus, ActnList, StdCtrls, Buttons, Spin, DateTimePicker, StrUtils, LCLType,
-   Process, DynLibs,
+   Process,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    mysql56conn, sqldb;
@@ -247,32 +249,6 @@ type
    procedure ToolsGenerateExecute(Sender: TObject);
    procedure tvTreeClick(Sender: TObject);
 
-type
-
-   REC_Key_Priv = record
-      Key              : string;
-      DaysLeft         : integer;
-      LPMS_Collections : boolean;
-      LPMS_DocGen      : boolean;
-      LPMS_Floating    : boolean;
-      LPMS_Option4     : boolean;
-      License          : integer;
-      DBPrefix         : string;
-      Unique           : string;
-      KeyDate          : string;
-   end;
-
-   REC_Key_Values = record
-      Unique           : string;
-      ExpDate          : string;
-      DBPrefix         : string;
-      LPMS_Collections : boolean;
-      LPMS_DocGen      : boolean;
-      LPMS_Floating    : boolean;
-      LPMS_Options4    : boolean;
-      License          : integer;
-   end;
-
 private  { Private Declarations }
 
 {$IFDEF WINDOWS}                   // Target is Winblows
@@ -298,9 +274,6 @@ private  { Private Declarations }
    PlaceHolder                        : integer;
    DoSave, CanUpdate, DoGen, FirstRun : boolean;
    Root                               : TTreeNode;
-   This_Key_Values                    : REC_Key_Values;
-   This_Key_Priv                      : REC_Key_Priv;
-
 
    procedure OpenDB(ThisType: integer);
    function  GetData(ThisType: integer; Company, User, Unique: string) : boolean;
@@ -314,8 +287,7 @@ private  { Private Declarations }
    function  GetUnique(Unique: string; ThisType: integer; var UniqueCount: integer) : string;
    procedure LPMS_ACM_Abort(Msg: string);
    function  ReplaceQuote(S1: string; ThisType: integer) : string;
-   function  DeCode() : integer;
-   function  EnCode() : boolean;
+   procedure SetPlatform();
 
 type
    DB_TYPE = (DB_OPEN,             // Open the Database
@@ -356,12 +328,54 @@ end;
 //------------------------------------------------------------------------------
 // Global variables
 //------------------------------------------------------------------------------
+
+type
+
+   REC_Key_Priv = record
+      Key              : string;
+      DaysLeft         : integer;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Option4     : boolean;
+      License          : integer;
+      DBPrefix         : string;
+      Unique           : string;
+      KeyDate          : string;
+   end;
+
+   REC_Key_Values = record
+      Unique           : string;
+      ExpDate          : string;
+      DBPrefix         : string;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Options4    : boolean;
+      License          : integer;
+   end;
+
 var
    FLPMS_Main: TFLPMS_Main;
 
+   This_Key_Values : REC_Key_Values;
+   This_Key_Priv   : REC_Key_Priv;
+
+//--- Utilities contained in BSD_Utilities.dll
+
+{$IFDEF WINDOWS}
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'BSD_Utilities';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'BSD_Utilities';
+{$ELSE}
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities';
+{$ENDIF}
+
 implementation
 
-   uses LPMS_Login, LPMS_InputQuery, LPMS_Show;
+   uses LPMS_Login, LPMS_InputQuery, LPMS_Show, LPMS_Excel;
 
 {$R *.lfm}
 
@@ -404,6 +418,12 @@ begin
    sqlTran.DataBase    := sqlCon;
    adoQry1.Transaction := sqlTran;
    adoQry2.Transaction := sqlTran;
+
+
+//--- Adjust a few key display artifacts for optimum presentation on the
+//--- execution platform
+
+   SetPlatform();
 
 end;
 
@@ -775,7 +795,7 @@ begin
 //--- Decode the Key and populate the fields contained in the key
 
       This_Key_Priv.Key := edtKeyU.Text;
-      DaysLeft := DeCode();
+      DaysLeft := DoDeCode(This_Key_Priv);
 
       if DaysLeft < 0 then begin
 
@@ -1172,7 +1192,7 @@ begin
 
       if edtPrefixC.Text = 'XXX000' then begin
 
-         Application.MessageBox('''Prefix'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox(PChar('Prefix ''' + edtPrefixC.Text + ''' is reserved and cannot be used.'),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          edtPrefixC.SetFocus();
          Exit;
 
@@ -1194,7 +1214,7 @@ begin
 
       if Trim(edtPrefixC.Text) = '' then begin
 
-         Application.MessageBox('''Prefix'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox('''Prefix'' is a required field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          edtPrefixC.SetFocus();
          Exit;
 
@@ -1202,7 +1222,7 @@ begin
 
       if cbxKeyTypeC.ItemIndex < 1 then begin
 
-         Application.MessageBox('''Key Type'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox(PChar('Key Type ''' + cbxKeyTypeC.Text + ''' is not a valid selection.'),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          cbxKeyTypeC.SetFocus();
          Exit;
 
@@ -1210,7 +1230,7 @@ begin
 
       if Trim(edtCompanyC.Text) = '' then begin
 
-         Application.MessageBox('''Company'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox('''Company'' is a require field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          edtCompanyC.SetFocus();
          Exit;
 
@@ -1220,7 +1240,7 @@ begin
 //--- If we get here then all information is there - do the Update
 
       if UpdateCpy() = True then
-         Application.MessageBox('Update completed.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
+         Application.MessageBox('Update succesfully completed.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
 
       tvTree.Selected.Text := edtPrefixC.Text;
 
@@ -1282,7 +1302,7 @@ begin
 
       if Trim(edtUserNameU.Text) = '' then begin
 
-         Application.MessageBox('''Username'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox('''Username'' is a required field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          edtUserNameU.SetFocus();
          Exit;
 
@@ -1290,7 +1310,7 @@ begin
 
       if Trim(edtCompanyU.Text) = '' then begin
 
-         Application.MessageBox('''Company'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox('''Company'' is a required field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          edtCompanyU.SetFocus();
          Exit;
 
@@ -1298,7 +1318,7 @@ begin
 
       if Trim(edtEmailU.Text) = '' then begin
 
-         Application.MessageBox('''Email'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox('''Email'' is a required field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          edtEmailU.SetFocus();
          Exit;
 
@@ -1306,7 +1326,7 @@ begin
 
       if Trim(edtContactU.Text) = '' then begin
 
-         Application.MessageBox('''Contact No'' must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox('''Contact No'' is a required field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          edtContactU.SetFocus();
          Exit;
 
@@ -1314,7 +1334,7 @@ begin
 
       if Length(edtUniqueU.Text) <> 12 then begin
 
-         Application.MessageBox('''Unique'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox(PChar('' + edtUniqueU.Text + ''' is not a valid value for ''Unique''.'),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          edtUniqueU.SetFocus();
          Exit;
 
@@ -1322,15 +1342,23 @@ begin
 
       if cbxLicTypeU.ItemIndex < 1 then begin
 
-         Application.MessageBox('''License Type'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox(PChar('License Type ''' + cbxLicTypeU.Text + ''' is not a valid selection.'),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          cbxLicTypeU.SetFocus();
+         Exit;
+
+      end;
+
+      if Trim(edtKeyU.Text) = '' then begin
+
+         Application.MessageBox('''Key'' is a required field and must be provided.' + #10 + #10 + #10 + 'HINT: Click on ''Generate'' to generate a Key.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         edtKeyU.SetFocus();
          Exit;
 
       end;
 
       if Length(edtKeyU.Text) <> 38 then begin
 
-         Application.MessageBox('''Key'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox(PChar('' + edtKeyU.Text + ''' is not a valid value for ''Key''.'),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          edtKeyU.SetFocus();
          Exit;
 
@@ -1340,7 +1368,7 @@ begin
 
          if cbxNewLicU.ItemIndex = 0 then begin
 
-            Application.MessageBox('''New Lic Type'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+            Application.MessageBox(PChar('New Lic Type ''' + cbxNewLicU.Text + ''' is not a valid selection.'),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
             cbxNewLicU.SetFocus();
             Exit;
 
@@ -1348,7 +1376,7 @@ begin
 
          if cbxNewPrefixU.ItemIndex = 0 then begin
 
-            Application.MessageBox('''New Prefix'' is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+            Application.MessageBox(PChar('New Prefix ''' + cbxNewPrefixU.Text + ''' is not a valid selection.'),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
             cbxNewPrefixU.SetFocus();
             Exit;
 
@@ -1359,7 +1387,7 @@ begin
 //--- If we get here then all information is there - do the Update
 
       if UpdateUser() = True then
-         Application.MessageBox('Update completed.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
+         Application.MessageBox('Update successfully completed.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
 
       tvTree.Selected.Text := edtUserNameU.Text;
 
@@ -1379,7 +1407,7 @@ begin
 
       if Trim(edtPassword.Text) = '' then begin
 
-         Application.MessageBox('''Password'' is a required field - please provide then try again.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox('''Password'' is a required field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          edtPassword.SetFocus();
          Exit;
 
@@ -1387,7 +1415,7 @@ begin
 
       if Trim(edtHost.Text) = '' then begin
 
-         Application.MessageBox('''Host'' is a required field - please provide then try again.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Application.MessageBox('''Host'' is a required field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
          edtHost.SetFocus();
          Exit;
 
@@ -1542,11 +1570,11 @@ var
 begin
 
    This_Key_Priv.Key := edtKeyR.Text;
-   DaysLeft          := DeCode();
+   DaysLeft          := DoDeCode(This_Key_Priv);
 
    if (DaysLeft = ord(ERR_INVALID) - 3) or (DaysLeft = ord(ERR_LENGTH) - 3) then begin
 
-      Application.MessageBox('Unlock Key is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+      Application.MessageBox('The supplied Unlock Key is invalid.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
       Exit;
 
    end else if DaysLeft = ord(ERR_EXPIRED) - 3 then
@@ -1606,7 +1634,7 @@ begin
    This_Key_Values.LPMS_Floating    := cbFloatingR.Checked;
    This_Key_Values.LPMS_Options4    := cbOption4R.Checked;
 
-   if EnCode() = True then begin
+   if DoEnCode(This_Key_Values) = True then begin
 
       edtKeyR.Text := This_Key_Values.Unique;
       edtKeyR.SetFocus();
@@ -1794,49 +1822,36 @@ begin
 
 end;
 
+{
 //------------------------------------------------------------------------------
 // Function to load the LPMS_EncDec DLL and decode a key contained in
 // Decode_Key_Priv
 //------------------------------------------------------------------------------
 function TFLPMS_Main.DeCode() : integer;
-type
-  TMyFunc = function (Decode_Key_Priv : REC_Key_Priv) : REC_Key_Priv; stdcall;
-
-var
-   MyFunc           : TMyFunc;
-
 begin
 
 //--- Call and execute the DoDecode function in the DLL
 
-   MyFunc := TMyFunc(GetProcedureAddress(FLPMS_Login.MyLibC, 'DoDecode'));
-
-   This_Key_Priv := MyFunc(This_Key_Priv);
+   This_Key_Priv := DoDecode(This_Key_Priv);
 
 //--- Return the Result
 
    Result := This_Key_Priv.DaysLeft;
 
 end;
+}
 
+{
 //------------------------------------------------------------------------------
 // Function to load the LPMS_EncDec DLL and encode a key with the information
 // contained in Encode_Key_Values
 //------------------------------------------------------------------------------
 function TFLPMS_Main.EnCode() : boolean;
-type
-  TMyFunc = function (Encode_Key_Values : REC_Key_Values) : REC_Key_Values; stdcall;
-
-var
-   MyFunc : TMyFunc;
-
 begin
 
 //--- Call and execute the DoDecode function in the DLL
 
-   MyFunc := TMyFunc(GetProcedureAddress(FLPMS_Login.MyLibC, 'DoEncode'));
-
-   This_Key_Values := MyFunc(This_Key_Values);
+   This_Key_Values := DoEncode(This_Key_Values);
 
 //--- If the encoding was successful Unique will contain the Key
 
@@ -1846,6 +1861,7 @@ begin
       Result := True;
 
 end;
+}
 
 //------------------------------------------------------------------------------
 // User clicked on the Backup button
@@ -2102,7 +2118,7 @@ begin
    This_Key_Values.LPMS_Floating    := cbFloatingU.Checked;
    This_Key_Values.LPMS_Options4    := cbOption4U.Checked;
 
-   if EnCode() = True then begin
+   if DoEnCode(This_Key_Values) = True then begin
 
       edtKeyU.Text := This_Key_Values.Unique;
       Application.MessageBox('Unlock Key generation successful.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
@@ -2121,18 +2137,22 @@ end;
 procedure TFLPMS_Main.ToolsExportExecute(Sender: TObject);
 begin
 
+   FLPMS_Main.Hide();
+
+   FLPMS_Excel := TFLPMS_Excel.Create(Application);
+//   FLPMS_Excel.ThisUnique := edtUniqueF.Text;
+   FLPMS_Excel.ShowModal();
+   FLPMS_Excel.Destroy;
+
+   FLPMS_Main.Show();
+
 end;
 
 //------------------------------------------------------------------------------
 // User clicked on the Send Email button
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.ToolsEmailExecute(Sender: TObject);
-type
-  TMyFunc = function (From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string) : boolean; stdcall;
-
 var
-   MyFunc       : TMyFunc;
-
    From         : string;      // Email address of the Sender
    ToStr        : string;      // To addresses, comma delimited
    CcStr        : string;      // Cc addresses, comma delimited
@@ -2197,21 +2217,10 @@ begin
 
 //--- Call and execute the SendMimeMail function in the DLL
 
-   MyFunc := TMyFunc(GetProcedureAddress(FLPMS_Login.MyLibC, 'SendMimeMail'));
-
-   if MyFunc(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr) = False then
+   if SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr) = False then
       Application.MessageBox('Sending Email failed! Please check Email set-up details.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP))
    else
       Application.MessageBox('Send Email completed.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
-
-{
-
-   if cbEditEmail.Checked = True then
-      emlSend.Flags << sfDialog
-   else
-      emlSend.Flags >> sfDialog;
-
-}
 
 end;
 
@@ -2773,6 +2782,84 @@ begin
    end;
 
    Result := S1;
+
+end;
+
+//------------------------------------------------------------------------------
+// Adjust some display artifacts for optimum presentation on the execution
+// platform
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.SetPlatform();
+begin
+
+{$IFDEF WINDOWS}
+
+//--- Root Panel
+
+   btnClear.Height    :=  23;
+   btnClear.Width     :=  23;
+   btnDecodeR.Height  :=  23;
+   btnEncodeR.Height  :=  23;
+   btnFindR.Height    :=  23;
+   dtpExpiryR.Left    := 192;
+   dtpExpiryR.Width   := 127;
+   cbxLicTypeR.Height :=  23;
+
+//--- User Panel
+
+   btnUnlock.Height   := 23;
+   btnUnlock.Width    := 23;
+   btnLock.Height     := 23;
+   btnLock.Width      := 23;
+   cbxLicTypeU.Height := 23;
+
+{$ENDIF}
+
+{$IFDEF LINUX}
+
+//--- Root Panel
+
+   btnClear.Height    :=  26;
+   btnClear.Width     :=  26;
+   btnDecodeR.Height  :=  26;
+   btnEncodeR.Height  :=  26;
+   btnFindR.Height    :=  26;
+   dtpExpiryR.Left    := 193;
+   dtpExpiryR.Width   := 126;
+   cbxLicTypeR.Height :=  26;
+
+//--- User Panel
+
+   btnUnlock.Height   := 26;
+   btnUnlock.Width    := 26;
+   btnLock.Height     := 26;
+   btnLock.Width      := 26;
+   cbxLicTypeU.Height := 26;
+
+{$ENDIF}
+
+{$IFDEF DARWIN}
+
+//--- Root Panel
+
+   btnClear.Height    :=  23;
+   btnClear.Width     :=  23;
+   btnDecodeR.Height  :=  23;
+   btnEncodeR.Height  :=  23;
+   btnFindR.Height    :=  23;
+   dtpExpiryR.Left    := 192;
+   dtpExpiryR.Width   := 127;
+   cbxLicTypeR.Height :=  23;
+
+//--- User Panel
+
+   btnUnlock.Height   := 23;
+   btnUnlock.Width    := 23;
+   btnLock.Height     := 23;
+   btnLock.Width      := 23;
+   cbxLicTypeU.Height := 23;
+
+{$ENDIF}
 
 end;
 
