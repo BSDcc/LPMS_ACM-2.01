@@ -40,6 +40,9 @@ type
 
 private   { Private Declarations }
 
+   procedure SetPlatform();
+
+
 public    { Public Declarations }
 
 end;
@@ -63,6 +66,8 @@ implementation
 //------------------------------------------------------------------------------
 procedure TFLPMS_InputQuery. FormShow( Sender: TObject);
 begin
+
+   SetPlatform();
 
    edtInput.Clear;
    edtInput.SetFocus;
@@ -113,6 +118,33 @@ begin
       btnView.Glyph.LoadFromFile(Location + 'eye_16.bmp');
 
    end;
+
+end;
+
+//------------------------------------------------------------------------------
+// Adjust some display artifacts for optimum presentation on the execution
+// platform
+//------------------------------------------------------------------------------
+procedure TFLPMS_InputQuery.SetPlatform();
+begin
+
+{$IFDEF WINDOWS}
+
+   btnView.Top := 32;
+
+{$ENDIF}
+
+{$IFDEF LINUX}
+
+   btnView.Top := 34;
+
+{$ENDIF}
+
+{$IFDEF DARWIN}
+
+   btnView.Top := 34;
+
+{$ENDIF}
 
 end;
 

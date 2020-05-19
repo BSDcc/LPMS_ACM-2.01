@@ -24,7 +24,7 @@ object FLPMS_Show: TFLPMS_Show
   object btnSelect: TButton
     Left = 538
     Height = 25
-    Top = 321
+    Top = 324
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Select'
@@ -34,8 +34,8 @@ object FLPMS_Show: TFLPMS_Show
   end
   object edtSelected: TEdit
     Left = 8
-    Height = 27
-    Top = 321
+    Height = 23
+    Top = 325
     Width = 524
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
@@ -51,7 +51,7 @@ object FLPMS_Show: TFLPMS_Show
         AutoSize = True
         Caption = 'Company'
         MinWidth = 180
-        Width = 180
+        Width = 67
       end    
       item
         Caption = 'User'

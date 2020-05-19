@@ -832,10 +832,14 @@ begin
 
       end;
 
+{
       if adoQry2.FieldByName('LPMSKEy_AllowDuplicates').AsString = '1' then
          cbAllowDuplicates.Checked := True
       else
          cbAllowDuplicates.Checked := False;
+}
+
+      cbAllowDuplicates.Checked := StrToBool(adoQry2.FieldByName('LPMSKEy_AllowDuplicates').AsString);
 
       cbCollectU.Checked  := This_Key_Priv.LPMS_Collections;
       cbDocGenU.Checked   := This_Key_Priv.LPMS_DocGen;
@@ -848,7 +852,11 @@ begin
       btnUpdate.Enabled := False;
 
       ToolsGenerate.Enabled := True;
-      ToolsEmail.Enabled    := True;
+
+      if ((Trim(edtServerR.Text) = '') or (Trim(edtPasswordR.Text) = '') or (DaysLeft < 1)) then
+         ToolsEmail.Enabled := False
+      else
+         ToolsEmail.Enabled := True;
 
       edtUserNameU.SetFocus();
 

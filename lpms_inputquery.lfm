@@ -1,7 +1,7 @@
 object FLPMS_InputQuery: TFLPMS_InputQuery
-  Left = 673
+  Left = 915
   Height = 98
-  Top = 219
+  Top = 179
   Width = 320
   Caption = 'FLPMS_InputQuery'
   ClientHeight = 98
@@ -30,15 +30,15 @@ object FLPMS_InputQuery: TFLPMS_InputQuery
   end
   object lblCaption: TLabel
     Left = 16
-    Height = 17
+    Height = 15
     Top = 12
-    Width = 24
+    Width = 23
     Caption = 'ABC'
     ParentColor = False
   end
   object edtInput: TEdit
     Left = 16
-    Height = 27
+    Height = 23
     Top = 34
     Width = 256
     TabOrder = 2

@@ -84,8 +84,9 @@ private   { Private Declarations }
    {$ENDIF}
 {$ENDIF}
 
-   function MySQLAccess(S1: string) : boolean;
-   function ReplaceQuote(S1: string) : string;
+   function  MySQLAccess(S1: string) : boolean;
+   function  ReplaceQuote(S1: string) : string;
+   procedure SetPlatform();
 
 public    { Public Declarations }
 
@@ -136,6 +137,8 @@ begin
    sqlTran.DataBase    := sqlCon;
    sqlQry1.Transaction := sqlTran;
 
+   SetPlatform();
+
 end;
 
 //------------------------------------------------------------------------------
@@ -169,7 +172,7 @@ begin
       ThisList.Caption := ReplaceQuote(sqlQry1.FieldByName('LPMSKey_Company').AsString);
       ThisList.SubItems.Add(ReplaceQuote(sqlQry1.FieldByName('LPMSKey_Name').AsString));
       ThisList.SubItems.Add(ReplaceQuote(sqlQry1.FieldByName('LPMSKey_ExpiryDate').AsString));
-      ThisList.SubItems.Add(Types[sqlQry1.FieldByName('LPMSKey_LicType').AsInteger]);
+      ThisList.SubItems.Add(Types[sqlQry1.FieldByName('LPMSKey_LicType').AsInteger + 1]);
 
       if sqlQry1.FieldByName('LPMSKey_Blocked').AsInteger = 0 then
          ThisList.SubItems.Add('No')
@@ -268,6 +271,36 @@ begin
    S1 := AnsiReplaceStr(S1,'&slash','\');
 
    Result := S1;
+
+end;
+
+//------------------------------------------------------------------------------
+// Adjust some display artifacts for optimum presentation on the execution
+// platform
+//------------------------------------------------------------------------------
+procedure TFLPMS_Show.SetPlatform();
+begin
+
+{$IFDEF WINDOWS}
+
+   btnReturn.Top :=  324;
+   btnSelect.Top :=  324;
+
+{$ENDIF}
+
+{$IFDEF LINUX}
+
+   btnReturn.Top :=  321;
+   btnSelect.Top :=  321;
+
+{$ENDIF}
+
+{$IFDEF DARWIN}
+
+   btnReturn.Top :=  321;
+   btnSelect.Top :=  321;
+
+{$ENDIF}
 
 end;
 
