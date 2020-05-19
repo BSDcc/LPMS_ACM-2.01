@@ -69,6 +69,7 @@ type
    Bevel8: TBevel;
    Bevel9: TBevel;
    btnCancel: TButton;
+   btnPaste: TSpeedButton;
    btnDecodeR: TButton;
    btnDelete: TButton;
    btnEncodeR: TButton;
@@ -78,6 +79,7 @@ type
    btnLockB: TBitBtn;
    btnLockR: TBitBtn;
    btnNew: TButton;
+   btnCopy: TSpeedButton;
    btnUnlock: TBitBtn;
    btnUnlockB: TBitBtn;
    btnUnlockR: TBitBtn;
@@ -220,6 +222,7 @@ type
    procedure ActionsRestoreExecute( Sender: TObject);
    procedure btnCancelClick(Sender: TObject);
    procedure btnClearClick( Sender: TObject);
+   procedure btnCopyClick( Sender: TObject);
    procedure btnDecodeRClick( Sender: TObject);
    procedure btnDeleteClick(Sender: TObject);
    procedure btnEncodeRClick( Sender: TObject);
@@ -228,6 +231,7 @@ type
    procedure btnLockClick( Sender: TObject);
    procedure btnLockRClick( Sender: TObject);
    procedure btnNewClick(Sender: TObject);
+   procedure btnPasteClick( Sender: TObject);
    procedure btnUnlockBClick( Sender: TObject);
    procedure btnUnlockClick( Sender: TObject);
    procedure btnUnlockRClick( Sender: TObject);
@@ -273,6 +277,7 @@ private  { Private Declarations }
 
    PlaceHolder                        : integer;
    DoSave, CanUpdate, DoGen, FirstRun : boolean;
+   ClipKey                            : string;
    Root                               : TTreeNode;
 
    procedure OpenDB(ThisType: integer);
@@ -392,6 +397,8 @@ begin
    DoGen      := False;
    FirstRun   := True;
 
+   ClipKey := '';
+
    DefaultFormatSettings.ShortDateFormat := 'yyyy/MM/dd';
    DefaultFormatSettings.DateSeparator   := '/';
 
@@ -441,6 +448,8 @@ begin
       Exit
    else
       FirstRun := False;
+
+   btnPaste.Enabled := False;
 
    FLPMS_Main.Caption := 'LPMS Access Control Manager';
 
@@ -658,6 +667,29 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+// User clicked on the Copy to Clipboard button on the User screen
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main. btnCopyClick( Sender: TObject);
+begin
+
+   ClipKey := edtKeyU.Text;
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the Paste from Clipboard button on the Root screen
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main. btnPasteClick( Sender: TObject);
+//------------------------------------------------------------------------------
+// User clicked on the Paste from Clipboard key on the Root screen
+//------------------------------------------------------------------------------
+begin
+
+   edtKeyR.Text := ClipKey;
+
+end;
+
+//------------------------------------------------------------------------------
 // User clicked on the TreeView
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.tvTreeClick(Sender: TObject);
@@ -715,6 +747,11 @@ begin
 
       ToolsGenerate.Enabled := False;
       ToolsEmail.Enabled    := False;
+
+      if Trim(ClipKey) = '' then
+         btnPaste.Enabled := False
+      else
+         btnPaste.Enabled := True;
 
       edtKeyR.SetFocus();
 
@@ -2810,6 +2847,10 @@ begin
 
    btnClear.Height    :=  23;
    btnClear.Width     :=  23;
+   btnPaste.Height    :=  23;
+   btnPaste.Width     :=  23;
+   btnCopy.Height     :=  23;
+   btnCopy.Width      :=  23;
    btnDecodeR.Height  :=  23;
    btnEncodeR.Height  :=  23;
    btnFindR.Height    :=  23;
@@ -2833,6 +2874,10 @@ begin
 
    btnClear.Height    :=  26;
    btnClear.Width     :=  26;
+   btnPaste.Height    :=  26;
+   btnPaste.Width     :=  26;
+   btnCopy.Height     :=  26;
+   btnCopy.Width      :=  26;
    btnDecodeR.Height  :=  26;
    btnEncodeR.Height  :=  26;
    btnFindR.Height    :=  26;
@@ -2856,6 +2901,10 @@ begin
 
    btnClear.Height    :=  23;
    btnClear.Width     :=  23;
+   btnPaste.Height    :=  23;
+   btnPaste.Width     :=  23;
+   btnCopy.Height     :=  23;
+   btnCopy.Width      :=  23;
    btnDecodeR.Height  :=  23;
    btnEncodeR.Height  :=  23;
    btnFindR.Height    :=  23;
