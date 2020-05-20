@@ -32,10 +32,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="735"/>
         <CursorPos Y="754"/>
-        <FoldState Value=" T3q40h013 pjGmc0M211]BTpf0{7[A4DlP0~15]A3pT062 piYjC0{G[o4Cmf0A4]JejW0B[S4fjO0G2[u4k70f[a49kR0I]Ik1ke0K[94Al30H1 TLw8091 p5*307]Pb;Z0Q'"/>
+        <FoldState Value=" T3q40h013 TLw8091 p5*3072 pb;Z0Q("/>
         <UsageCount Value="173"/>
         <Bookmarks Count="1">
           <Item0 X="41" Y="2189"/>
@@ -65,7 +64,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Show"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="284"/>
+        <TopLine Value="273"/>
         <CursorPos Y="306"/>
         <UsageCount Value="169"/>
         <Loaded Value="True"/>
@@ -78,7 +77,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Excel"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
+        <TopLine Value="169"/>
         <CursorPos X="45" Y="205"/>
         <UsageCount Value="88"/>
         <Loaded Value="True"/>

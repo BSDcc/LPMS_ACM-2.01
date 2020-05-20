@@ -48,7 +48,7 @@ object FLPMS_Excel: TFLPMS_Excel
       TabOrder = 0
     end
     object Label2: TLabel
-      Left = 1010
+      Left = 980
       Height = 17
       Top = 12
       Width = 41
@@ -57,10 +57,10 @@ object FLPMS_Excel: TFLPMS_Excel
       ParentColor = False
     end
     object cbxSheets: TComboBox
-      Left = 1066
+      Left = 1036
       Height = 25
       Top = 8
-      Width = 126
+      Width = 156
       Anchors = [akTop, akRight]
       ItemHeight = 0
       Items.Strings = (
