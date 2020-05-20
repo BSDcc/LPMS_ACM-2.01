@@ -1,7 +1,7 @@
 object FLPMS_Excel: TFLPMS_Excel
-  Left = 331
+  Left = 683
   Height = 650
-  Top = 80
+  Top = 145
   Width = 1200
   Caption = 'FLPMS_Excel'
   ClientHeight = 650
@@ -47,29 +47,6 @@ object FLPMS_Excel: TFLPMS_Excel
       ParentFont = False
       TabOrder = 0
     end
-    object Label2: TLabel
-      Left = 980
-      Height = 17
-      Top = 12
-      Width = 41
-      Anchors = [akTop, akRight]
-      Caption = 'Sheets:'
-      ParentColor = False
-    end
-    object cbxSheets: TComboBox
-      Left = 1036
-      Height = 25
-      Top = 8
-      Width = 156
-      Anchors = [akTop, akRight]
-      ItemHeight = 0
-      Items.Strings = (
-        '-'
-      )
-      OnSelect = cbxSheetsSelect
-      Style = csDropDownList
-      TabOrder = 1
-    end
   end
   object Panel2: TPanel
     Left = 0
@@ -109,22 +86,36 @@ object FLPMS_Excel: TFLPMS_Excel
       ClientHeight = 570
       ClientWidth = 1184
       TabOrder = 1
-      object wsgGrid: TsWorksheetGrid
+      object wtcTabControl: TsWorkbookTabControl
         Left = 0
         Height = 570
         Top = 0
         Width = 1184
-        FrozenCols = 0
-        FrozenRows = 0
-        ReadFormulas = False
-        TextOverflow = True
-        WorkbookSource = wsgGrid.internal
+        TabPosition = tpBottom
+        TabIndex = 0
+        Tabs.Strings = (
+          'Sheet1'
+        )
         Align = alClient
-        AutoAdvance = aaDown
-        DefaultColWidth = 64
-        DefaultRowHeight = 24
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSizing, goColSizing, goDblClickAutoSize, goSmoothScroll]
         TabOrder = 0
+        WorkbookSource = wbsSource
+        object wsgGrid: TsWorksheetGrid
+          Left = 2
+          Height = 536
+          Top = 2
+          Width = 1180
+          FrozenCols = 0
+          FrozenRows = 0
+          ReadFormulas = False
+          TextOverflow = True
+          WorkbookSource = wbsSource
+          Align = alClient
+          AutoAdvance = aaDown
+          DefaultColWidth = 64
+          DefaultRowHeight = 24
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSizing, goColSizing, goDblClickAutoSize, goSmoothScroll]
+          TabOrder = 1
+        end
       end
     end
     object Panel6: TPanel
@@ -369,8 +360,20 @@ object FLPMS_Excel: TFLPMS_Excel
   end
   object wbsSource: TsWorkbookSource
     FileFormat = sfUser
-    Options = []
+    Options = [boAutoCalc, boReadFormulas]
+    left = 720
+    top = 256
+  end
+  object alActions: TActionList
     left = 784
     top = 256
+    object FileSaveAs: TFileSaveAs
+      Category = 'File'
+      Caption = 'Select Folder where generated Spreadsheet must be saved'
+      Dialog.Filter = 'Excel File (*.xlsx)|*.xlsx'
+      Dialog.Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
+      BeforeExecute = FileSaveAsBeforeExecute
+      OnAccept = FileSaveAsAccept
+    end
   end
 end
