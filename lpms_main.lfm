@@ -1,7 +1,7 @@
 object FLPMS_Main: TFLPMS_Main
-  Left = 369
+  Left = 563
   Height = 591
-  Top = 152
+  Top = 171
   Width = 880
   ActiveControl = Panel1
   Caption = 'FLPMS_Main'
@@ -2263,7 +2263,7 @@ object FLPMS_Main: TFLPMS_Main
           TabOrder = 10
         end
         object txtInvalid: TStaticText
-          Left = 408
+          Left = 433
           Height = 18
           Top = 349
           Width = 4

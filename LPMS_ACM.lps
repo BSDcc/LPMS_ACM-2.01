@@ -32,6 +32,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
+        <IsVisibleTab Value="True"/>
         <TopLine Value="735"/>
         <CursorPos Y="754"/>
         <FoldState Value=" T3q40h013 TLw8091 p5*3072 pb;Z0Q("/>
@@ -77,7 +78,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Excel"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <TopLine Value="169"/>
         <CursorPos X="45" Y="205"/>
