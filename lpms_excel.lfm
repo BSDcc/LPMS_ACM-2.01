@@ -1,7 +1,7 @@
 object FLPMS_Excel: TFLPMS_Excel
-  Left = 473
+  Left = 331
   Height = 650
-  Top = 86
+  Top = 80
   Width = 1200
   Caption = 'FLPMS_Excel'
   ClientHeight = 650
@@ -365,6 +365,12 @@ object FLPMS_Excel: TFLPMS_Excel
     InitialDir = '~'
     Options = [ofNoTestFileCreate, ofEnableSizing, ofViewDetail]
     left = 656
+    top = 256
+  end
+  object wbsSource: TsWorkbookSource
+    FileFormat = sfUser
+    Options = []
+    left = 784
     top = 256
   end
 end

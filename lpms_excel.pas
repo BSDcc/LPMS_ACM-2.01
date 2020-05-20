@@ -20,8 +20,8 @@ interface
 //------------------------------------------------------------------------------
 uses
    Classes, SysUtils, sqldb, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-   StdCtrls, ActnList{, StdActns}, EditBtn, Buttons, LCLIntf, LCLType,
-   fpspreadsheet, fpsallformats, fpspreadsheetgrid, fpspreadsheetctrls,
+   StdCtrls, ActnList, EditBtn, Buttons, LCLIntf, LCLType, fpspreadsheet,
+   fpsallformats, fpspreadsheetgrid, fpspreadsheetctrls, fpspreadsheetchart,
    {fpsActions, }fpstypes,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
@@ -78,6 +78,7 @@ type
       sqlQry2: TSQLQuery;
       sqlTran: TSQLTransaction;
       StaticText1: TStaticText;
+      wbsSource: TsWorkbookSource;
       wsgGrid: TsWorksheetGrid;
       procedure btnExportClick( Sender: TObject);
       procedure btnOpenClick( Sender: TObject);
