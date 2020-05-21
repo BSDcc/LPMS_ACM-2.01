@@ -106,6 +106,11 @@ type
    dlgSave: TSaveDialog;
    dtpExpiryDateU: TDateTimePicker;
    dtpExpiryR: TDateTimePicker;
+   edtUserIDB: TEdit;
+   edtPasswordB: TEdit;
+   edtTemplateB: TEdit;
+   edtHostNameB: TEdit;
+   edtLocationB: TEdit;
    edtCompanyC: TEdit;
    edtCompanyU: TEdit;
    edtContactU: TEdit;
@@ -117,9 +122,7 @@ type
    edtPrefixC: TEdit;
    edtPrefixR: TEdit;
    edtPrefixU: TEdit;
-   edtRecord: TEdit;
    edtRenewalsU: TEdit;
-   edtTable: TEdit;
    edtUniqueF: TEdit;
    edtKeyR: TEdit;
    edtServerR: TEdit;
@@ -168,12 +171,16 @@ type
    Label31: TLabel;
    Label32: TLabel;
    Label33: TLabel;
+   Label34: TLabel;
+   Label35: TLabel;
+   Label36: TLabel;
    Label4: TLabel;
    Label5: TLabel;
    Label6: TLabel;
    Label7: TLabel;
    Label8: TLabel;
    Label9: TLabel;
+   BackupLog: TListView;
    mnuMain: TMainMenu;
    N1: TMenuItem;
    ools1: TMenuItem;
@@ -193,6 +200,7 @@ type
    btnClear: TSpeedButton;
    speRenewalC: TSpinEdit;
    speLicCountC: TSpinEdit;
+   speReadBlockB: TSpinEdit;
    Splitter1: TSplitter;
    sqlTran: TSQLTransaction;
    StaticText1: TStaticText;
@@ -376,6 +384,7 @@ var
    function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities';
    function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities';
 {$ENDIF}
 
 implementation
@@ -1438,7 +1447,9 @@ begin
 
    end else if pnlBackup.Visible = True then begin
 
-//      DoBackup();
+//      RunBackup();
+      DoBackup('Ad-Hoc',edtLocationB.Text,'lpmsdefault',edtHostNameB.Text,edtUserIDB.Text,edtPasswordB.Text,'LPMS_ACM',{edtTemplateB.Text}'&Date@&Time - &BackupType Backup for &Instruction (&DBName on &HostName) {&OSName}',FLPMS_Login.Version,speReadBlockB.Value,BackupLog,nil,True);
+//      DoBackup('Ad-Hoc',edtLocationB.Text,'MPA001_LPMS',edtHostNameB.Text,edtUserIDB.Text,edtPasswordB.Text,'LPMS_ACM',{edtTemplateB.Text}'&Date@&Time - &BackupType Backup for &Instruction (&DBName on &HostName) {&OSName}',FLPMS_Login.Version,speReadBlockB.Value,BackupLog,nil,True);
 
    end else if pnlRestore.Visible = True then begin
 
@@ -1942,8 +1953,7 @@ begin
    btnLockB.Visible   := True;
    btnUnlockB.Visible := False;
 
-   edtTable.Clear();
-   edtRecord.Clear();
+   BackupLog.Clear;
    btnCancel.SetFocus();
 
 end;
@@ -1956,8 +1966,6 @@ begin
 
    btnUnlockB.Visible := False;
    btnLockB.Visible   := True;
-   edtTable.Enabled   := False;
-   edtRecord.Enabled  := False;
    btnUpdate.Enabled  := False;
    btnLockB.SetFocus();
 
@@ -1978,8 +1986,6 @@ begin
 
       btnUnlockB.Visible := True;
       btnLockB.Visible   := False;
-      edtTable.Enabled   := True;
-      edtRecord.Enabled  := True;
       btnUpdate.Enabled  := True;
       btnUpdate.SetFocus();
 
