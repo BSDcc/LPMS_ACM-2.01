@@ -729,25 +729,25 @@ object FLPMS_Login: TFLPMS_Login
   end
   object Label1: TLabel
     Left = 8
-    Height = 15
+    Height = 17
     Top = 60
-    Width = 37
+    Width = 43
     Caption = 'UserID:'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 8
-    Height = 15
+    Height = 17
     Top = 92
-    Width = 53
+    Width = 57
     Caption = 'Password:'
     ParentColor = False
   end
   object Label3: TLabel
     Left = 8
-    Height = 15
+    Height = 17
     Top = 124
-    Width = 28
+    Width = 29
     Caption = 'Host:'
     ParentColor = False
   end
@@ -765,14 +765,14 @@ object FLPMS_Login: TFLPMS_Login
   end
   object edtHostName: TEdit
     Left = 88
-    Height = 23
+    Height = 27
     Top = 120
     Width = 248
     TabOrder = 3
   end
   object edtPassword: TEdit
     Left = 88
-    Height = 23
+    Height = 27
     Top = 88
     Width = 248
     EchoMode = emPassword
@@ -781,7 +781,7 @@ object FLPMS_Login: TFLPMS_Login
   end
   object edtUserID: TEdit
     Left = 88
-    Height = 23
+    Height = 27
     Top = 56
     Width = 248
     TabOrder = 1
@@ -798,8 +798,8 @@ object FLPMS_Login: TFLPMS_Login
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 23
-    Top = 161
+    Height = 21
+    Top = 163
     Width = 430
     Font.Style = [fsBold]
     Panels = <    

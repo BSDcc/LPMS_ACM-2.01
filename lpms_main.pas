@@ -22,7 +22,7 @@ interface
 uses
    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
    Menus, ActnList, StdCtrls, Buttons, Spin, DateTimePicker, StrUtils, LCLType,
-   Process, sqldb,
+   EditBtn, Process, sqldb,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    mysql56conn;
@@ -102,6 +102,7 @@ type
    cbxLicTypeU: TComboBox;
    cbxNewLicU: TComboBox;
    cbxNewPrefixU: TComboBox;
+   edtLocationB: TDirectoryEdit;
    dlgOpen: TOpenDialog;
    dlgSave: TSaveDialog;
    dtpExpiryDateU: TDateTimePicker;
@@ -110,7 +111,6 @@ type
    edtPasswordB: TEdit;
    edtTemplateB: TEdit;
    edtHostNameB: TEdit;
-   edtLocationB: TEdit;
    edtCompanyC: TEdit;
    edtCompanyU: TEdit;
    edtContactU: TEdit;
@@ -248,6 +248,7 @@ type
    procedure cbTransferUClick(Sender: TObject);
    procedure edtKeyRChange( Sender: TObject);
    procedure edtKeyRKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+   procedure edtLocationBAcceptDirectory( Sender: TObject; var Value: String);
    procedure edtPrefixCChange( Sender: TObject);
    procedure edtUniqueFChange( Sender: TObject);
    procedure edtUniqueUChange(Sender: TObject);
@@ -285,7 +286,7 @@ private  { Private Declarations }
 
    PlaceHolder                        : integer;
    DoSave, CanUpdate, DoGen, FirstRun : boolean;
-   ClipKey                            : string;
+   ClipKey, OSDelim                   : string;
    Root                               : TTreeNode;
 
    procedure OpenDB(ThisType: integer);
@@ -411,7 +412,10 @@ begin
    DefaultFormatSettings.ShortDateFormat := 'yyyy/MM/dd';
    DefaultFormatSettings.DateSeparator   := '/';
 
+   OSDelim := '/';
+
 {$IFDEF WINDOWS}                    // Target is Winblows
+   OSDelim := '\';
    sqlCon  := TMySQL56Connection.Create(nil);
 {$ENDIF}
 
@@ -1448,8 +1452,7 @@ begin
    end else if pnlBackup.Visible = True then begin
 
 //      RunBackup();
-      DoBackup('Ad-Hoc',edtLocationB.Text,'lpmsdefault',edtHostNameB.Text,edtUserIDB.Text,edtPasswordB.Text,'LPMS_ACM',{edtTemplateB.Text}'&Date@&Time - &BackupType Backup for &Instruction (&DBName on &HostName) {&OSName}',FLPMS_Login.Version,speReadBlockB.Value,BackupLog,nil,True);
-//      DoBackup('Ad-Hoc',edtLocationB.Text,'MPA001_LPMS',edtHostNameB.Text,edtUserIDB.Text,edtPasswordB.Text,'LPMS_ACM',{edtTemplateB.Text}'&Date@&Time - &BackupType Backup for &Instruction (&DBName on &HostName) {&OSName}',FLPMS_Login.Version,speReadBlockB.Value,BackupLog,nil,True);
+      DoBackup('Ad-Hoc',edtLocationB.Text,'lpmsdefault',edtHostNameB.Text,edtUserIDB.Text,edtPasswordB.Text,'LPMS_ACM',edtTemplateB.Text,FLPMS_Login.Version,speReadBlockB.Value,BackupLog,nil,True);
 
    end else if pnlRestore.Visible = True then begin
 
@@ -1959,7 +1962,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-// User click on the Unlock button on the Backup screen
+// User clicked on the Unlock button on the Backup screen
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.btnUnlockBClick(Sender: TObject);
 begin
@@ -1972,7 +1975,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-// User click on the Lock button on the Backup screen
+// User clicked on the Lock button on the Backup screen
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.btnLockBClick(Sender: TObject);
 var
@@ -1990,6 +1993,21 @@ begin
       btnUpdate.SetFocus();
 
    end;
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the button to accept the output location for backups
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.edtLocationBAcceptDirectory(Sender: TObject; var Value: String);
+begin
+
+{$IFDEF WINDOWS}
+   if Length(Value) > 3 then
+      Value := Value + OSDelim;
+{$ELSE}
+   Value := Value + OSDELIM;
+{$ENDIF}
 
 end;
 

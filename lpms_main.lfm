@@ -1,7 +1,7 @@
 object FLPMS_Main: TFLPMS_Main
-  Left = 290
+  Left = 384
   Height = 591
-  Top = 74
+  Top = 129
   Width = 880
   ActiveControl = Panel1
   Caption = 'FLPMS_Main'
@@ -2340,7 +2340,7 @@ object FLPMS_Main: TFLPMS_Main
           Width = 127
           MaxValue = 100000
           TabOrder = 5
-          Value = 20000
+          Value = 1
         end
         object Label34: TLabel
           Left = 10
@@ -2353,9 +2353,12 @@ object FLPMS_Main: TFLPMS_Main
         object edtTemplateB: TEdit
           Left = 88
           Height = 27
+          Hint = 'Valid symbolic variables are &Date, &Year, &Month, &Day, &Time, &Hour, &Minute, &BackupName, &HostName, &BackupType, &DBName, &OSName, &OSShort'
           Top = 124
           Width = 565
           Anchors = [akTop, akLeft, akRight]
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 8
         end
         object Label35: TLabel
@@ -2370,23 +2373,30 @@ object FLPMS_Main: TFLPMS_Main
           Left = 88
           Height = 27
           Top = 92
-          Width = 230
+          Width = 200
           TabOrder = 6
         end
         object Label36: TLabel
-          Left = 336
+          Left = 308
           Height = 17
           Top = 96
           Width = 50
           Caption = 'Location:'
           ParentColor = False
         end
-        object edtLocationB: TEdit
-          Left = 416
+        object edtLocationB: TDirectoryEdit
+          Left = 378
           Height = 27
           Top = 92
-          Width = 237
+          Width = 275
+          OnAcceptDirectory = edtLocationBAcceptDirectory
+          DialogTitle = 'LPMS_ACM - Select Location for Backup File'
+          ShowHidden = False
+          ButtonWidth = 26
+          NumGlyphs = 1
           Anchors = [akTop, akLeft, akRight]
+          AutoSize = False
+          MaxLength = 0
           TabOrder = 7
         end
       end

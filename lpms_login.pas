@@ -108,10 +108,11 @@ private  { Private Declarations }
 
 public   { Public Declarations }
 
-   LoginCount                                             : integer;
+   LoginCount, DBBlock                                    : integer;
    AutoLogin                                              : boolean;
    CopyRight, UserName, Password, Version, DTDLocation    : string;
    AutoUser, AutoPass, AutoHost, Path, SMTPHost, SMTPPass : string;
+   DBUser, DBPass, DBHost, DBLocation, DBTemplate         : string;
 
 type
 
@@ -253,8 +254,14 @@ begin
 
       IniFile := TINIFile.Create(INILoc);
 
-      SMTPHost := IniFile.ReadString('Config','SMTPHost','');
-      SMTPPass := IniFile.ReadString('Config','SMTPPass','');
+      SMTPHost   := IniFile.ReadString('Config','SMTPHost','');
+      SMTPPass   := IniFile.ReadString('Config','SMTPPass','');
+      DBUser     := IniFile.ReadString('Config','DBuser','');
+      DBPass     := IniFile.ReadString('Config','DBPass','');
+      DBHost     := IniFile.ReadString('Config','DBHost','');
+      DBLocation := IniFile.ReadString('Config','DBLocation','');
+      DBTemplate := IniFile.ReadString('Config','DBTemplate','&Date@&Time - &BackupType Backup for &BackupName (&DBName on &HostName) {&OSShort}');
+      DBBlock    := IniFile.ReadInteger('Config','DBBlock',20000);
 
       IniFile.Destroy;
 
@@ -309,6 +316,12 @@ begin
 
    IniFile.WriteString('Config','SMTPHost',SMTPHost);
    IniFile.WriteString('Config','SMTPPass',SMTPPass);
+   IniFile.WriteString('Config','DBuser',DBUser);
+   IniFile.WriteString('Config','DBPass',DBPass);
+   IniFile.WriteString('Config','DBHost',DBHost);
+   IniFile.WriteString('Config','DBLocation',DBLocation);
+   IniFile.WriteString('Config','DBTemplate',DBTemplate);
+   IniFile.WriteInteger('Config','DBBlock',DBBlock);
 
    IniFile.Destroy;
 
@@ -375,6 +388,8 @@ begin
       FLPMS_Login.Hide();
       FLPMS_Main := TFLPMS_Main.Create(Application);
 
+//--- Set up some values on the Main form
+
       FLPMS_Main.UserName  := edtUserID.Text;
       FLPMS_Main.Password  := edtPassword.Text;
       FLPMS_Main.HostName  := edtHostName.Text;
@@ -383,7 +398,28 @@ begin
       FLPMS_Main.SMTPHost  := SMTPHost;
       FLPMS_Main.SMTPPass  := SMTPPass;
 
+      FLPMS_Main.edtUserIDB.Text     := DBUSer;
+      FLPMS_Main.edtPasswordB.Text   := DBPass;
+      FLPMS_Main.speReadBlockB.Value := DBBlock;
+      FLPMS_Main.edtHostNameB.Text   := DBHost;
+      FLPMS_Main.edtLocationB.Text   := DBLocation;
+      FLPMS_Main.edtTemplateB.Text   := DBTemplate;
+
+//--- Call the Main form
+
       FLPMS_Main.ShowModal();
+
+//--- Retrieve the Backup value from the Main Form in case they were changed
+
+      DBUser     := FLPMS_Main.edtUserIDB.Text;
+      DBPass     := FLPMS_Main.edtPasswordB.Text;
+      DBBlock    := FLPMS_Main.speReadBlockB.Value;
+      DBHost     := FLPMS_Main.edtHostNameB.Text;
+      DBLocation := FLPMS_Main.edtLocationB.Text;
+      DBTemplate := FLPMS_Main.edtTemplateB.Text;
+
+//--- Terminate
+
       FLPMS_Main.Destroy;
       FLPMS_Login.Show();
 
