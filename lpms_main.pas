@@ -377,15 +377,23 @@ var
 
 //--- Utilities contained in BSD_Utilities.dll
 
-{$IFDEF WINDOWS}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'BSD_Utilities';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'BSD_Utilities';
-{$ELSE}
+{$IFDEF DARWIN}
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities.dylib';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities.dylib';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities.dylib';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities.dylib';
+{$ENDIF}
+{$IFDEF LINUX}
    function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities';
    function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities';
    function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities';
+{$ENDIF}
+{$IFDEF WINDOWS}
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'BSD_Utilities';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'BSD_Utilities';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'BSD_Utilities';
 {$ENDIF}
 
 implementation
