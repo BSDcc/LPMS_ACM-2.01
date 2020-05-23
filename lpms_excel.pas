@@ -20,9 +20,9 @@ interface
 //------------------------------------------------------------------------------
 uses
    Classes, SysUtils, sqldb, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-   StdCtrls, ActnList{, StdActns}, EditBtn, Buttons, LCLIntf, LCLType,
-   fpspreadsheet, fpsallformats, fpspreadsheetgrid, fpspreadsheetctrls,
-   {fpsActions, }fpstypes,
+   StdCtrls, ActnList, EditBtn, Buttons, LCLIntf, LCLType, StdActns,
+   fpspreadsheet, fpspreadsheetgrid, fpspreadsheetctrls, fpstypes, xlsbiff8,
+   fpsopendocument, fpsCSV, xlsxOOXML,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    mysql56conn;
@@ -53,6 +53,7 @@ type
    { TFLPMS_Excel }
 
    TFLPMS_Excel = class( TForm)
+   alActions: TActionList;
       Bevel1: TBevel;
       Bevel2: TBevel;
       Bevel3: TBevel;
@@ -64,34 +65,36 @@ type
       cbOpen: TCheckBox;
       cbClose: TCheckBox;
       cbxFormat: TComboBox;
+      FileSaveAs: TFileSaveAs;
       Label1: TLabel;
-      Label2: TLabel;
       Panel1: TPanel;
       Panel2: TPanel;
       Panel3: TPanel;
       Panel4: TPanel;
       Panel5: TPanel;
       Panel6: TPanel;
-      cbxSheets: TComboBox;
       dlgSelDir: TSelectDirectoryDialog;
       sqlQry1: TSQLQuery;
       sqlQry2: TSQLQuery;
       sqlTran: TSQLTransaction;
       StaticText1: TStaticText;
+      wtcTabControl: TsWorkbookTabControl;
+      wbsSource: TsWorkbookSource;
       wsgGrid: TsWorksheetGrid;
       procedure btnExportClick( Sender: TObject);
       procedure btnOpenClick( Sender: TObject);
       procedure btnReturnClick( Sender: TObject);
-      procedure cbxSheetsSelect( Sender: TObject);
+      procedure FileSaveAsAccept( Sender: TObject);
+      procedure FileSaveAsBeforeExecute( Sender: TObject);
       procedure FormClose( Sender: TObject; var CloseAction: TCloseAction);
       procedure FormCreate( Sender: TObject);
       procedure FormShow( Sender: TObject);
 
 private   {Private Declarations}
 
-   FileName  : string;             // Holds the Path and Name (without the Ext) of the Generated File
+   SpreadSheetName  : string;      // Holds the Path and Name (without the Ext) of the Generated File
    ErrMsg    : string;             // Holds last MySQL error message
-   OSDelim   : string;             // Platform specific delimiter
+   InitDir   : string;             // Remembers the Initial Directory from the first File Save when the form is shown
 
 {$IFDEF WINDOWS}                   // Target is Winblows
    sqlCon  : TMySQL56Connection;
@@ -146,10 +149,7 @@ begin
    DefaultFormatSettings.ShortDateFormat := 'yyyy/MM/dd';
    DefaultFormatSettings.DateSeparator   := '/';
 
-   OSDelim := '/';
-
 {$IFDEF WINDOWS}                    // Target is Winblows
-   OSdelim := '\';
    sqlCon  := TMySQL56Connection.Create(nil);
 {$ENDIF}
 
@@ -181,16 +181,19 @@ end;
 procedure TFLPMS_Excel.FormShow( Sender: TObject);
 begin
 
-   dlgSelDir.Title      := 'LPMS_ACM - Select location for the generated output file';
+//--- Request a location for saving the output file from the user
 
-   if dlgSelDir.Execute = False then begin
+  FileSaveAs.Dialog.FileName   := FormatDateTime('yyyyMMdd',Date()) + ' - LPMS_ACM Company and User Definitions.xlsx';
+
+   if FileSaveAs.Dialog.Execute = False then begin
 
       Close();
       Exit;
 
    end;
 
-   FileName := dlgSelDir.FileName + OSDelim + FormatDateTime('yyyyMMdd',Date()) + ' - LPMS_ACM Company and User Definitions';
+   SpreadSheetName := ChangeFileExt(ExtractFileName(FileSaveAs.Dialog.FileName),'');
+   InitDir         := ExtractFilePath(FileSaveAs.Dialog.FileName);
 
    FLPMS_Excel.Caption := 'LPMS_ACM Export Manager';
    btnExport.Enabled   := False;
@@ -314,47 +317,47 @@ begin
 //--- Generate the table headings
 
       xlsSheet.WriteText(Row,Col,'Key');
-      xlsSheet.WriteColWidth(Col,5);
+      xlsSheet.WriteColWidth(Col,5,suChars);
 
       xlsSheet.WriteText(Row,Col+1,'User');
-      xlsSheet.WriteColWidth(Col+1,30);
+      xlsSheet.WriteColWidth(Col+1,30,suChars);
 
       xlsSheet.WriteText(Row,Col+2,'Company');
-      xlsSheet.WriteColWidth(Col+2,35);
+      xlsSheet.WriteColWidth(Col+2,35,suChars);
 
       xlsSheet.WriteText(Row,Col+3,'Email');
-      xlsSheet.WriteColWidth(Col+3,30);
+      xlsSheet.WriteColWidth(Col+3,30,suChars);
 
       xlsSheet.WriteText(Row,Col+4,'Contact');
-      xlsSheet.WriteColWidth(Col+4,15);
+      xlsSheet.WriteColWidth(Col+4,15,suChars);
 
       xlsSheet.WriteText(Row,Col+5,'Unique');
-      xlsSheet.WriteColWidth(Col+5,15);
+      xlsSheet.WriteColWidth(Col+5,15,suChars);
 
       xlsSheet.WriteText(Row,Col+6,'License');
-      xlsSheet.WriteColWidth(Col+6,20);
+      xlsSheet.WriteColWidth(Col+6,20,suChars);
 
       xlsSheet.WriteText(Row,Col+7,'Expire');
-      xlsSheet.WriteColWidth(Col+7,12);
+      xlsSheet.WriteColWidth(Col+7,12,suChars);
 
       xlsSheet.WriteText(Row,Col+8,'Activation Key');
-      xlsSheet.WriteColWidth(Col+8,45);
+      xlsSheet.WriteColWidth(Col+8,45,suChars);
 
       xlsSheet.WriteText(Row,Col+9,'Blocked');
-      xlsSheet.WriteColWidth(Col+9,12);
+      xlsSheet.WriteColWidth(Col+9,12,suChars);
 
       xlsSheet.WriteText(Row,Col+10,'Renewals');
-      xlsSheet.WriteColWidth(Col+10,12);
+      xlsSheet.WriteColWidth(Col+10,12,suChars);
       xlsSheet.WriteHorAlignment(Row,Col+10,haRight);
 
       xlsSheet.WriteText(Row,Col+11,'Transfer');
-      xlsSheet.WriteColWidth(Col+11,12);
+      xlsSheet.WriteColWidth(Col+11,12,suChars);
 
       xlsSheet.WriteText(Row,Col+12,'New Prefix');
-      xlsSheet.WriteColWidth(Col+12,12);
+      xlsSheet.WriteColWidth(Col+12,12,suChars);
 
       xlsSheet.WriteText(Row,Col+13,'New License');
-      xlsSheet.WriteColWidth(Col+13,20);
+      xlsSheet.WriteColWidth(Col+13,20,suChars);
 
       for idx1 := Col to Col + 13 do begin
 
@@ -490,13 +493,13 @@ begin
 //--- Print the table headings
 
    xlsSheet.WriteText(Row,Col,'Unique');
-   xlsSheet.WriteColWidth(Col,20);
+   xlsSheet.WriteColWidth(Col,20,suChars);
 
    xlsSheet.WriteText(Row,Col+1,'User');
-   xlsSheet.WriteColWidth(Col+1,40);
+   xlsSheet.WriteColWidth(Col+1,40,suChars);
 
    xlsSheet.WriteText(Row,Col+2,'Company');
-   xlsSheet.WriteColWidth(Col+2,100);
+   xlsSheet.WriteColWidth(Col+2,100,suChars);
 
    for idx1 := Col to Col + 2 do begin
 
@@ -531,30 +534,12 @@ begin
 
 //--- Save the spreadsheet to a file
 
-   xlsBook.WriteToFile(FileName + '.xlsx', True);
+   xlsBook.WriteToFile(InitDir + SpreadSheetName + '.xlsx', True);
    xlsBook.Free;
 
-   wsgGrid.LoadFromSpreadsheetFile(FileName + '.xlsx');
-   wsgGrid.GetSheets(cbxSheets.Items);
-
-   if cbxSheets.Items.Count <> -1 then begin
-
-      cbxSheets.ItemIndex := cbxSheets.Items.Count - 1;
-      cbxSheetsSelect(Application);
-
-   end;
+   wbsSource.LoadFromSpreadsheetFile(InitDir + SpreadSheetName + '.xlsx',sfOOXML);
 
    Result := True;
-
-end;
-
-//------------------------------------------------------------------------------
-// Procedure to load the sheet selected from the Sheets combobox
-//------------------------------------------------------------------------------
-procedure TFLPMS_Excel.cbxSheetsSelect( Sender: TObject);
-begin
-
-   wsgGrid.SelectSheetByIndex(cbxSheets.ItemIndex);
 
 end;
 
@@ -562,61 +547,117 @@ end;
 // User clicked on the Export button
 //------------------------------------------------------------------------------
 procedure TFLPMS_Excel.btnExportClick(Sender: TObject);
+begin
+
+   FileSaveAs.Execute
+
+end;
+
+//------------------------------------------------------------------------------
+// Executed before the SaveAs dialog is shown
+//------------------------------------------------------------------------------
+procedure TFLPMS_Excel. FileSaveAsBeforeExecute( Sender: TObject);
+var
+   Ext    : string;
+
+begin
+
+   With FileSaveAs.Dialog do begin
+
+      case cbxFormat.ItemIndex of
+
+         0: begin                // Excel 2007+ Format (*.xlsx)
+
+            Ext := '.xlsx';
+
+            DefaultExt := '.xlsx';
+            Filter     := 'Excel 2007+ File (*.xlsx)|*.xlsx';
+
+         end;
+
+         1: begin                // Excel 95-2003 Format (*.xls)
+
+            Ext := '.xls';
+
+            DefaultExt := '.xls';
+            Filter     := 'Excel 95-2003 File (*.xls)|*.xls';
+
+         end;
+
+         2: begin                // Open/LibreOffice Format (*.ods)
+
+            Ext := '.ods';
+
+            DefaultExt := '.ods';
+            Filter     := 'Open/Libre Office Document (*.ods)|*.ods';
+
+         end;
+
+         3: begin                // CSV (Text) Format (*.csv)
+
+            Ext := '.csv';
+
+            DefaultExt := '.csv';
+            Filter     := 'CSV (Text) File (*.csv)|*.csv';
+
+         end;
+
+      end;
+
+      FileName   := SpreadSheetName + Ext;
+      InitialDir := InitDir;
+
+   end;
+
+end;
+
+//------------------------------------------------------------------------------
+// User Selected a Folder to store the exported spreadhseet and clicked on the
+// Save button
+//------------------------------------------------------------------------------
+procedure TFLPMS_Excel.FileSaveAsAccept(Sender: TObject);
 var
    Ext    : string;
    Format : TsSpreadsheetFormat;
 
 begin
 
-   Screen.Cursor := crHourglass;
+  case cbxFormat.ItemIndex of
 
-   try
+     0: begin                // Excel 2007+ Format (*.xlsx)
 
-     case cbxFormat.ItemIndex of
+        Format := sfOOXML;
+        Ext    := '.xlsx';
 
-        0: begin                // Excel 2007+ Format (*.xlsx)
+     end;
 
-           Format := sfOOXML;
-           Ext    := '.xlxs';
+     1: begin                // Excel 95-2003 Format (*.xls)
 
-        end;
+        Format := sfExcel8;
+        Ext    := '.xls';
 
-        1: begin                // Excel 95-2003 Format (*.xls)
+     end;
 
-           Format := sfExcel8;
-           Ext    := '.xls';
+     2: begin                // Open/LibreOffice Format (*.ods)
 
-        end;
+        Format := sfOpenDocument;
+        Ext    := '.ods';
 
-        2: begin                // Open/LibreOffice Format (*.ods)
+     end;
 
-           Format := sfOpenDocument;
-           Ext    := '.ods';
+     3: begin                // CSV (Text) Format (*.csv)
 
-        end;
+        Format := sfCSV;
+        Ext    := '.csv';
 
-        3: begin                // CSV (Text) Format (*.csv)
-
-           Format := sfCSV;
-           Ext    := '.csv';
-
-        end;
+     end;
 
    end;
 
-   wsgGrid.SaveToSpreadsheetFile(FileName + Ext,Format,True);
+   wbsSource.SaveToSpreadsheetFile(InitDir + SpreadSheetName + Ext,Format,True);
 
-   finally
-
-      Screen.Cursor := crDefault;
-
-   end;
-
-   if cbOpen.Checked = True then begin
-
-      OpenDocument(FileName + Ext);
-
-   end;
+   if cbOpen.Checked = True then
+      OpenDocument(SpreadSheetName + Ext);
 
 end;
 
@@ -626,7 +667,7 @@ end;
 procedure TFLPMS_Excel. btnOpenClick( Sender: TObject);
 begin
 
-   OpenDocument(FileName + '.xlsx');
+   OpenDocument(InitDir + SpreadSheetName + '.xlsx');
 
    if cbClose.Checked = True then
       Close();
