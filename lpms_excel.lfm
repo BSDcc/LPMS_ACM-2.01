@@ -1,7 +1,7 @@
 object FLPMS_Excel: TFLPMS_Excel
-  Left = 683
+  Left = 515
   Height = 650
-  Top = 145
+  Top = 97
   Width = 1200
   Caption = 'FLPMS_Excel'
   ClientHeight = 650
@@ -10,7 +10,7 @@ object FLPMS_Excel: TFLPMS_Excel
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.8.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -35,17 +35,24 @@ object FLPMS_Excel: TFLPMS_Excel
       Width = 1200
       Align = alBottom
     end
-    object StaticText1: TStaticText
+    object sCellIndicator1: TsCellIndicator
       Left = 8
       Height = 27
-      Top = 8
-      Width = 546
-      AutoSize = True
-      Caption = 'LPMS Access Control Manager - Company and User definition export'
-      Font.Height = -16
-      Font.Style = [fsBold]
-      ParentFont = False
+      Top = 7
+      Width = 80
+      WorkbookSource = wbsSource
       TabOrder = 0
+      Text = 'A1'
+    end
+    object sCellEdit1: TsCellEdit
+      Left = 96
+      Height = 35
+      Top = 2
+      Width = 1096
+      Anchors = [akTop, akLeft, akRight]
+      ReadOnly = True
+      TabOrder = 1
+      WorkbookSource = wbsSource
     end
   end
   object Panel2: TPanel
