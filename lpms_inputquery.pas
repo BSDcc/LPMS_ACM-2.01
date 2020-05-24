@@ -18,7 +18,8 @@ interface
 // Uses clause
 //------------------------------------------------------------------------------
 uses
-   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons;
+   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
+   StrUtils;
 
 //------------------------------------------------------------------------------
 // Declarations
@@ -30,9 +31,11 @@ type
    TFLPMS_InputQuery = class( TForm)
       btnCancel: TButton;
       btnOk: TButton;
+      btnBypass: TSpeedButton;
       edtInput: TEdit;
       lblCaption: TLabel;
       btnView: TSpeedButton;
+      procedure btnBypassClick(Sender: TObject);
       procedure btnCancelClick( Sender: TObject);
       procedure btnOkClick( Sender: TObject);
       procedure btnViewClick( Sender: TObject);
@@ -64,7 +67,7 @@ implementation
 //------------------------------------------------------------------------------
 // Executed when the Form is show
 //------------------------------------------------------------------------------
-procedure TFLPMS_InputQuery. FormShow( Sender: TObject);
+procedure TFLPMS_InputQuery.FormShow(Sender: TObject);
 begin
 
    SetPlatform();
@@ -72,12 +75,24 @@ begin
    edtInput.Clear;
    edtInput.SetFocus;
 
+   if AnsiContainsStr(FLPMS_Main.Version,'[DEBUG]') = True then begin
+
+      btnBypass.Enabled := False;
+      btnBypass.Visible := True;
+
+   end else begin
+
+      btnBypass.Enabled := False;
+      btnBypass.Visible := False;
+
+   end;
+
 end;
 
 //------------------------------------------------------------------------------
 // User clicked on the OK button
 //------------------------------------------------------------------------------
-procedure TFLPMS_InputQuery. btnOkClick( Sender: TObject);
+procedure TFLPMS_InputQuery.btnOkClick(Sender: TObject);
 begin
 
   FLPMS_Main.ThisRes := edtInput.Text;
@@ -88,7 +103,7 @@ end;
 //------------------------------------------------------------------------------
 // User clicked on the Cancel button
 //------------------------------------------------------------------------------
-procedure TFLPMS_InputQuery. btnCancelClick( Sender: TObject);
+procedure TFLPMS_InputQuery.btnCancelClick(Sender: TObject);
 begin
 
     FLPMS_Main.ThisRes := '';
@@ -97,9 +112,21 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+// If the App mode is DEBUG then this button is visisble to provide a shortcut
+// that bypasses having to enter the pass phrase
+//------------------------------------------------------------------------------
+procedure TFLPMS_InputQuery.btnBypassClick(Sender: TObject);
+begin
+
+   edtInput.Text := FLPMS_Main.PassPhrase;
+   btnOkClick(Sender);
+
+end;
+
+//------------------------------------------------------------------------------
 // User clicked on the button to Show/Hide the password
 //------------------------------------------------------------------------------
-procedure TFLPMS_InputQuery. btnViewClick( Sender: TObject);
+procedure TFLPMS_InputQuery.btnViewClick(Sender: TObject);
 var
    Location : string;
 

@@ -59,6 +59,7 @@ type
    ActionsRestore: TAction;
    actList: TActionList;
    Backup1: TMenuItem;
+   RestoreLogRe1: TListView;
    Bevel1: TBevel;
    Bevel10: TBevel;
    Bevel2: TBevel;
@@ -69,6 +70,7 @@ type
    Bevel8: TBevel;
    Bevel9: TBevel;
    btnCancel: TButton;
+   btnOpenRe: TButton;
    btnPaste: TSpeedButton;
    btnDecodeR: TButton;
    btnDelete: TButton;
@@ -102,11 +104,14 @@ type
    cbxLicTypeU: TComboBox;
    cbxNewLicU: TComboBox;
    cbxNewPrefixU: TComboBox;
+   edtBackupRe: TEditButton;
+   edtHostNameRe: TEdit;
    edtLocationB: TDirectoryEdit;
    dlgOpen: TOpenDialog;
    dlgSave: TSaveDialog;
    dtpExpiryDateU: TDateTimePicker;
    dtpExpiryR: TDateTimePicker;
+   edtPasswordRe: TEdit;
    edtUserIDB: TEdit;
    edtPasswordB: TEdit;
    edtTemplateB: TEdit;
@@ -116,9 +121,7 @@ type
    edtContactU: TEdit;
    edtDBKeyU: TEdit;
    edtEmailU: TEdit;
-   edtHost: TEdit;
    edtKeyU: TEdit;
-   edtPassword: TEdit;
    edtPrefixC: TEdit;
    edtPrefixR: TEdit;
    edtPrefixU: TEdit;
@@ -129,7 +132,7 @@ type
    edtUniqueR: TEdit;
    edtPasswordR: TEdit;
    edtUniqueU: TEdit;
-   edtUserID: TEdit;
+   edtUserIDRe: TEdit;
    edtUserNameU: TEdit;
    Email1: TMenuItem;
    Exit1: TMenuItem;
@@ -162,9 +165,6 @@ type
    Label23: TLabel;
    Label24: TLabel;
    Label25: TLabel;
-   Label26: TLabel;
-   Label27: TLabel;
-   Label28: TLabel;
    Label29: TLabel;
    Label3: TLabel;
    Label30: TLabel;
@@ -174,7 +174,11 @@ type
    Label34: TLabel;
    Label35: TLabel;
    Label36: TLabel;
+   Label37: TLabel;
+   Label38: TLabel;
    Label4: TLabel;
+   Label40: TLabel;
+   Label42: TLabel;
    Label5: TLabel;
    Label6: TLabel;
    Label7: TLabel;
@@ -198,6 +202,7 @@ type
    adoQry1: TSQLQuery;
    adoQry2: TSQLQuery;
    btnClear: TSpeedButton;
+   RestoreLogRe2: TListView;
    speRenewalC: TSpinEdit;
    speLicCountC: TSpinEdit;
    speReadBlockB: TSpinEdit;
@@ -239,6 +244,7 @@ type
    procedure btnLockClick( Sender: TObject);
    procedure btnLockRClick( Sender: TObject);
    procedure btnNewClick(Sender: TObject);
+   procedure btnOpenReClick(Sender: TObject);
    procedure btnPasteClick( Sender: TObject);
    procedure btnUnlockBClick( Sender: TObject);
    procedure btnUnlockClick( Sender: TObject);
@@ -246,6 +252,8 @@ type
    procedure btnUpdateClick(Sender: TObject);
    procedure cbBlockedUClick(Sender: TObject);
    procedure cbTransferUClick(Sender: TObject);
+   procedure edtBackupReButtonClick(Sender: TObject);
+   procedure edtBackupReChange(Sender: TObject);
    procedure edtKeyRChange( Sender: TObject);
    procedure edtKeyRKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
    procedure edtLocationBAcceptDirectory( Sender: TObject; var Value: String);
@@ -304,24 +312,27 @@ private  { Private Declarations }
    procedure SetPlatform();
 
 type
-   DB_TYPE = (DB_OPEN,             // Open the Database
-              DB_CLOSE,            // Close the Database
-              DB_ALL,              // Get all prefix records from the database
-              DB_COMPANY,          // Get all Company records
-              DB_USER,             // Get all User records
-              DB_UNIQUE,           // Get all the records for a sepcific Unique
-              DB_SELECT,           // 'SELECT' statement
-              DB_OTHER);           // All other SQL statements
+   DB_TYPE =  (DB_OPEN,             // Open the Database
+               DB_CLOSE,            // Close the Database
+               DB_ALL,              // Get all prefix records from the database
+               DB_COMPANY,          // Get all Company records
+               DB_USER,             // Get all User records
+               DB_UNIQUE,           // Get all the records for a sepcific Unique
+               DB_SELECT,           // 'SELECT' statement
+               DB_OTHER);           // All other SQL statements
 
-   TY_TYPE = (TYPE_PASSWORD,       // Used when calling LPMS_InoputQuery
-              TYPE_TEST,           //
-              TYPE_XFER,           //
-              TYPE_READ,           // Reading from the database - &quote to '''
-              TYPE_WRITE);         // Writing to the database - ''' to &quote
+   TY_TYPE =  (TYPE_PASSWORD,       // Used when calling LPMS_InoputQuery
+               TYPE_TEST,           //
+               TYPE_XFER,           //
+               TYPE_READ,           // Reading from the database - &quote to '''
+               TYPE_WRITE);         // Writing to the database - ''' to &quote
 
-   RE_RSLT = (ERR_INVALID,         // The content of the Key is invalid
-              ERR_LENGTH,          // The length of the Key is wrong
-              ERR_EXPIRED);        // The Key has expired
+   RE_RSLT =  (ERR_INVALID,         // The content of the Key is invalid
+               ERR_LENGTH,          // The length of the Key is wrong
+               ERR_EXPIRED);        // The Key has expired
+
+   RES_TYPE = (RT_OPEN,             // Extract Restore information from the BackupFile
+               RT_RESTORE);         // Restore from the Backup File
 
 public   { Public Declarations }
 
@@ -336,6 +347,7 @@ public   { Public Declarations }
    ThisUnique  : string;      // Used by LPMS_Show
    SMTPHost    : string;      // SMTP Host for sending emails
    SMTPPass    : string;      // SMTP Password for sending emails
+   PassPhrase  : string;      // Contains the Phass Phrase to unlock restricted activities
 
 end;
 
@@ -382,18 +394,21 @@ var
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities.dylib';
    function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities.dylib';
    function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities.dylib';
+   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : boolean; cdecl; external 'libbsd_utilities.dylib';
 {$ENDIF}
 {$IFDEF LINUX}
    function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities';
    function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities';
    function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities';
+//   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : boolean; cdecl; external 'libbsd_utilities';
 {$ENDIF}
 {$IFDEF WINDOWS}
    function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'BSD_Utilities';
    function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'BSD_Utilities';
    function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'BSD_Utilities';
+   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : boolean; cdecl; external 'BSD_Utilities';
 {$ENDIF}
 
 implementation
@@ -446,6 +461,8 @@ begin
    sqlTran.DataBase    := sqlCon;
    adoQry1.Transaction := sqlTran;
    adoQry2.Transaction := sqlTran;
+
+   PassPhrase := 'BlueCrane Software Development CC';
 
 
 //--- Adjust a few key display artifacts for optimum presentation on the
@@ -1339,26 +1356,38 @@ begin
 
       end;
 
-//--- If the Unique = '123456789ABC' then we have a floating license
+//--- A Unique = '123456789ABC' is not allowed for Trial licenses
+
+      if ((edtUniqueU.Text = '123456789ABC') and (cbxLicTypeU.Text = 'Trial')) then begin
+
+         Application.MessageBox(PChar('''Unique'' with value ''123456789ABC'' is not allowed for license type ''' + cbxLicTypeU.Text + '''.'),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+
+            if btnUnlock.Visible = True then
+               edtUniqueU.SetFocus()
+            else
+               btnLock.SetFocus();
+
+         Exit;
+
+      end;
+
+//--- If it is not a Trail license and the Unique = '123456789ABC' then we have
+//--- a floating license.
 
       if edtUniqueU.Text <> '123456789ABC' then begin
 
-        MsgPart := GetUnique(edtUniqueU.Text,ord(TYPE_TEST),Dummy);
+         MsgPart := GetUnique(edtUniqueU.Text,ord(TYPE_TEST),Dummy);
 
-         if MsgPart <> '' then begin
+         if ((MsgPart <> '') and (cbAllowDuplicates.Checked = False)) then begin
 
-            if cbAllowDuplicates.Checked = False then begin
+            Application.MessageBox(PChar('''Unique'' already exists for ' + MsgPart),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
 
-               Application.MessageBox(PChar('''Unique'' already exists for ' + MsgPart),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+            if btnUnlock.Visible = True then
+               edtUniqueU.SetFocus()
+            else
+               btnLock.SetFocus();
 
-               if btnUnlock.Visible = True then
-                  edtUniqueU.SetFocus()
-               else
-                  btnLock.SetFocus();
-
-               Exit;
-
-            end;
+            Exit;
 
          end;
 
@@ -1464,6 +1493,7 @@ begin
 
    end else if pnlRestore.Visible = True then begin
 
+{
       if Trim(edtUserID.Text) = '' then begin
 
          Application.MessageBox('''UserID'' is a required field - please provide then try again.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
@@ -1489,7 +1519,7 @@ begin
       end;
 
 //      DoRestore();
-
+}
    end;
 
    if ((pnlBackup.Visible = False) and (pnlRestore.Visible = False)) then begin
@@ -1679,7 +1709,7 @@ begin
 
    ThisPass := InputQueryM('LPMS Access Control Management','Pass phrase:',ord(TYPE_PASSWORD));
 
-   if ThisPass <> 'BlueCrane Software Development CC' then
+   if ThisPass <> PassPhrase then
       Exit;
 
    ThisDate := FormatDateTime('yyyy/MM/dd',Now());
@@ -1993,7 +2023,7 @@ begin
 
    ThisPass := InputQueryM('LPMS Access Control Management','Pass phrase:',ord(TYPE_PASSWORD));
 
-   if ThisPass = 'BlueCrane Software Development CC' then begin
+   if ThisPass = PassPhrase then begin
 
       btnUnlockB.Visible := True;
       btnLockB.Visible   := False;
@@ -2044,7 +2074,7 @@ begin
 
    ThisPass := InputQueryM('LPMS Access Control Management','Pass phrase:',ord(TYPE_PASSWORD));
 
-   if ThisPass = 'BlueCrane Software Development CC' then begin
+   if ThisPass = PassPhrase then begin
 
       btnUnlock.Visible         := True;
       btnLock.Visible           := False;
@@ -2091,10 +2121,9 @@ begin
    btnLockR.Visible   := True;
    btnUnlockR.Visible := False;
 
-   edtUserID.Clear();
-   edtPassword.Clear();
-   edtHost.Clear();
-   edtUserID.SetFocus();
+   RestoreLogRe2.Visible := True;
+   RestoreLogRe1.Visible := False;
+   btnOpenRe.Enabled     := False;
 
 end;
 
@@ -2106,11 +2135,7 @@ begin
 
    btnUnlockR.Visible  := False;
    btnLockR.Visible    := True;
-   edtUserID.Enabled   := False;
-   edtPassword.Enabled := False;
-   edtHost.Enabled     := False;
    btnUpdate.Enabled   := False;
-   edtUserID.SetFocus();
 
 end;
 
@@ -2125,17 +2150,47 @@ begin
 
    ThisPass := InputQueryM('LPMS Access Control Management','Pass phrase:',ord(TYPE_PASSWORD));
 
-   if ThisPass = 'BlueCrane Software Development CC' then begin
+   if ThisPass = PassPhrase then begin
 
       btnUnlockR.Visible  := True;
       btnLockR.Visible    := False;
-      edtUserID.Enabled   := True;
-      edtPassword.Enabled := True;
-      edtHost.Enabled     := True;
       btnUpdate.Enabled   := True;
-      edtUserID.SetFocus();
 
    end;
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the button to open the Backup File on the Restore screen
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.edtBackupReButtonClick(Sender: TObject);
+begin
+
+   if dlgOpen.Execute = True then
+      edtBackupRe.Text := dlgOpen.FileName;
+
+end;
+
+//------------------------------------------------------------------------------
+// The information in the Backup File filed changed on the Restore screen
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.edtBackupReChange(Sender: TObject);
+begin
+
+   if FileExists(edtBackupRe.Text) = True then
+      btnOpenRe.Enabled := True
+   else
+      btnOpenRe.Enabled := False;
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the button to get the Backup information from the selected
+// Backup File on the Restore screen
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.btnOpenReClick(Sender: TObject);
+begin
+
+//   DoRestore(edtBackupRe.Text,edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe2,nil,ord(RT_OPEN));
 
 end;
 
@@ -2153,7 +2208,7 @@ begin
 
    Pass := InputQueryM('LPMS Access Control Management','Pass phrase:',ord(TYPE_PASSWORD));
 
-   if Pass <> 'BlueCrane Software Development CC' then begin
+   if Pass <> PassPhrase then begin
 
       Application.MessageBox('Invalid Pass phrase - Key generation cancelled.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
       Exit;
