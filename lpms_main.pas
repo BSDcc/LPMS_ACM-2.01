@@ -394,21 +394,21 @@ var
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities.dylib';
    function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities.dylib';
    function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities.dylib';
-   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : boolean; cdecl; external 'libbsd_utilities.dylib';
+   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'libbsd_utilities.dylib';
 {$ENDIF}
 {$IFDEF LINUX}
    function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities';
    function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities';
    function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities';
-//   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : boolean; cdecl; external 'libbsd_utilities';
+   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'libbsd_utilities';
 {$ENDIF}
 {$IFDEF WINDOWS}
    function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'BSD_Utilities';
    function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'BSD_Utilities';
    function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'BSD_Utilities';
-   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : boolean; cdecl; external 'BSD_Utilities';
+   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'BSD_Utilities';
 {$ENDIF}
 
 implementation
@@ -2118,7 +2118,7 @@ begin
    btnDelete.Enabled := False;
    btnUpdate.Enabled := False;
 
-   btnLockR.Visible   := True;
+   btnLockR.Visible   := False;
    btnUnlockR.Visible := False;
 
    RestoreLogRe2.Visible := True;
@@ -2166,21 +2166,35 @@ end;
 procedure TFLPMS_Main.edtBackupReButtonClick(Sender: TObject);
 begin
 
+   btnUnlockR.Visible := False;
+   btnLockR.Visible   := False;
+
+   RestoreLogRe2.Clear;
+
    if dlgOpen.Execute = True then
       edtBackupRe.Text := dlgOpen.FileName;
 
 end;
 
 //------------------------------------------------------------------------------
-// The information in the Backup File filed changed on the Restore screen
+// The information in the Backup File field changed on the Restore screen
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.edtBackupReChange(Sender: TObject);
 begin
 
    if FileExists(edtBackupRe.Text) = True then
+
       btnOpenRe.Enabled := True
-   else
-      btnOpenRe.Enabled := False;
+
+   else begin
+
+      btnOpenRe.Enabled  := False;
+      btnUnlockR.Visible := False;
+      btnLockR.Visible   := False;
+
+      RestoreLogRe2.Clear;
+
+   end;
 end;
 
 //------------------------------------------------------------------------------
@@ -2188,9 +2202,24 @@ end;
 // Backup File on the Restore screen
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.btnOpenReClick(Sender: TObject);
+var
+   ThisResult : string;
+
 begin
 
-//   DoRestore(edtBackupRe.Text,edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe2,nil,ord(RT_OPEN));
+   ThisResult := DoRestore(edtBackupRe.Text,edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe2,nil,ord(RT_OPEN));
+
+   if ThisResult <> '' then begin
+
+      btnUnlockR.Visible := False;
+      btnLockR.Visible   := True;
+
+   end else begin
+
+      btnUnlockR.Visible := False;
+      btnLockR.Visible   := False;
+
+   end;
 
 end;
 

@@ -77,7 +77,7 @@ begin
 
    if AnsiContainsStr(FLPMS_Main.Version,'[DEBUG]') = True then begin
 
-      btnBypass.Enabled := False;
+      btnBypass.Enabled := True;
       btnBypass.Visible := True;
 
    end else begin
