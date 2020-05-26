@@ -294,9 +294,11 @@ private  { Private Declarations }
 
    PlaceHolder                        : integer;
    DoSave, CanUpdate, DoGen, FirstRun : boolean;
-   ClipKey, OSDelim                   : string;
+   ClipKey, OSDelim, RestoreFile      : string;
    Root                               : TTreeNode;
 
+   procedure RunBackup();
+   procedure RunRestore();
    procedure OpenDB(ThisType: integer);
    function  GetData(ThisType: integer; Company, User, Unique: string) : boolean;
    function  InputQueryM(ThisCap, Question : string; DispType: integer) : string;
@@ -394,21 +396,21 @@ var
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities.dylib';
    function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities.dylib';
    function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities.dylib';
-   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'libbsd_utilities.dylib';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'libbsd_utilities.dylib';
 {$ENDIF}
 {$IFDEF LINUX}
    function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities';
    function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities';
    function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities';
-   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'libbsd_utilities';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'libbsd_utilities';
 {$ENDIF}
 {$IFDEF WINDOWS}
    function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'BSD_Utilities';
    function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'BSD_Utilities';
    function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'BSD_Utilities';
-   function DoRestore(BackupLocation,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'BSD_Utilities';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'BSD_Utilities';
 {$ENDIF}
 
 implementation
@@ -1488,38 +1490,12 @@ begin
 
    end else if pnlBackup.Visible = True then begin
 
-//      RunBackup();
-      DoBackup('Ad-Hoc',edtLocationB.Text,'lpmsdefault',edtHostNameB.Text,edtUserIDB.Text,edtPasswordB.Text,'LPMS_ACM',edtTemplateB.Text,FLPMS_Login.Version,speReadBlockB.Value,BackupLog,nil,True);
+      RunBackup();
 
    end else if pnlRestore.Visible = True then begin
 
-{
-      if Trim(edtUserID.Text) = '' then begin
+      RunRestore();
 
-         Application.MessageBox('''UserID'' is a required field - please provide then try again.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
-         edtUserID.SetFocus();
-         Exit;
-
-      end;
-
-      if Trim(edtPassword.Text) = '' then begin
-
-         Application.MessageBox('''Password'' is a required field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
-         edtPassword.SetFocus();
-         Exit;
-
-      end;
-
-      if Trim(edtHost.Text) = '' then begin
-
-         Application.MessageBox('''Host'' is a required field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
-         edtHost.SetFocus();
-         Exit;
-
-      end;
-
-//      DoRestore();
-}
    end;
 
    if ((pnlBackup.Visible = False) and (pnlRestore.Visible = False)) then begin
@@ -1529,6 +1505,60 @@ begin
       btnCancelClick(Sender);
 
    end;
+
+end;
+
+//------------------------------------------------------------------------------
+// Procedure to perform a backup
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.RunBackup();
+begin
+
+   DoBackup('Ad-Hoc',edtLocationB.Text,'lpmsdefault',edtHostNameB.Text,edtUserIDB.Text,edtPasswordB.Text,'LPMS_ACM',edtTemplateB.Text,FLPMS_Login.Version,speReadBlockB.Value,BackupLog,nil,True);
+
+end;
+
+//------------------------------------------------------------------------------
+// Procedure to perform a Restore
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.RunRestore();
+var
+   ThisResult : string;
+
+begin
+
+   if Trim(edtUserIDRe.Text) = '' then begin
+
+      Application.MessageBox('''UserID'' is a required field - please provide then try again.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+      edtUserIDRe.SetFocus();
+      Exit;
+
+   end;
+
+   if Trim(edtPasswordRe.Text) = '' then begin
+
+      Application.MessageBox('''Password'' is a required field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+      edtPasswordRe.SetFocus();
+      Exit;
+
+   end;
+
+   if Trim(edtHostNameRe.Text) = '' then begin
+
+      Application.MessageBox('''Host Name'' is a required field and must be provided.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+      edtHostNameRe.SetFocus();
+      Exit;
+
+   end;
+
+   RestoreLogRe2.Visible := False;
+   RestoreLogRe1.Visible := True;
+
+   if Application.MessageBox(PChar('WARNING: Restoring database ''lpmsdefault'' from ''' + RestoreFile + ''' will DESTROY all information in the database. This operation cannot be undone once started. You can:' + #10 + #10 + #10 + 'Click [Ok] to proceed with the Restore; or' + #10 + #10 + 'Click [Cancel to abandon the Restore and return.'),'LPMS Access Control Management',(MB_OKCANCEL + MB_ICONSTOP)) = ID_NO then begin
+      Exit;
+   end;
+
+   ThisResult := DoRestore(RestoreFile,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe1,nil,ord(RT_RESTORE));
 
 end;
 
@@ -2207,14 +2237,18 @@ var
 
 begin
 
-   ThisResult := DoRestore(edtBackupRe.Text,edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe2,nil,ord(RT_OPEN));
+   ThisResult := DoRestore(edtBackupRe.Text,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe2,nil,ord(RT_OPEN));
 
    if ThisResult <> '' then begin
+
+      RestoreFile := ThisResult;
 
       btnUnlockR.Visible := False;
       btnLockR.Visible   := True;
 
    end else begin
+
+      RestoreFile := '';
 
       btnUnlockR.Visible := False;
       btnLockR.Visible   := False;
