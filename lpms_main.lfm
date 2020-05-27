@@ -1,7 +1,7 @@
 object FLPMS_Main: TFLPMS_Main
-  Left = 944
+  Left = 530
   Height = 591
-  Top = 235
+  Top = 159
   Width = 880
   ActiveControl = Panel1
   Caption = 'FLPMS_Main'
@@ -2422,6 +2422,7 @@ object FLPMS_Main: TFLPMS_Main
           Height = 27
           Top = 92
           Width = 565
+          Anchors = [akTop, akLeft, akRight]
           TabOrder = 5
         end
         object Label42: TLabel
@@ -2437,6 +2438,7 @@ object FLPMS_Main: TFLPMS_Main
           Height = 27
           Top = 124
           Width = 565
+          Anchors = [akTop, akLeft, akRight]
           ButtonWidth = 26
           Glyph.Data = {
             36030000424D3803000000000000360000002800000010000000100000000100

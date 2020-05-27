@@ -292,10 +292,10 @@ private  { Private Declarations }
    {$ENDIF}
 {$ENDIF}
 
-   PlaceHolder                        : integer;
-   DoSave, CanUpdate, DoGen, FirstRun : boolean;
-   ClipKey, OSDelim, RestoreFile      : string;
-   Root                               : TTreeNode;
+   PlaceHolder                                        : integer;
+   DoSave, CanUpdate, DoGen, FirstRun, RestoreSuccess : boolean;
+   ClipKey, OSDelim, RestoreFile                      : string;
+   Root                                               : TTreeNode;
 
    procedure RunBackup();
    procedure RunRestore();
@@ -1147,6 +1147,9 @@ begin
 
       end;
 
+      if RestoreSuccess = True then
+         ActionsRefreshExecute(Sender);
+
    end;
 
    tvTree.Enabled := True;
@@ -1558,7 +1561,11 @@ begin
       Exit;
    end;
 
+   RestoreSuccess := False;
    ThisResult := DoRestore(RestoreFile,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe1,nil,ord(RT_RESTORE));
+
+   if ThisResult <> '' then
+      RestoreSuccess := True;
 
 end;
 
@@ -2225,6 +2232,7 @@ begin
       RestoreLogRe2.Clear;
 
    end;
+
 end;
 
 //------------------------------------------------------------------------------
