@@ -3003,18 +3003,20 @@ begin
 
 //--- Root Panel
 
-   btnClear.Height    :=  23;
-   btnClear.Width     :=  23;
-   btnPaste.Height    :=  23;
-   btnPaste.Width     :=  23;
-   btnCopy.Height     :=  23;
-   btnCopy.Width      :=  23;
-   btnDecodeR.Height  :=  23;
-   btnEncodeR.Height  :=  23;
-   btnFindR.Height    :=  23;
-   dtpExpiryR.Left    := 192;
-   dtpExpiryR.Width   := 127;
-   cbxLicTypeR.Height :=  23;
+   btnClear.Height       :=  23;
+   btnClear.Width        :=  23;
+   btnPaste.Height       :=  23;
+   btnPaste.Width        :=  23;
+   btnCopy.Height        :=  23;
+   btnCopy.Width         :=  23;
+   btnDecodeR.Height     :=  23;
+   btnEncodeR.Height     :=  23;
+   btnFindR.Height       :=  23;
+   dtpExpiryR.Left       := 192;
+   dtpExpiryR.Width      := 127;
+   dtpExpiryR.Height     :=  23;
+   dtpExpiryDateU.Height :=  23;
+   cbxLicTypeR.Height    :=  23;
 
 //--- User Panel
 
@@ -3030,18 +3032,20 @@ begin
 
 //--- Root Panel
 
-   btnClear.Height    :=  26;
-   btnClear.Width     :=  26;
-   btnPaste.Height    :=  26;
-   btnPaste.Width     :=  26;
-   btnCopy.Height     :=  26;
-   btnCopy.Width      :=  26;
-   btnDecodeR.Height  :=  26;
-   btnEncodeR.Height  :=  26;
-   btnFindR.Height    :=  26;
-   dtpExpiryR.Left    := 193;
-   dtpExpiryR.Width   := 126;
-   cbxLicTypeR.Height :=  26;
+   btnClear.Height       :=  26;
+   btnClear.Width        :=  26;
+   btnPaste.Height       :=  26;
+   btnPaste.Width        :=  26;
+   btnCopy.Height        :=  26;
+   btnCopy.Width         :=  26;
+   btnDecodeR.Height     :=  26;
+   btnEncodeR.Height     :=  26;
+   btnFindR.Height       :=  26;
+   dtpExpiryR.Left       := 193;
+   dtpExpiryR.Width      := 126;
+   dtpExpiryR.Height     :=  26;
+   dtpExpiryDateU.Height :=  26;
+   cbxLicTypeR.Height    :=  26;
 
 //--- User Panel
 
@@ -3057,18 +3061,20 @@ begin
 
 //--- Root Panel
 
-   btnClear.Height    :=  23;
-   btnClear.Width     :=  23;
-   btnPaste.Height    :=  23;
-   btnPaste.Width     :=  23;
-   btnCopy.Height     :=  23;
-   btnCopy.Width      :=  23;
-   btnDecodeR.Height  :=  23;
-   btnEncodeR.Height  :=  23;
-   btnFindR.Height    :=  23;
-   dtpExpiryR.Left    := 192;
-   dtpExpiryR.Width   := 127;
-   cbxLicTypeR.Height :=  23;
+   btnClear.Height       :=  23;
+   btnClear.Width        :=  23;
+   btnPaste.Height       :=  23;
+   btnPaste.Width        :=  23;
+   btnCopy.Height        :=  23;
+   btnCopy.Width         :=  23;
+   btnDecodeR.Height     :=  23;
+   btnEncodeR.Height     :=  23;
+   btnFindR.Height       :=  23;
+   dtpExpiryR.Left       := 192;
+   dtpExpiryR.Width      := 127;
+   dtpExpiryR.Height     :=  23;
+   dtpExpiryDateU.Height :=  23;
+   cbxLicTypeR.Height    :=  23;
 
 //--- User Panel
 

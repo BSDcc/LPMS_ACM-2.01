@@ -2,14 +2,14 @@
 <CONFIG>
   <ProjectSession>
     <Version Value="11"/>
-    <BuildModes Active="Debug"/>
+    <BuildModes Active="Release"/>
     <Units Count="29">
       <Unit0>
         <Filename Value="LPMS_ACM.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
         <CursorPos Y="22"/>
-        <UsageCount Value="195"/>
+        <UsageCount Value="196"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -22,7 +22,7 @@
         <EditorIndex Value="2"/>
         <TopLine Value="489"/>
         <CursorPos X="11" Y="489"/>
-        <UsageCount Value="195"/>
+        <UsageCount Value="196"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -34,10 +34,10 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="1552"/>
-        <CursorPos Y="1571"/>
-        <FoldState Value=" T3qd0m1 pidkB03114 pmUpd0{Y011]O0u805015 pj3l0062]hYjC0{G3]JBme08416 pkAne0G2]KDk70f[T49kR0I2]R1ke0K2[a4l30H1 TLx5091 p5/907]Pb,I0Qd"/>
-        <UsageCount Value="195"/>
+        <TopLine Value="3058"/>
+        <CursorPos X="26" Y="3077"/>
+        <FoldState Value=" T3qd0m1 pidkB03114 TLx509]J5/9072 pb,I0Q'"/>
+        <UsageCount Value="196"/>
         <Bookmarks Count="2">
           <Item0 X="27" Y="2265"/>
           <Item1 X="70" Y="1533" ID="1"/>
@@ -55,7 +55,7 @@
         <EditorIndex Value="1"/>
         <TopLine Value="59"/>
         <CursorPos X="137" Y="75"/>
-        <UsageCount Value="195"/>
+        <UsageCount Value="196"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit3>
@@ -69,7 +69,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="210"/>
         <CursorPos Y="306"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="192"/>
       </Unit4>
       <Unit5>
         <Filename Value="lpms_excel.pas"/>
@@ -80,7 +80,7 @@
         <UnitName Value="LPMS_Excel"/>
         <EditorIndex Value="4"/>
         <CursorPos X="11" Y="51"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="111"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit5>
