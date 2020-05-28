@@ -124,6 +124,12 @@ private   {Private Declarations}
    function  ReadUser(Prefix : string): boolean;
    function  ReadUnique(): boolean;
 
+type
+
+   RE_RSLT =  (ERR_INVALID,         // The content of the Key is invalid
+               ERR_LENGTH,          // The length of the Key is wrong
+               ERR_EXPIRED);        // The Key has expired
+
 public    {Public Declarations}
 
    Host     : string;       // Passed from calling Form
@@ -132,8 +138,42 @@ public    {Public Declarations}
 
 end;
 
+//------------------------------------------------------------------------------
+// Global variables
+//------------------------------------------------------------------------------
+
+type
+
+   REC_Key_Priv = record
+      Key              : string;
+      DaysLeft         : integer;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Option4     : boolean;
+      License          : integer;
+      DBPrefix         : string;
+      Unique           : string;
+      KeyDate          : string;
+   end;
+
+
 var
    FLPMS_Excel: TFLPMS_Excel;
+
+   This_Key_Priv   : REC_Key_Priv;
+
+//--- Utilities contained in BSD_Utilities.dll
+
+{$IFDEF DARWIN}
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities.dylib';
+{$ENDIF}
+{$IFDEF LINUX}
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
+{$ENDIF}
+{$IFDEF WINDOWS}
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
+{$ENDIF}
 
 implementation
 
@@ -240,6 +280,7 @@ function TFLPMS_Excel.CreateSheet() : boolean;
 var
    Row, Col       : integer;          // Row and Column counter
    ThisCase, idx1 : integer;          // Used for case statements
+   DaysLeft       : integer;          // Days left on a User's key
    ThisPref       : string;           // Current Company Prefix
 
    xlsBook        : TsWorkbook;       // The Excel Workbook;
@@ -284,7 +325,7 @@ begin
       xlsSheet.WriteBorders(Row,Col,[cbWest]);
       xlsSheet.WriteBorders(Row,Col+14,[cbEast]);
 
-      for idx1 := Col to Col+13 do begin
+      for idx1 := Col to Col+18 do begin
 
          xlsSheet.WriteBorders(Row,idx1,[cbNorth, cbSouth]);
          xlsSheet.WriteBackgroundColor(Row,idx1,clNavy);
@@ -341,26 +382,41 @@ begin
       xlsSheet.WriteText(Row,Col+7,'Expire');
       xlsSheet.WriteColWidth(Col+7,12,suChars);
 
-      xlsSheet.WriteText(Row,Col+8,'Activation Key');
-      xlsSheet.WriteColWidth(Col+8,45,suChars);
+      xlsSheet.WriteText(Row,Col+8,'Days Left');
+      xlsSheet.WriteColWidth(Col+8,22,suChars);
 
-      xlsSheet.WriteText(Row,Col+9,'Blocked');
-      xlsSheet.WriteColWidth(Col+9,12,suChars);
+      xlsSheet.WriteText(Row,Col+9,'Activation Key');
+      xlsSheet.WriteColWidth(Col+9,45,suChars);
 
-      xlsSheet.WriteText(Row,Col+10,'Renewals');
+      xlsSheet.WriteText(Row,Col+10,'Collections');
       xlsSheet.WriteColWidth(Col+10,12,suChars);
-      xlsSheet.WriteHorAlignment(Row,Col+10,haRight);
 
-      xlsSheet.WriteText(Row,Col+11,'Transfer');
+      xlsSheet.WriteText(Row,Col+11,'Doc Gen');
       xlsSheet.WriteColWidth(Col+11,12,suChars);
 
-      xlsSheet.WriteText(Row,Col+12,'New Prefix');
+      xlsSheet.WriteText(Row,Col+12,'Floating');
       xlsSheet.WriteColWidth(Col+12,12,suChars);
 
-      xlsSheet.WriteText(Row,Col+13,'New License');
-      xlsSheet.WriteColWidth(Col+13,20,suChars);
+      xlsSheet.WriteText(Row,Col+13,'Reserved');
+      xlsSheet.WriteColWidth(Col+13,12,suChars);
 
-      for idx1 := Col to Col + 13 do begin
+      xlsSheet.WriteText(Row,Col+14,'Blocked');
+      xlsSheet.WriteColWidth(Col+14,12,suChars);
+
+      xlsSheet.WriteText(Row,Col+15,'Renewals');
+      xlsSheet.WriteColWidth(Col+15,12,suChars);
+      xlsSheet.WriteHorAlignment(Row,Col+15,haRight);
+
+      xlsSheet.WriteText(Row,Col+16,'Transfer');
+      xlsSheet.WriteColWidth(Col+16,12,suChars);
+
+      xlsSheet.WriteText(Row,Col+17,'New Prefix');
+      xlsSheet.WriteColWidth(Col+17,12,suChars);
+
+      xlsSheet.WriteText(Row,Col+18,'New License');
+      xlsSheet.WriteColWidth(Col+18,20,suChars);
+
+      for idx1 := Col to Col + 18 do begin
 
          xlsSheet.WriteBorders(Row,idx1,[cbEast,cbNorth,cbSouth,cbWest]);
          xlsSheet.WriteBackgroundColor(Row,idx1,clNavy);
@@ -416,37 +472,73 @@ begin
          end;
 
          xlsSheet.WriteText(Row,Col+7,sqlQry2.FieldByName('LPMSKey_ExpiryDate').AsString);
-         xlsSheet.WriteText(Row,Col+8,sqlQry2.FieldByName('LPMSKey_Activation').AsString);
+
+//--- Decode the Key and populate the fields contained in the key
+
+         This_Key_Priv.Key := sqlQry2.FieldByName('LPMSKey_Activation').AsString;
+         DaysLeft := DoDeCode(This_Key_Priv);
+
+         if DaysLeft < 0 then begin
+
+            if DaysLeft = ord(ERR_EXPIRED) - 3 then
+               xlsSheet.WriteText(Row,Col+8,'Key has Expired!')
+            else
+               xlsSheet.WriteText(Row,Col+8,'Key is Invalid!');
+
+         end else
+            xlsSheet.WriteText(Row,Col+8,IntToStr(DaysLeft) + ' Days remaining');
+
+         xlsSheet.WriteText(Row,Col+9,sqlQry2.FieldByName('LPMSKey_Activation').AsString);
+
+         if This_Key_Priv.LPMS_Collections = True then
+            xlsSheet.WriteText(Row,Col+10,'Yes')
+         else
+            xlsSheet.WriteText(Row,Col+10,'No');
+
+         if This_Key_Priv.LPMS_DocGen = True then
+            xlsSheet.WriteText(Row,Col+11,'Yes')
+         else
+            xlsSheet.WriteText(Row,Col+11,'No');
+
+         if This_Key_Priv.LPMS_Floating = True then
+            xlsSheet.WriteText(Row,Col+12,'Yes')
+         else
+            xlsSheet.WriteText(Row,Col+12,'No');
+
+         if This_Key_Priv.LPMS_Option4 = True then
+            xlsSheet.WriteText(Row,Col+13,'Yes')
+         else
+            xlsSheet.WriteText(Row,Col+13,'No');
 
          if (sqlQry2.FieldByName('LPMSKey_Blocked').AsInteger = 0) then
-            xlsSheet.WriteText(Row,Col+9,'No')
+            xlsSheet.WriteText(Row,Col+14,'No')
          else
-            xlsSheet.WriteText(Row,Col+9,'Yes');
+            xlsSheet.WriteText(Row,Col+14,'Yes');
 
-         xlsSheet.WriteText(Row,Col+10,sqlQry2.FieldByName('LPMSKey_Renewals').AsString);
-         xlsSheet.WriteHorAlignment(Row,Col+10,haRight);
+         xlsSheet.WriteText(Row,Col+15,sqlQry2.FieldByName('LPMSKey_Renewals').AsString);
+         xlsSheet.WriteHorAlignment(Row,Col+15,haRight);
 
 
          if (sqlQry2.FieldByName('LPMSKey_Transfer').AsInteger = 0) then
-            xlsSheet.WriteText(Row,Col+11,'No')
+            xlsSheet.WriteText(Row,Col+16,'No')
          else
-            xlsSheet.WriteText(Row,Col+11,'Yes');
+            xlsSheet.WriteText(Row,Col+16,'Yes');
 
-         xlsSheet.WriteText(Row,Col+12,sqlQry2.FieldByName('LPMSKey_NewPrefix').AsString);
+         xlsSheet.WriteText(Row,Col+17,sqlQry2.FieldByName('LPMSKey_NewPrefix').AsString);
 
          ThisCase := sqlQry2.FieldByName('LPMSKey_NewLicense').AsInteger;
 
          case ThisCase of
 
-            0: xlsSheet.WriteText(Row,Col+13,'Not Transferred');
-            1: xlsSheet.WriteText(Row,Col+13,'Trial');
-            2: xlsSheet.WriteText(Row,Col+13,'Personal');
-            3: xlsSheet.WriteText(Row,Col+13,'Browse');
-            4: xlsSheet.WriteText(Row,Col+13,'Generic');
+            0: xlsSheet.WriteText(Row,Col+18,'Not Transferred');
+            1: xlsSheet.WriteText(Row,Col+18,'Trial');
+            2: xlsSheet.WriteText(Row,Col+18,'Personal');
+            3: xlsSheet.WriteText(Row,Col+18,'Browse');
+            4: xlsSheet.WriteText(Row,Col+18,'Generic');
 
          end;
 
-         for idx1 := Col to Col + 13 do begin
+         for idx1 := Col to Col + 18 do begin
             xlsSheet.WriteBorders(Row,idx1,[cbWest,cbNorth,cbSouth,cbEast]);
          end;
 
@@ -658,7 +750,7 @@ begin
    wbsSource.SaveToSpreadsheetFile(InitDir + SpreadSheetName + Ext,Format,True);
 
    if cbOpen.Checked = True then
-      OpenDocument(SpreadSheetName + Ext);
+      OpenDocument(InitDir + SpreadSheetName + Ext);
 
 end;
 

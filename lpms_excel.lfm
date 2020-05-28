@@ -10,7 +10,7 @@ object FLPMS_Excel: TFLPMS_Excel
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.8.0'
+  LCLVersion = '2.0.6.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -37,7 +37,7 @@ object FLPMS_Excel: TFLPMS_Excel
     end
     object sCellIndicator1: TsCellIndicator
       Left = 8
-      Height = 27
+      Height = 26
       Top = 7
       Width = 80
       WorkbookSource = wbsSource
@@ -50,7 +50,6 @@ object FLPMS_Excel: TFLPMS_Excel
       Top = 2
       Width = 1096
       Anchors = [akTop, akLeft, akRight]
-      ReadOnly = True
       TabOrder = 1
       WorkbookSource = wbsSource
     end
@@ -171,7 +170,7 @@ object FLPMS_Excel: TFLPMS_Excel
     end
     object Label1: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 12
       Width = 82
       Caption = 'Export Format:'
@@ -179,7 +178,7 @@ object FLPMS_Excel: TFLPMS_Excel
     end
     object cbxFormat: TComboBox
       Left = 120
-      Height = 27
+      Height = 26
       Top = 8
       Width = 206
       ItemHeight = 0
