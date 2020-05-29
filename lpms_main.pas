@@ -2360,6 +2360,7 @@ end;
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.ToolsEmailExecute(Sender: TObject);
 var
+   idx          : integer;     // Loop counter
    From         : string;      // Email address of the Sender
    ToStr        : string;      // To addresses, comma delimited
    CcStr        : string;      // Cc addresses, comma delimited
@@ -2368,6 +2369,7 @@ var
    Body         : string;      // Body of the email
    Attach       : string;      // '|' delimited string containing files to be attached
    SMTPStr      : string;      // '|' delimited string containing the SMTP parameters
+   Process      : TProcess;    // Used forc alling the standalone email utility if 'Edit Email' is checked
 
 begin
 
@@ -2391,20 +2393,24 @@ begin
               'To activate LPMS with this key please do the following:|' +
               ' |' +
               '1.  Run LPMS_FirstRun.|' +
+              ' |' +
               '    1.1. Click on Start;|' +
               '    1.2. Click on Programs;|' +
               '    1.3. Click on BlueCrane Software; and|' +
-              '    1.4. Click on LPMS_FirstRun|' +
+              '    1.4. Click on LPMS_FirstRun;|' +
+              ' |' +
               '2.  If your release is a multi-company release then:|' +
+              ' |' +
               '    2.1. Enter ''' + edtPrefixU.Text + ''' in the field next to ''DBPrefix:'';|' +
               '    2.2. Select ''Multi Company Support''; and|' +
-              '    2.3. Click on ''Ok'' button to proceed|' +
-              '3.  If your release is not a multi-company release simply click on the ''Ok'' button|' +
-              '4.  Click on the ''Maintenance'' tab|' +
-              '5.  Enter ''' + edtPrefixU.Text + ''' in the field next to ''Prefix:''|' +
-              '6.  Copy the key above and paste in the field next to ''Key:''|' +
-              '7.  Click on the ''Update'' button, then on the ''OK'' button and then on the ''Close'' button |' +
-              '8.  Start LPMS. |' +
+              '    2.3. Click on ''Ok'' button to proceed;|' +
+              ' |' +
+              '3.  If your release is not a multi-company release simply click on the ''Ok'' button;|' +
+              '4.  Click on the ''Maintenance'' tab;|' +
+              '5.  Enter ''' + edtPrefixU.Text + ''' in the field next to ''Prefix:'';|' +
+              '6.  Copy the key above and paste in the field next to ''Key:'';|' +
+              '7.  Click on the ''Update'' button, then on the ''OK'' button and then on the ''Close'' button; and|' +
+              '8.  Start LPMS.|' +
               ' |' +
               'Please contact BlueCrane Software Development should you have any queries or experience any problems.|' +
               ' |' +
@@ -2424,10 +2430,49 @@ begin
 
 //--- Call and execute the SendMimeMail function in the DLL
 
-   if SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr) = False then
-      Application.MessageBox('Sending Email failed! Please check Email set-up details.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP))
-   else
-      Application.MessageBox('Send Email completed.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
+   if cbEditemail.Checked = True then begin
+
+      Process := TProcess.Create(nil);
+
+      try
+
+         Process.InheritHandles := False;
+         Process.Options        := [poWaitOnExit];
+         Process.ShowWindow     := swoShow;
+
+   //--- Copy default environment variables including DISPLAY variable for GUI
+   //--- application to work
+
+         for idx := 1 to GetEnvironmentVariableCount do
+            Process.Environment.Add(GetEnvironmentString(idx));
+
+         Process.Executable := ExtractFilePath(Application.ExeName) + 'LPMS_SendEmail';
+         Process.Parameters.Add('--args');
+         Process.Parameters.Add('-FBSD SEND EMAIL');
+         Process.Parameters.Add('-P' + SMTPStr);
+         Process.Parameters.Add('-B' + BccStr);
+         Process.Parameters.Add('-E' + Body);
+         Process.Parameters.Add('-T' + ToStr);
+         Process.Parameters.Add('-C' + CcStr);
+         Process.Parameters.Add('-S' + Subject);
+         Process.Parameters.Add('-O' + From);
+
+         FLPMS_Main.Hide();
+         Process.Execute;
+         FLPMS_Main.Show();
+
+      finally
+         Process.Free;
+      end;
+
+   end else begin
+
+      if SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr) = False then
+         Application.MessageBox('Sending Email failed! Please check Email set-up details.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP))
+      else
+         Application.MessageBox('Send Email completed.','LPMS Access Control Management',(MB_OK + MB_ICONINFORMATION));
+
+   end;
 
 end;
 
