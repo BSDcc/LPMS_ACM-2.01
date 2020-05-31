@@ -7,8 +7,8 @@
       <Unit0>
         <Filename Value="LPMS_ACM.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
-        <CursorPos Y="22"/>
+        <EditorIndex Value="3"/>
+        <CursorPos Y="23"/>
         <UsageCount Value="199"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -19,7 +19,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Login"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="368"/>
         <CursorPos Y="158"/>
         <UsageCount Value="199"/>
@@ -34,9 +34,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="2416"/>
-        <CursorPos X="27" Y="2462"/>
-        <FoldState Value=" T3qd0m1 pidkB03113 TLx509]J5/90727"/>
+        <TopLine Value="2441"/>
+        <CursorPos X="75" Y="2449"/>
         <UsageCount Value="199"/>
         <Bookmarks Count="2">
           <Item0 X="5" Y="2467"/>
@@ -52,7 +51,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_InputQuery"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="1"/>
         <TopLine Value="59"/>
         <CursorPos X="137" Y="75"/>
         <UsageCount Value="199"/>
@@ -78,7 +77,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Excel"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="281"/>
         <CursorPos X="44" Y="408"/>
         <UsageCount Value="114"/>
@@ -254,10 +253,9 @@
       </Unit28>
       <Unit29>
         <Filename Value="../SendEmail-1.00/ldSendEmail.pas"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="109"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
       </Unit29>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
@@ -371,15 +369,15 @@
       </Position27>
       <Position28>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2371" Column="107" TopLine="2400"/>
+        <Caret Line="2975" TopLine="2937"/>
       </Position28>
       <Position29>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2975" TopLine="2937"/>
+        <Caret Line="2453" Column="36" TopLine="2420"/>
       </Position29>
       <Position30>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2453" Column="36" TopLine="2420"/>
+        <Caret Line="2462" Column="27" TopLine="2439"/>
       </Position30>
     </JumpHistory>
     <RunParams>

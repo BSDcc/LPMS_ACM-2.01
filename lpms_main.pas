@@ -2446,7 +2446,7 @@ begin
          for idx := 1 to GetEnvironmentVariableCount do
             Process.Environment.Add(GetEnvironmentString(idx));
 
-         Process.Executable := ExtractFilePath(Application.ExeName) + 'LPMS_SendEmail';
+         Process.Executable := ExtractFilePath(Application.ExeName) + 'BSD_SendEmail';
          Process.Parameters.Add('--args');
          Process.Parameters.Add('-FBSD SEND EMAIL');
          Process.Parameters.Add('-P' + SMTPStr);
