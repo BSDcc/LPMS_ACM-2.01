@@ -3070,35 +3070,81 @@ begin
    btnLock.Height     := 23;
    btnLock.Width      := 23;
    cbxLicTypeU.Height := 23;
+   btnCopy.Height     := 23;
+
+//--- Restore Panel
+
+   btnOpenRe.Top := 160;
 
 {$ENDIF}
 
 {$IFDEF LINUX}
 
+   {$IFDEF CPUARM}
+
 //--- Root Panel
 
-   btnClear.Height       :=  26;
-   btnClear.Width        :=  26;
-   btnPaste.Height       :=  26;
-   btnPaste.Width        :=  26;
-   btnCopy.Height        :=  26;
-   btnCopy.Width         :=  26;
-   btnDecodeR.Height     :=  26;
-   btnEncodeR.Height     :=  26;
-   btnFindR.Height       :=  26;
-   dtpExpiryR.Left       := 193;
-   dtpExpiryR.Width      := 126;
-   dtpExpiryR.Height     :=  26;
-   dtpExpiryDateU.Height :=  26;
-   cbxLicTypeR.Height    :=  26;
+      btnClear.Height       :=  24;
+      btnClear.Width        :=  23;
+      btnPaste.Height       :=  24;
+      btnPaste.Width        :=  23;
+      btnCopy.Height        :=  23;
+      btnCopy.Width         :=  23;
+      btnDecodeR.Height     :=  23;
+      btnEncodeR.Height     :=  23;
+      btnFindR.Height       :=  23;
+      dtpExpiryR.Left       := 192;
+      dtpExpiryR.Width      := 127;
+      dtpExpiryR.Height     :=  24;
+      dtpExpiryDateU.Height :=  23;
+      cbxLicTypeR.Height    :=  23;
 
 //--- User Panel
 
-   btnUnlock.Height   := 26;
-   btnUnlock.Width    := 26;
-   btnLock.Height     := 26;
-   btnLock.Width      := 26;
-   cbxLicTypeU.Height := 26;
+      btnUnlock.Height   := 23;
+      btnUnlock.Width    := 23;
+      btnLock.Height     := 23;
+      btnLock.Width      := 23;
+      cbxLicTypeU.Height := 23;
+      btnCopy.Height     := 24;
+
+//--- Restore Panel
+
+      btnOpenRe.Top := 155;
+
+   {$ELSE}
+
+//--- Root Panel
+
+      btnClear.Height       :=  26;
+      btnClear.Width        :=  26;
+      btnPaste.Height       :=  26;
+      btnPaste.Width        :=  26;
+      btnCopy.Height        :=  26;
+      btnCopy.Width         :=  26;
+      btnDecodeR.Height     :=  26;
+      btnEncodeR.Height     :=  26;
+      btnFindR.Height       :=  26;
+      dtpExpiryR.Left       := 193;
+      dtpExpiryR.Width      := 126;
+      dtpExpiryR.Height     :=  26;
+      dtpExpiryDateU.Height :=  26;
+      cbxLicTypeR.Height    :=  26;
+
+//--- User Panel
+
+      btnUnlock.Height   := 26;
+      btnUnlock.Width    := 26;
+      btnLock.Height     := 26;
+      btnLock.Width      := 26;
+      cbxLicTypeU.Height := 26;
+      btnCopy.Height     := 26;
+
+//--- Restore Panel
+
+      btnOpenRe.Top := 156;
+
+   {$ENDIF}
 
 {$ENDIF}
 
@@ -3128,6 +3174,11 @@ begin
    btnLock.Height     := 23;
    btnLock.Width      := 23;
    cbxLicTypeU.Height := 23;
+   btnCopy.Height     := 23;
+
+//--- Restore Panel
+
+     btnOpenRe.Top := 160;
 
 {$ENDIF}
 

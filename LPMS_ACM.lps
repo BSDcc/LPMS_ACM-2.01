@@ -34,8 +34,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="2441"/>
-        <CursorPos X="75" Y="2449"/>
+        <TopLine Value="3133"/>
+        <CursorPos X="27" Y="3145"/>
         <UsageCount Value="199"/>
         <Bookmarks Count="2">
           <Item0 X="5" Y="2467"/>
@@ -385,7 +385,7 @@
       <Modes Count="1" ActiveMode="default">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="-Hmeyerfamily.no-ip.org -pvincent1 -uroot"/>
+            <CommandLineParams Value="-H192.168.10.210 -pvincent1 -uroot"/>
           </local>
         </Mode0>
       </Modes>

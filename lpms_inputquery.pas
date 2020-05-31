@@ -163,7 +163,15 @@ begin
 
 {$IFDEF LINUX}
 
-   btnView.Top := 34;
+   {$IFDEF CPUARM}
+
+      btnView.Top := 33;
+
+   {$ELSE}
+
+      btnView.Top := 34;
+
+   {$ENDIF}
 
 {$ENDIF}
 
