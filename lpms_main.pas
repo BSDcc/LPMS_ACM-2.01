@@ -2219,19 +2219,17 @@ end;
 procedure TFLPMS_Main.edtBackupReChange(Sender: TObject);
 begin
 
+   btnUnlockRClick(Sender);
+   btnOpenRe.Enabled  := False;
+   btnUnlockR.Visible := False;
+   btnLockR.Visible   := False;
+
+   RestoreLogRe1.Visible := False;
+   RestoreLogRe2.Visible := True;
+   RestoreLogRe2.Clear;
+
    if FileExists(edtBackupRe.Text) = True then
-
-      btnOpenRe.Enabled := True
-
-   else begin
-
-      btnOpenRe.Enabled  := False;
-      btnUnlockR.Visible := False;
-      btnLockR.Visible   := False;
-
-      RestoreLogRe2.Clear;
-
-   end;
+      btnOpenRe.Enabled := True;
 
 end;
 
@@ -2244,6 +2242,10 @@ var
    ThisResult : string;
 
 begin
+
+   RestoreLogRe1.Visible := False;
+   RestoreLogRe2.Visible := True;
+   RestoreLogRe2.Clear;
 
    ThisResult := DoRestore(edtBackupRe.Text,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe2,nil,ord(RT_OPEN));
 
@@ -2258,6 +2260,7 @@ begin
 
       RestoreFile := '';
 
+      btnUnlockRClick(Sender);
       btnUnlockR.Visible := False;
       btnLockR.Visible   := False;
 
@@ -2369,6 +2372,7 @@ var
    Body         : string;      // Body of the email
    Attach       : string;      // '|' delimited string containing files to be attached
    SMTPStr      : string;      // '|' delimited string containing the SMTP parameters
+   SMUtil       : string;      // Name of external email viewer - assumed to be in the execution directory
    Process      : TProcess;    // Used forc alling the standalone email utility if 'Edit Email' is checked
 
 begin
@@ -2432,6 +2436,21 @@ begin
 
    if cbEditemail.Checked = True then begin
 
+//--- User wants to see/edit the email before it is sent. Make sure the
+//--- external program exists and can be called
+
+      SMUtil := ExtractFilePath(Application.ExeName) + 'BSD_SendEmail';
+{$IFDEF WINDOWS}
+      SMUtil := SMUtil + '.exe';
+{$ENDIF}
+
+      if FileExists(SMUtil) = False then begin
+
+         Application.MessageBox('Unable to load external utility to view/edit the email content.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+         Exit;
+
+      end;
+
       Process := TProcess.Create(nil);
 
       try
@@ -2446,7 +2465,7 @@ begin
          for idx := 1 to GetEnvironmentVariableCount do
             Process.Environment.Add(GetEnvironmentString(idx));
 
-         Process.Executable := ExtractFilePath(Application.ExeName) + 'BSD_SendEmail';
+         Process.Executable := SMUtil;
          Process.Parameters.Add('--args');
          Process.Parameters.Add('-FBSD SEND EMAIL');
          Process.Parameters.Add('-P' + SMTPStr);
