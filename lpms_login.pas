@@ -25,7 +25,7 @@ uses
 {$ENDIF}
 
    Classes, SysUtils, sqldb, Forms, Controls, Graphics, Dialogs, StdCtrls,
-   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles,
+   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles, LazFileUtils,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    winpeimagereader, mysql56conn;
@@ -62,6 +62,7 @@ type
    edtPassword: TEdit;
    edtUserID: TEdit;
    Image1: TImage;
+   jvBrowse: TSelectDirectoryDialog;
    Label1: TLabel;
    Label2: TLabel;
    Label3: TLabel;
@@ -82,6 +83,10 @@ private  { Private Declarations }
    Minor      : string;     // Minor Version component of the Version info
    VerRelease : string;     // Release component of the Version info
    Build      : string;     // Build Number component of the Version info
+   INILoc     : string;     // Location of the INI file
+   LocalPath  : string;     // Path to location of the INI file
+
+
 
 {$IFDEF WINDOWS}                   // Target is Winblows
    sqlCon  : TMySQL56Connection;
@@ -149,7 +154,6 @@ implementation
 procedure TFLPMS_Login.FormCreate(Sender: TObject);
 var
    idx, NumParms  : integer;
-   INILoc         : string;
    Params, Args   : TStringList;
    IniFile        : TINIFile;
 
@@ -246,9 +250,78 @@ begin
 
    end;
 
+//--- Set the location of the INI file. We get the path to the user's home
+//--- directory (this is platform independent). Winblows is a problem due to a
+//--- lack of naming conventions across versions of Winblows. If it is not
+//--- 'Documents' or 'My Documents' then we give the User a change to select
+//--- the home directory.
+
+{$IFDEF WINDOWS}
+
+   LocalPath := AppendPathDelim(GetUserDir + 'Documents');
+
+   if DirectoryExists(LocalPath) = False then begin
+
+      LocalPath := AppendPathDelim(GetUserDir + 'My Documents');
+
+      if DirectoryExists(LocalPath) = False then begin
+
+         if (MessageDlg('LPMS Access Control Management','WARNING: Unable to locate home directory. You can:' + #10 + #10 + #10 + 'Click [Yes] to locate the home directory; or ' + #10 +#10 + 'Click [No] to terminate.', mtWarning, [mbYes,mbNo], '') = mrNo) then begin;
+
+            Application.Terminate;
+            Exit;
+
+         end;
+
+
+         if jvBrowse.Execute = False then begin
+
+            Application.Terminate;
+            Exit;
+
+         end;
+
+      end;
+
+   end;
+
+   LocalPath := AppendPathDelim(LocalPath + 'LPMS_ACM');
+
+{$ELSE}
+
+   LocalPath := AppendPathDelim(GetUSerDir);
+   LocalPath := LocalPath + '.lpms_acm' + OSDelim;
+
+{$ENDIF}
+
+//--- We now have what passes for a home directory with the working directory
+//--- 'LPMS_ACM' (Winblows) or '.lpms_acm' (*nix) added to it and tests whether
+//--- this exists. If it does not then we ask the User whether we should create
+//--- it and do so if the User agrees otherwise we terminate the Application
+
+   if DirectoryExists(LocalPath) = False then begin
+
+      if (MessageDlg('LPMS Access Control Management','WARNING: LPMS_ACM directory does not exist. You can:' + #10 + #10 + #10 + 'Click [Yes] to create the directory; or' +#10 + #10 + 'Click [No] to terminate.', mtWarning, [mbYes,mbNo], '') = mrNo) then begin;
+
+         Application.Terminate;
+         Exit;
+
+      end;
+
+      if CreateDir(LocalPath) = False then begin
+
+         MessageDlg('LPMS Access Control Management','FATAL: Unable to create LPMS_ACM directory.' + #10 + #10 + 'LPMS_ACM cannot continue and will be terminated.', mtError, [mbOk], '');
+         Application.Terminate;
+         Exit;
+
+      end;
+
+   end;
+
+
 //--- Get the SMTP parameters from the INI file and store for later use
 
-   INILoc := ExtractFilePath(Application.ExeName) + 'LPMS_ACM.ini';
+   INILoc := LocalPath + 'LPMS_ACM.ini';
 
    if FileExists(INILoc) = True then begin
 
@@ -299,8 +372,7 @@ end;
 //------------------------------------------------------------------------------
 procedure TFLPMS_Login. FormClose( Sender: TObject; var CloseAction: TCloseAction);
 var
-   INILoc  : string;
-   IniFile : TINIFile;
+   IniFile   : TINIFile;
 
 begin
 
@@ -310,7 +382,7 @@ begin
 
 //--- Write the current SMTP parameters to the INI file
 
-   INILoc := ExtractFilePath(Application.ExeName) + 'LPMS_ACM.ini';
+   INILoc := LocalPath + 'LPMS_ACM.ini';
 
    IniFile := TINIFile.Create(INILoc);
 
@@ -558,196 +630,6 @@ begin
 {$ENDIF}
 
 end;
-
-{
-//------------------------------------------------------------------------------
-// Function to mask/unmask a field written to a plain text file
-//------------------------------------------------------------------------------
-function TFLPMS_Login.MaskField(InputField: string; MaskType: integer) : string;
-var
-   idx1             : integer;
-   S2               : string;
-   S1               : array[1..64] of char;
-   Hi1, Hi2, HL, Lo : Word;
-
-begin
-
-   case MaskType of
-
-//--- Mask the Input Field
-
-      ord(MA_MASK): begin
-
-         S1   := InputField;
-         S2   := '';
-         idx1 := 1;
-
-         while (S1[idx1] <> #0) do begin
-
-//--- Get copies of the current character
-
-            Hi1 := Word(S1[idx1]);
-            Lo  := Word(S1[idx1]);
-
-//--- Move the 4 high bits to the right and mask out the four left bits
-
-            Hi1 := Hi1 shr 4;
-            Lo  := Lo and %00001111;
-
-//--- Turn the Hi and Lo parts into displayable characters
-
-            Hi1 := Hi1 or %01000000;
-            Lo  := Lo  or %01000000;
-
-//--- Add them to the result string
-
-            S2 := S2 + char(Hi1) + char(Lo);
-
-            inc(idx1);
-
-         end;
-
-         Result := S2;
-
-      end;
-
-//--- Unmask the input field
-
-      ord(MA_UNMASK) : begin
-
-         S1   := InputField;
-         S2   := '';
-         idx1 := 1;
-
-         while (S1[idx1] <> #0) do begin
-
-//--- Get copies of the next 2 characters
-
-            Hi1 := Word(S1[idx1]);
-            Inc(idx1);
-            Hi2 := Word(S1[idx1]);
-            Inc(idx1);
-
-//--- Move the 4 low bits of the first to the left and mask the 4 low bits then
-//--- mask the 4 high bits of the second
-
-            Hi1 := Hi1 shl 4;
-            Hi1 := Hi1 and %11110000;
-            Hi2 := Hi2 and %00001111;
-
-//--- Merge the 2 characters
-
-            HL := Hi1 or Hi2;
-
-//--- Add it to the result string
-
-            S2 := S2 + char(HL);
-
-         end;
-
-         Result := S2;
-
-      end;
-
-   end;
-
-end;
-}
-
-{
-//------------------------------------------------------------------------------
-// Function to extract and return the parameters that were passed on the
-// command line when the application was invoked.
-//
-// An Option list of "H:L:mu:" would expect a command line similar to:
-//   -H followed by a parameter e.g. -Hwww.sourcingmethods.com
-//   -L followed by a parameter e.g. -L1
-//   -m
-//   -u followed by a parameter e.g. -uFrancois
-//
-// The calling function must create the following TStringList variables:
-//
-//   Options
-//   Parms
-//
-// The function returns:
-//
-//    0 if no command line parameters were passed
-//    $ in the Parms string if a value was expected but not found
-//    # in the Parms string if an unknown parameter was found
-//   -1 if the switch '-' could not be found
-//   The number of parameters found if no error were found
-//---------------------------------------------------------------------------
-function TFLPMS_Login.cmdlOpt(OptList : string; Options, Parms : TStringList) : integer;
-var
-   idx1, idx2           : integer;
-   Found                : boolean;
-   ThisParm, ThisOption : string;
-
-begin
-
-   if ParamCount < 1 then begin
-
-      Result := 0;
-      Exit;
-
-   end;
-
-//--- Extract the parameters that were passed from ParamStr
-
-   for idx1 := 1 to ParamCount do begin
-
-      ThisParm := ParamStr(idx1);
-
-//--- First character of the argument must be the switch character ('-')
-
-      if ThisParm.SubString(0,1) <> '-' then begin
-
-         Result := -1;
-         Exit;
-
-      end;
-
-//--- Extract the second character and search for it in OptList
-
-      ThisOption := ThisParm.SubString(1,1);
-      Found := False;
-
-      for idx2 := 0 to OptList.Length do begin
-
-         if OptList.SubString(idx2,1) = ThisOption then begin
-
-            Found := True;
-            Options.Add(ThisOption);
-
-//--- If this Option is followed by ":" in the OptList then a parameter is
-//    expected. Extract the parameter if it is expected
-
-            if OptList.SubString(idx2 + 1,1) = ':' then begin
-
-               if ThisParm.Length < 3 then
-                  Parms.Add('$')
-               else
-                  Parms.Add(ThisParm.SubString(2, ThisParm.Length - 1));
-
-            end else
-               Parms.Add('$');
-
-         end;
-
-      end;
-
-      if Found = False then begin
-         Options.Add(ThisOption);
-         Parms.Add('#');
-      end;
-
-   end;
-
-   Result := Parms.Count;
-
-end;
-}
 
 //------------------------------------------------------------------------------
 
