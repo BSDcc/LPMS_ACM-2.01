@@ -295,7 +295,7 @@ private  { Private Declarations }
 
    PlaceHolder                                        : integer;
    DoSave, CanUpdate, DoGen, FirstRun, RestoreSuccess : boolean;
-   ClipKey, OSDelim, RestoreFile                      : string;
+   ClipKey, RestoreFile                               : string;
    Root                                               : TTreeNode;
 
    procedure RunBackup();
@@ -461,10 +461,7 @@ begin
    DefaultFormatSettings.ShortDateFormat := 'yyyy/MM/dd';
    DefaultFormatSettings.DateSeparator   := '/';
 
-   OSDelim := '/';
-
 {$IFDEF WINDOWS}                    // Target is Winblows
-   OSDelim := '\';
    sqlCon  := TMySQL56Connection.Create(nil);
 {$ENDIF}
 
@@ -2101,12 +2098,7 @@ end;
 procedure TFLPMS_Main.edtLocationBAcceptDirectory(Sender: TObject; var Value: String);
 begin
 
-{$IFDEF WINDOWS}
-   if Length(Value) > 3 then
-      Value := Value + OSDelim;
-{$ELSE}
-   Value := Value + OSDELIM;
-{$ENDIF}
+   Value := AppendPathDelim(Value);
 
 end;
 
