@@ -37,10 +37,11 @@ uses
 {$ENDIF}
 
 {$IFDEF DARWIN}                      // Target is macOS
-   {$IFDEF CPUI386}                  // Running on a version below Catalina
-      mysql55conn;
+   Zipper, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
+  {$IFDEF CPUI386}                  // Running on old hardware i.e. i386
+      mysql55conn, Interfaces;
    {$ELSE}                           // Running on Catalina
-      mysql57conn;
+      mysql57conn, Interfaces;
    {$ENDIF}
 {$ENDIF}
 
@@ -270,6 +271,10 @@ type
    procedure ToolsGenerateExecute(Sender: TObject);
    procedure tvTreeClick(Sender: TObject);
 
+{$IFDEF DARWIN}
+{$INCLUDE '../BSD_Utilities/BSD_Utilities_01.inc'}
+{$ENDIF}
+
 private  { Private Declarations }
 
 {$IFDEF WINDOWS}                   // Target is Winblows
@@ -284,12 +289,8 @@ private  { Private Declarations }
    {$ENDIF}
 {$ENDIF}
 
-{$IFDEF DARWIN}                    // Target is macOS
-   {$IFDEF CPUI386}                // Running on a version below Catalina
-      sqlCon : TMySQL55Connection;
-   {$ELSE}                         // Running on Catalina
-      sqlCon : TMySQL57Connection;
-   {$ENDIF}
+{$IFDEF DARWIN}
+{$INCLUDE '../BSD_Utilities/BSD_Utilities_02.inc'}
 {$ENDIF}
 
    PlaceHolder                                        : integer;
@@ -352,6 +353,8 @@ public   { Public Declarations }
    PassPhrase  : string;      // Contains the Phass Phrase to unlock restricted activities
 
 end;
+
+{$IFNDEF DARWIN}
 
 //------------------------------------------------------------------------------
 // Global variables
@@ -418,6 +421,27 @@ implementation
    uses LPMS_Login, LPMS_InputQuery, LPMS_Show, LPMS_Excel;
 
 {$R *.lfm}
+
+{$ElSE}
+
+//------------------------------------------------------------------------------
+// Global variables
+//------------------------------------------------------------------------------
+var
+   FBSDSendEmail: TFBSDSendEmail;
+
+   This_Key_Values : REC_Key_Values;
+   This_Key_Priv   : REC_Key_Priv;
+
+implementation
+
+   uses LPMS_Login, LPMS_InputQuery, LPMS_Show, LPMS_Excel;
+
+{$R *.lfm}
+
+{$INCLUDE '../BSD_Utilities/BSD_Utilities.lpr'}
+
+{$ENDIF}
 
    { TFLPMS_Main }
 

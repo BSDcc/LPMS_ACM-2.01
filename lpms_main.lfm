@@ -2481,7 +2481,6 @@ object FLPMS_Main: TFLPMS_Main
           Hint = 'Click to terminate LPMS Access Control Manager'
           Top = 156
           Width = 75
-          Anchors = [akRight, akBottom]
           Caption = 'Open'
           OnClick = btnOpenReClick
           TabOrder = 7
