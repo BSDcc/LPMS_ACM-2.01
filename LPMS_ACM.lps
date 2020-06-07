@@ -20,10 +20,11 @@
         <UnitName Value="LPMS_Login"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="11"/>
-        <CursorPos X="35" Y="31"/>
+        <TopLine Value="14"/>
+        <CursorPos X="7" Y="34"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="lpms_main.pas"/>
@@ -32,13 +33,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
-        <TopLine Value="2298"/>
-        <CursorPos X="22" Y="2313"/>
-        <FoldState Value=" T3vW03011 TLyU091 p5/9072 pb.Y0QG"/>
+        <TopLine Value="996"/>
+        <CursorPos X="57" Y="487"/>
+        <FoldState Value=" T3uc03011 TLxa091 p5/9072 pb.Y0QB"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
-          <Item0 X="5" Y="2549"/>
-          <Item1 X="27" Y="3030" ID="1"/>
+          <Item0 X="5" Y="2512"/>
+          <Item1 X="27" Y="2993" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -77,7 +78,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="12"/>
         <CursorPos X="38" Y="25"/>
-        <UsageCount Value="130"/>
+        <UsageCount Value="131"/>
       </Unit5>
       <Unit6>
         <Filename Value="../LPMS_Backup_Manager-3.02/Source/ldbackupapp.pas"/>
@@ -302,7 +303,6 @@
       <Unit37>
         <Filename Value="../BSD_Utilities/BSD_Utilities_01.inc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="19"/>
         <UsageCount Value="12"/>
       </Unit37>
       <Unit38>
@@ -338,7 +338,7 @@
         <UsageCount Value="10"/>
       </Unit42>
     </Units>
-    <JumpHistory Count="10" HistoryIndex="9">
+    <JumpHistory Count="16" HistoryIndex="15">
       <Position1>
         <Filename Value="lpms_main.pas"/>
         <Caret Line="388" Column="21" TopLine="370"/>
@@ -379,6 +379,30 @@
         <Filename Value="lpms_login.pas"/>
         <Caret Line="31" Column="35" TopLine="11"/>
       </Position10>
+      <Position11>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="32" Column="13" TopLine="10"/>
+      </Position11>
+      <Position12>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="34" Column="20" TopLine="14"/>
+      </Position12>
+      <Position13>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="561" Column="24" TopLine="454"/>
+      </Position13>
+      <Position14>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="34" Column="27" TopLine="4"/>
+      </Position14>
+      <Position15>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="79" Column="24" TopLine="63"/>
+      </Position15>
+      <Position16>
+        <Filename Value="lpms_main.pas"/>
+        <Caret Line="487" Column="57" TopLine="996"/>
+      </Position16>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
@@ -392,15 +416,6 @@
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="1">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="lpms_main.pas"/>
-        <Line Value="2309"/>
-      </Item1>
-    </BreakPoints>
     <Watches Count="1">
       <Item1>
         <Expression Value="S1"/>

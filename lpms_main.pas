@@ -38,9 +38,9 @@ uses
 
 {$IFDEF DARWIN}                      // Target is macOS
    Zipper, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
-  {$IFDEF CPUI386}                  // Running on old hardware i.e. i386
+  {$IFDEF CPUI386}                   // Running on old hardware i.e. i386 - Widget set must be Carbon
       mysql55conn, Interfaces;
-   {$ELSE}                           // Running on Catalina
+   {$ELSE}                           // Running on x86_64 - Widget set must be Cocoa
       mysql57conn, Interfaces;
    {$ENDIF}
 {$ENDIF}
@@ -277,11 +277,9 @@ type
 private  { Private Declarations }
 
 {$IFDEF WINDOWS}                   // Target is Winblows
-
    sqlCon  : TMySQL56Connection;
    sqlTran : TSQLTransaction;
    sqlQry1 : TSQLQuery;
-
 {$ENDIF}
 
 {$IFDEF LINUX}                     // Target is Linux
@@ -434,43 +432,8 @@ implementation
 //------------------------------------------------------------------------------
 // Global variables
 //------------------------------------------------------------------------------
-{
-type
-
-   REC_Key_Priv = record
-      Key              : string;
-      DaysLeft         : integer;
-      LPMS_Collections : boolean;
-      LPMS_DocGen      : boolean;
-      LPMS_Floating    : boolean;
-      LPMS_Option4     : boolean;
-      License          : integer;
-      DBPrefix         : string;
-      Unique           : string;
-      KeyDate          : string;
-   end;
-
-   REC_Key_Values = record
-      Unique           : string;
-      ExpDate          : string;
-      DBPrefix         : string;
-      LPMS_Collections : boolean;
-      LPMS_DocGen      : boolean;
-      LPMS_Floating    : boolean;
-      LPMS_Options4    : boolean;
-      License          : integer;
-   end;
-}
-
 var
    FLPMS_Main: TFLPMS_Main;
-
-{$IFNDEF DARWIN}
-
-   This_Key_Values : REC_Key_Values;
-   This_Key_Priv   : REC_Key_Priv;
-
-{$ENDIF}
 
 implementation
 
@@ -519,9 +482,9 @@ begin
 {$ENDIF}
 
 {$IFDEF DARWIN}                     // Target is macOS
-   {$IFDEF CPUI386}                 // Running on a version below Catalina
+   {$IFDEF CPUI386}                 // Running on older hardware i.e. i386
       sqlCon := TMySQL55Connection.Create(nil);
-   {$ELSE}
+   {$ELSE}                          // Running on x86_64
       sqlCon := TMySQL57Connection.Create(nil);
    {$ENDIF}
    sqlTran := TSQLTransaction.Create(nil);

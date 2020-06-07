@@ -25,24 +25,24 @@ uses
 {$ENDIF}
 
    Classes, SysUtils, sqldb, Forms, Controls, Graphics, Dialogs, StdCtrls,
-   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles
+   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles,
 
 {$IFDEF DARWIN}                      // Target is macOS
-   , Zipper, StrUtils, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
-   macOSAll, CarbonProc,
-  {$IFDEF CPUI386}                  // Running on old hardware i.e. i386
-      mysql55conn, Interfaces;
-   {$ELSE}                           // Running on X86_64 hardware
-      mysql57conn, Interfaces;
+   Zipper, StrUtils, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
+   macOSAll,
+  {$IFDEF CPUI386}                   // Running on old hardware i.e. i386 - Widget set must be Carbon
+      CarbonProc, mysql55conn, Interfaces;
+   {$ELSE}                           // Running on X86_64 hardware - Widget set must be Cocoa
+      CocoaUtils, mysql57conn, Interfaces;
    {$ENDIF}
 {$ENDIF}
 
 {$IFDEF WINDOWS}                     // Target is Winblows
-   , winpeimagereader, mysql56conn;
+   winpeimagereader, mysql56conn;
 {$ENDIF}
 
 {$IFDEF LINUX}                       // Target is Linux
-   , elfreader,
+   elfreader,
    {$IFDEF CPUARMHF}                 // Running on ARM (Raspbian) architecture
       mysql55conn;
    {$ELSE}                           // Running on Intel architecture
@@ -107,14 +107,6 @@ private  { Private Declarations }
 {$IFDEF DARWIN}
 {$INCLUDE '../BSD_Utilities/BSD_Utilities_02.inc'}
 {$ENDIF}
-
-//{$IFDEF DARWIN}                    // Target is macOS
-//   {$IFDEF CPUI386}                // Running on a version below Catalina
-//      sqlCon : TMySQL55Connection;
-//   {$ELSE}                         // Running on Catalina
-//      sqlCon : TMySQL57Connection;
-//   {$ENDIF}
-//{$ENDIF}
 
    function  DoLogin() : boolean;
    procedure GetVersion();
@@ -561,6 +553,7 @@ begin
       VersionString := CFStringToStr(ValueRef);
 
    except on E : Exception do
+
       ShowMessage(E.Message);
 
    end;
@@ -607,196 +600,6 @@ begin
 {$ENDIF}
 
 end;
-
-{
-//------------------------------------------------------------------------------
-// Function to mask/unmask a field written to a plain text file
-//------------------------------------------------------------------------------
-function TFLPMS_Login.MaskField(InputField: string; MaskType: integer) : string;
-var
-   idx1             : integer;
-   S2               : string;
-   S1               : array[1..64] of char;
-   Hi1, Hi2, HL, Lo : Word;
-
-begin
-
-   case MaskType of
-
-//--- Mask the Input Field
-
-      ord(MA_MASK): begin
-
-         S1   := InputField;
-         S2   := '';
-         idx1 := 1;
-
-         while (S1[idx1] <> #0) do begin
-
-//--- Get copies of the current character
-
-            Hi1 := Word(S1[idx1]);
-            Lo  := Word(S1[idx1]);
-
-//--- Move the 4 high bits to the right and mask out the four left bits
-
-            Hi1 := Hi1 shr 4;
-            Lo  := Lo and %00001111;
-
-//--- Turn the Hi and Lo parts into displayable characters
-
-            Hi1 := Hi1 or %01000000;
-            Lo  := Lo  or %01000000;
-
-//--- Add them to the result string
-
-            S2 := S2 + char(Hi1) + char(Lo);
-
-            inc(idx1);
-
-         end;
-
-         Result := S2;
-
-      end;
-
-//--- Unmask the input field
-
-      ord(MA_UNMASK) : begin
-
-         S1   := InputField;
-         S2   := '';
-         idx1 := 1;
-
-         while (S1[idx1] <> #0) do begin
-
-//--- Get copies of the next 2 characters
-
-            Hi1 := Word(S1[idx1]);
-            Inc(idx1);
-            Hi2 := Word(S1[idx1]);
-            Inc(idx1);
-
-//--- Move the 4 low bits of the first to the left and mask the 4 low bits then
-//--- mask the 4 high bits of the second
-
-            Hi1 := Hi1 shl 4;
-            Hi1 := Hi1 and %11110000;
-            Hi2 := Hi2 and %00001111;
-
-//--- Merge the 2 characters
-
-            HL := Hi1 or Hi2;
-
-//--- Add it to the result string
-
-            S2 := S2 + char(HL);
-
-         end;
-
-         Result := S2;
-
-      end;
-
-   end;
-
-end;
-}
-
-{
-//------------------------------------------------------------------------------
-// Function to extract and return the parameters that were passed on the
-// command line when the application was invoked.
-//
-// An Option list of "H:L:mu:" would expect a command line similar to:
-//   -H followed by a parameter e.g. -Hwww.sourcingmethods.com
-//   -L followed by a parameter e.g. -L1
-//   -m
-//   -u followed by a parameter e.g. -uFrancois
-//
-// The calling function must create the following TStringList variables:
-//
-//   Options
-//   Parms
-//
-// The function returns:
-//
-//    0 if no command line parameters were passed
-//    $ in the Parms string if a value was expected but not found
-//    # in the Parms string if an unknown parameter was found
-//   -1 if the switch '-' could not be found
-//   The number of parameters found if no error were found
-//---------------------------------------------------------------------------
-function TFLPMS_Login.cmdlOpt(OptList : string; Options, Parms : TStringList) : integer;
-var
-   idx1, idx2           : integer;
-   Found                : boolean;
-   ThisParm, ThisOption : string;
-
-begin
-
-   if ParamCount < 1 then begin
-
-      Result := 0;
-      Exit;
-
-   end;
-
-//--- Extract the parameters that were passed from ParamStr
-
-   for idx1 := 1 to ParamCount do begin
-
-      ThisParm := ParamStr(idx1);
-
-//--- First character of the argument must be the switch character ('-')
-
-      if ThisParm.SubString(0,1) <> '-' then begin
-
-         Result := -1;
-         Exit;
-
-      end;
-
-//--- Extract the second character and search for it in OptList
-
-      ThisOption := ThisParm.SubString(1,1);
-      Found := False;
-
-      for idx2 := 0 to OptList.Length do begin
-
-         if OptList.SubString(idx2,1) = ThisOption then begin
-
-            Found := True;
-            Options.Add(ThisOption);
-
-//--- If this Option is followed by ":" in the OptList then a parameter is
-//    expected. Extract the parameter if it is expected
-
-            if OptList.SubString(idx2 + 1,1) = ':' then begin
-
-               if ThisParm.Length < 3 then
-                  Parms.Add('$')
-               else
-                  Parms.Add(ThisParm.SubString(2, ThisParm.Length - 1));
-
-            end else
-               Parms.Add('$');
-
-         end;
-
-      end;
-
-      if Found = False then begin
-         Options.Add(ThisOption);
-         Parms.Add('#');
-      end;
-
-   end;
-
-   Result := Parms.Count;
-
-end;
-}
 
 //------------------------------------------------------------------------------
 
