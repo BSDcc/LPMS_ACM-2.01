@@ -1,8 +1,9 @@
 {$IFDEF LPMS_ACM_Login}
    TFLPMS_Login.
-   {$UNDEF LPMS_ACM_Login}
 {$ENDIF}
 {$IFDEF LPMS_ACM_Main}
    TFLPMS_Main.
-   {$UNDEF LPMS_ACM_Main}
+{$ENDIF}
+{$IFDEF LPMS_ACM_Excel}
+   TFLPMS_Excel.
 {$ENDIF}

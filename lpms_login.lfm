@@ -10,7 +10,7 @@ object FLPMS_Login: TFLPMS_Login
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.8.0'
   object Image1: TImage
     Left = 358
     Height = 64
@@ -729,7 +729,7 @@ object FLPMS_Login: TFLPMS_Login
   end
   object Label1: TLabel
     Left = 8
-    Height = 15
+    Height = 17
     Top = 60
     Width = 43
     Caption = 'UserID:'
@@ -737,7 +737,7 @@ object FLPMS_Login: TFLPMS_Login
   end
   object Label2: TLabel
     Left = 8
-    Height = 15
+    Height = 17
     Top = 92
     Width = 57
     Caption = 'Password:'
@@ -745,7 +745,7 @@ object FLPMS_Login: TFLPMS_Login
   end
   object Label3: TLabel
     Left = 8
-    Height = 15
+    Height = 17
     Top = 124
     Width = 29
     Caption = 'Host:'
@@ -765,14 +765,14 @@ object FLPMS_Login: TFLPMS_Login
   end
   object edtHostName: TEdit
     Left = 88
-    Height = 26
+    Height = 27
     Top = 120
     Width = 248
     TabOrder = 3
   end
   object edtPassword: TEdit
     Left = 88
-    Height = 26
+    Height = 27
     Top = 88
     Width = 248
     EchoMode = emPassword
@@ -781,7 +781,7 @@ object FLPMS_Login: TFLPMS_Login
   end
   object edtUserID: TEdit
     Left = 88
-    Height = 26
+    Height = 27
     Top = 56
     Width = 248
     TabOrder = 1
@@ -798,8 +798,8 @@ object FLPMS_Login: TFLPMS_Login
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 20
-    Top = 164
+    Height = 21
+    Top = 163
     Width = 430
     Font.Style = [fsBold]
     Panels = <    
@@ -815,14 +815,5 @@ object FLPMS_Login: TFLPMS_Login
     Interval = 500
     OnTimer = timTimerTimer
     left = 96
-  end
-  object sqlQry1: TSQLQuery
-    FieldDefs = <>
-    Params = <>
-    left = 144
-  end
-  object sqlTran: TSQLTransaction
-    Active = False
-    left = 192
   end
 end

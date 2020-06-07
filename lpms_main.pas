@@ -22,7 +22,7 @@ interface
 uses
    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
    Menus, ActnList, StdCtrls, Buttons, Spin, DateTimePicker, StrUtils, LCLType,
-   EditBtn, Process, sqldb,
+   EditBtn, Process, sqldb, LazFileUtils,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    mysql56conn;
@@ -208,7 +208,6 @@ type
    speLicCountC: TSpinEdit;
    speReadBlockB: TSpinEdit;
    Splitter1: TSplitter;
-   sqlTran: TSQLTransaction;
    StaticText1: TStaticText;
    StaticText2: TStaticText;
    StaticText3: TStaticText;
@@ -278,7 +277,11 @@ type
 private  { Private Declarations }
 
 {$IFDEF WINDOWS}                   // Target is Winblows
+
    sqlCon  : TMySQL56Connection;
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+
 {$ENDIF}
 
 {$IFDEF LINUX}                     // Target is Linux
@@ -287,16 +290,23 @@ private  { Private Declarations }
    {$ELSE}                         // Running on Intel architecture
       sqlCon : TMySQL57Connection;
    {$ENDIF}
-{$ENDIF}
-
-{$IFDEF DARWIN}
-{$INCLUDE '../BSD_Utilities/BSD_Utilities_02.inc'}
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
 {$ENDIF}
 
    PlaceHolder                                        : integer;
    DoSave, CanUpdate, DoGen, FirstRun, RestoreSuccess : boolean;
    ClipKey, RestoreFile                               : string;
    Root                                               : TTreeNode;
+
+{$IFDEF DARWIN}
+
+   This_Key_Values : REC_Key_Values;
+   This_Key_Priv   : REC_Key_Priv;
+
+{$INCLUDE '../BSD_Utilities/BSD_Utilities_02.inc'}
+
+{$ENDIF}
 
    procedure RunBackup();
    procedure RunRestore();
@@ -330,6 +340,8 @@ type
                TYPE_READ,           // Reading from the database - &quote to '''
                TYPE_WRITE);         // Writing to the database - ''' to &quote
 
+{$IFNDEF DARWIN}
+
    RE_RSLT =  (ERR_INVALID,         // The content of the Key is invalid
                ERR_LENGTH,          // The length of the Key is wrong
                ERR_EXPIRED);        // The Key has expired
@@ -337,20 +349,22 @@ type
    RES_TYPE = (RT_OPEN,             // Extract Restore information from the BackupFile
                RT_RESTORE);         // Restore from the Backup File
 
+ {$ENDIF}
+
 public   { Public Declarations }
 
-   UserName    : string;      // UserName passed from Login
-   Password    : string;      // Password passed from Login
-   HostName    : string;      // Host name passed from Login
-   Version     : string;      // Version string passed from Login
-   CopyRight   : string;      // Copyright notice passed from Login
-   ThisRes     : string;      // Holds result from InoutQuery
-   ThisName    : string;      // Used by LPMS_Show
-   ThisCompany : string;      // Used by LPMS_Show
-   ThisUnique  : string;      // Used by LPMS_Show
-   SMTPHost    : string;      // SMTP Host for sending emails
-   SMTPPass    : string;      // SMTP Password for sending emails
-   PassPhrase  : string;      // Contains the Phass Phrase to unlock restricted activities
+   UserName     : string;      // UserName passed from Login
+   Password     : string;      // Password passed from Login
+   HostName     : string;      // Host name passed from Login
+   Version      : string;      // Version string passed from Login
+   CopyRight    : string;      // Copyright notice passed from Login
+   ThisRes      : string;      // Holds result from InoutQuery
+   ThisName     : string;      // Used by LPMS_Show
+   ThisCompany  : string;      // Used by LPMS_Show
+   ThisUnique   : string;      // Used by LPMS_Show
+   ThisSMTPHost : string;      // SMTP Host for sending emails
+   ThisSMTPPass : string;      // SMTP Password for sending emails
+   PassPhrase   : string;      // Contains the Phass Phrase to unlock restricted activities
 
 end;
 
@@ -368,7 +382,7 @@ type
       LPMS_Collections : boolean;
       LPMS_DocGen      : boolean;
       LPMS_Floating    : boolean;
-      LPMS_Option4     : boolean;
+      LPMS_Options4    : boolean;
       License          : integer;
       DBPrefix         : string;
       Unique           : string;
@@ -394,13 +408,6 @@ var
 
 //--- Utilities contained in BSD_Utilities.dll
 
-{$IFDEF DARWIN}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities.dylib';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities.dylib';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities.dylib';
-   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities.dylib';
-   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'libbsd_utilities.dylib';
-{$ENDIF}
 {$IFDEF LINUX}
    function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities';
@@ -427,11 +434,43 @@ implementation
 //------------------------------------------------------------------------------
 // Global variables
 //------------------------------------------------------------------------------
+{
+type
+
+   REC_Key_Priv = record
+      Key              : string;
+      DaysLeft         : integer;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Option4     : boolean;
+      License          : integer;
+      DBPrefix         : string;
+      Unique           : string;
+      KeyDate          : string;
+   end;
+
+   REC_Key_Values = record
+      Unique           : string;
+      ExpDate          : string;
+      DBPrefix         : string;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Options4    : boolean;
+      License          : integer;
+   end;
+}
+
 var
-   FBSDSendEmail: TFBSDSendEmail;
+   FLPMS_Main: TFLPMS_Main;
+
+{$IFNDEF DARWIN}
 
    This_Key_Values : REC_Key_Values;
    This_Key_Priv   : REC_Key_Priv;
+
+{$ENDIF}
 
 implementation
 
@@ -439,7 +478,9 @@ implementation
 
 {$R *.lfm}
 
+{$DEFINE LPMS_ACM_Main}
 {$INCLUDE '../BSD_Utilities/BSD_Utilities.lpr'}
+{$UNDEF LPMMS_ACM_Main}
 
 {$ENDIF}
 
@@ -463,6 +504,8 @@ begin
 
 {$IFDEF WINDOWS}                    // Target is Winblows
    sqlCon  := TMySQL56Connection.Create(nil);
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
 {$ENDIF}
 
 {$IFDEF LINUX}                      // Target is Linux
@@ -471,14 +514,18 @@ begin
    {$ELSE}                          // Running on Intel architecture
       sqlCon  := TMySQL57Connection.Create(nil);
    {$ENDIF}
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
 {$ENDIF}
 
 {$IFDEF DARWIN}                     // Target is macOS
    {$IFDEF CPUI386}                 // Running on a version below Catalina
       sqlCon := TMySQL55Connection.Create(nil);
    {$ELSE}
-     sqlCon := TMySQL57Connection.Create(nil);
+      sqlCon := TMySQL57Connection.Create(nil);
    {$ENDIF}
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
 {$ENDIF}
 
    sqlTran.DataBase    := sqlCon;
@@ -576,8 +623,8 @@ begin
    ToolsEmail.Enabled    := False;
 
    dtpExpiryR.Date   := Now();
-   edtServerR.Text   := SMTPHost;
-   edtPasswordR.Text := SMTPPass;
+   edtServerR.Text   := ThisSMTPHost;
+   edtPasswordR.Text := ThisSMTPPass;
    edtKeyR.SetFocus();
 
 end;
@@ -609,8 +656,8 @@ begin
 
    OpenDB(ord(DB_CLOSE));
 
-   FLPMS_Login.SMTPHost := edtServerR.Text;
-   FLPMS_Login.SMTPPass := edtPasswordR.Text;
+   FLPMS_Login.ThisSMTPHost := edtServerR.Text;
+   FLPMS_Login.ThisSMTPPass := edtPasswordR.Text;
 
 end;
 
@@ -942,7 +989,7 @@ begin
       cbCollectU.Checked  := This_Key_Priv.LPMS_Collections;
       cbDocGenU.Checked   := This_Key_Priv.LPMS_DocGen;
       cbFloatingU.Checked := This_Key_Priv.LPMS_Floating;
-      cbOption4U.Checked  := This_Key_Priv.LPMS_Option4;
+      cbOption4U.Checked  := This_Key_Priv.LPMS_Options4;
 
       btnNew.Enabled    := False;
       btnCancel.Enabled := False;
@@ -1742,7 +1789,7 @@ begin
    cbCollectR.Checked    := This_Key_Priv.LPMS_Collections;
    cbDocGenR.Checked     := This_Key_Priv.LPMS_DocGen;
    cbFloatingR.Checked   := This_Key_Priv.LPMS_Floating;
-   cbOption4R.Checked    := This_Key_Priv.LPMS_Option4;
+   cbOption4R.Checked    := This_Key_Priv.LPMS_Options4;
    edtUniqueF.Text       := This_Key_Priv.Unique;
 
    edtKeyR.SetFocus();

@@ -25,26 +25,27 @@ uses
 {$ENDIF}
 
    Classes, SysUtils, sqldb, Forms, Controls, Graphics, Dialogs, StdCtrls,
-   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles,
+   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles
 
-{$IFDEF WINDOWS}                     // Target is Winblows
-   winpeimagereader, mysql56conn;
-{$ENDIF}
-
-{$IFDEF LINUX}                       // Target is Linux
-   elfreader,
-   {$IFDEF CPUARMHF}                 // Running on ARM (Raspbian) architecture
-      mysql55conn;
-   {$ELSE}                           // Running on Intel architecture
-      mysql57conn;
+{$IFDEF DARWIN}                      // Target is macOS
+   , Zipper, StrUtils, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
+   macOSAll, CarbonProc,
+  {$IFDEF CPUI386}                  // Running on old hardware i.e. i386
+      mysql55conn, Interfaces;
+   {$ELSE}                           // Running on X86_64 hardware
+      mysql57conn, Interfaces;
    {$ENDIF}
 {$ENDIF}
 
-{$IFDEF DARWIN}                      // Target is macOS
-   macOSAll, CarbonProc,
-   {$IFDEF CPUI386}                  // Running on a version below Catalina
+{$IFDEF WINDOWS}                     // Target is Winblows
+   , winpeimagereader, mysql56conn;
+{$ENDIF}
+
+{$IFDEF LINUX}                       // Target is Linux
+   , elfreader,
+   {$IFDEF CPUARMHF}                 // Running on ARM (Raspbian) architecture
       mysql55conn;
-   {$ELSE}                           // Running on Catalina
+   {$ELSE}                           // Running on Intel architecture
       mysql57conn;
    {$ENDIF}
 {$ENDIF}
@@ -65,8 +66,6 @@ type
    Label1: TLabel;
    Label2: TLabel;
    Label3: TLabel;
-   sqlQry1: TSQLQuery;
-   sqlTran: TSQLTransaction;
    StaticText1: TStaticText;
    StatusBar1: TStatusBar;
    timTimer: TTimer;
@@ -75,6 +74,10 @@ type
    procedure FormCreate( Sender: TObject);
    procedure FormShow( Sender: TObject);
    procedure timTimerTimer( Sender: TObject);
+
+{$IFDEF DARWIN}
+{$INCLUDE '../BSD_Utilities/BSD_Utilities_01.inc'}
+{$ENDIF}
 
 private  { Private Declarations }
 
@@ -85,6 +88,9 @@ private  { Private Declarations }
 
 {$IFDEF WINDOWS}                   // Target is Winblows
    sqlCon  : TMySQL56Connection;
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+   sqlQry2 : TSQLQuery;
 {$ENDIF}
 
 {$IFDEF LINUX}                     // Target is Linux
@@ -93,33 +99,47 @@ private  { Private Declarations }
    {$ELSE}                         // Running on Intel architecture
       sqlCon : TMySQL57Connection;
    {$ENDIF}
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+   sqlQry2 : TSQLQuery;
 {$ENDIF}
 
-{$IFDEF DARWIN}                    // Target is macOS
-   {$IFDEF CPUI386}                // Running on a version below Catalina
-      sqlCon : TMySQL55Connection;
-   {$ELSE}                         // Running on Catalina
-      sqlCon : TMySQL57Connection;
-   {$ENDIF}
+{$IFDEF DARWIN}
+{$INCLUDE '../BSD_Utilities/BSD_Utilities_02.inc'}
 {$ENDIF}
+
+//{$IFDEF DARWIN}                    // Target is macOS
+//   {$IFDEF CPUI386}                // Running on a version below Catalina
+//      sqlCon : TMySQL55Connection;
+//   {$ELSE}                         // Running on Catalina
+//      sqlCon : TMySQL57Connection;
+//   {$ENDIF}
+//{$ENDIF}
 
    function  DoLogin() : boolean;
    procedure GetVersion();
 
 public   { Public Declarations }
 
-   LoginCount, DBBlock                                    : integer;
-   AutoLogin                                              : boolean;
-   CopyRight, UserName, Password, Version, DTDLocation    : string;
-   AutoUser, AutoPass, AutoHost, Path, SMTPHost, SMTPPass : string;
-   DBUser, DBPass, DBHost, DBLocation, DBTemplate         : string;
+   LoginCount, DBBlock                                 : integer;
+   AutoLogin                                           : boolean;
+   CopyRight, UserName, Password, Version, DTDLocation : string;
+   AutoUser, AutoPass, AutoHost, Path, ThisSMTPHost    : string;
+   ThisSMTPPass, DBUser, DBPass, DBHost, DBLocation    : string;
+   DBTemplate                                          : string;
 
 type
+
+{$IFNDEF DARWIN}
 
    MASK_TYPES   = (MA_MASK,          // Encode the input field
                    MA_UNMASK);       // Decode the input field
 
+{$ENDIF}
+
 end;
+
+{$IFNDEF DARWIN}
 
 //------------------------------------------------------------------------------
 // Global variables
@@ -141,6 +161,26 @@ implementation
 
 {$R *.lfm}
 
+{$ElSE}
+
+//------------------------------------------------------------------------------
+// Global variables
+//------------------------------------------------------------------------------
+var
+   FLPMS_Login: TFLPMS_Login;
+
+implementation
+
+   uses LPMS_Main;
+
+{$R *.lfm}
+
+{$DEFINE LPMS_ACM_Login}
+{$INCLUDE '../BSD_Utilities/BSD_Utilities.lpr'}
+{$UNDEF LPMMS_ACM_Login}
+
+{$ENDIF}
+
 { TFLPMS_Login }
 
 //------------------------------------------------------------------------------
@@ -159,6 +199,9 @@ begin
 
 {$IFDEF WINDOWS}                    // Target is Winblows
    sqlCon  := TMySQL56Connection.Create(nil);
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
+   sqlQry2 := TSQLQuery.Create(nil);
 {$ENDIF}
 
 {$IFDEF LINUX}                      // Target is Linux
@@ -167,6 +210,9 @@ begin
    {$ELSE}                          // Running on Intel architecture
       sqlCon  := TMySQL57Connection.Create(nil);
    {$ENDIF}
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
+   sqlQry2 := TSQLQuery.Create(nil);
 {$ENDIF}
 
 {$IFDEF DARWIN}                     // Target is macOS
@@ -175,6 +221,9 @@ begin
    {$ELSE}
       sqlCon := TMySQL57Connection.Create(nil);
    {$ENDIF}
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
+   sqlQry2 := TSQLQuery.Create(nil);
 {$ENDIF}
 
    sqlTran.DataBase    := sqlCon;
@@ -254,14 +303,14 @@ begin
 
       IniFile := TINIFile.Create(INILoc);
 
-      SMTPHost   := IniFile.ReadString('Config','SMTPHost','');
-      SMTPPass   := IniFile.ReadString('Config','SMTPPass','');
-      DBUser     := IniFile.ReadString('Config','DBuser','');
-      DBPass     := IniFile.ReadString('Config','DBPass','');
-      DBHost     := IniFile.ReadString('Config','DBHost','');
-      DBLocation := IniFile.ReadString('Config','DBLocation','');
-      DBTemplate := IniFile.ReadString('Config','DBTemplate','&Date@&Time - &BackupType Backup for &BackupName (&DBName on &HostName) {&OSShort}');
-      DBBlock    := IniFile.ReadInteger('Config','DBBlock',20000);
+      ThisSMTPHost := IniFile.ReadString('Config','SMTPHost','');
+      ThisSMTPPass := IniFile.ReadString('Config','SMTPPass','');
+      DBUser       := IniFile.ReadString('Config','DBuser','');
+      DBPass       := IniFile.ReadString('Config','DBPass','');
+      DBHost       := IniFile.ReadString('Config','DBHost','');
+      DBLocation   := IniFile.ReadString('Config','DBLocation','');
+      DBTemplate   := IniFile.ReadString('Config','DBTemplate','&Date@&Time - &BackupType Backup for &BackupName (&DBName on &HostName) {&OSShort}');
+      DBBlock      := IniFile.ReadInteger('Config','DBBlock',20000);
 
       IniFile.Destroy;
 
@@ -269,7 +318,7 @@ begin
 
 //--- Unmask the Password
 
-   SMTPPass := MaskField(SMTPPass,ord(MA_UNMASK));
+   ThisSMTPPass := MaskField(ThisSMTPPass,ord(MA_UNMASK));
 
 end;
 
@@ -306,7 +355,7 @@ begin
 
 //--- Mask the SMTP Password before it is written to the INI File
 
-   SMTPPass := MaskField(SMTPPass,ord(MA_MASK));
+   ThisSMTPPass := MaskField(ThisSMTPPass,ord(MA_MASK));
 
 //--- Write the current SMTP parameters to the INI file
 
@@ -314,8 +363,8 @@ begin
 
    IniFile := TINIFile.Create(INILoc);
 
-   IniFile.WriteString('Config','SMTPHost',SMTPHost);
-   IniFile.WriteString('Config','SMTPPass',SMTPPass);
+   IniFile.WriteString('Config','SMTPHost',ThisSMTPHost);
+   IniFile.WriteString('Config','SMTPPass',ThisSMTPPass);
    IniFile.WriteString('Config','DBuser',DBUser);
    IniFile.WriteString('Config','DBPass',DBPass);
    IniFile.WriteString('Config','DBHost',DBHost);
@@ -390,13 +439,13 @@ begin
 
 //--- Set up some values on the Main form
 
-      FLPMS_Main.UserName  := edtUserID.Text;
-      FLPMS_Main.Password  := edtPassword.Text;
-      FLPMS_Main.HostName  := edtHostName.Text;
-      FLPMS_Main.Version   := Version;
-      FLPMS_Main.CopyRight := CopyRight;
-      FLPMS_Main.SMTPHost  := SMTPHost;
-      FLPMS_Main.SMTPPass  := SMTPPass;
+      FLPMS_Main.UserName     := edtUserID.Text;
+      FLPMS_Main.Password     := edtPassword.Text;
+      FLPMS_Main.HostName     := edtHostName.Text;
+      FLPMS_Main.Version      := Version;
+      FLPMS_Main.CopyRight    := CopyRight;
+      FLPMS_Main.ThisSMTPHost := ThisSMTPHost;
+      FLPMS_Main.ThisSMTPPass := ThisSMTPPass;
 
       FLPMS_Main.edtUserIDB.Text     := DBUSer;
       FLPMS_Main.edtPasswordB.Text   := DBPass;

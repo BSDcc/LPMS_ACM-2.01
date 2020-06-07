@@ -4518,9 +4518,4 @@ object FLPMS_Main: TFLPMS_Main
     left = 80
     top = 208
   end
-  object sqlTran: TSQLTransaction
-    Active = False
-    left = 144
-    top = 208
-  end
 end
