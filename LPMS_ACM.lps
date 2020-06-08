@@ -18,7 +18,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Login"/>
-        <CursorPos Y="634"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="267"/>
+        <CursorPos X="4" Y="294"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -30,7 +32,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="2032"/>
         <CursorPos Y="2078"/>
@@ -305,123 +306,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="585" Column="17" TopLine="560"/>
+        <Caret Line="562" Column="36" TopLine="554"/>
       </Position1>
       <Position2>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="562" Column="36" TopLine="554"/>
+        <Caret Line="590" Column="64" TopLine="555"/>
       </Position2>
       <Position3>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="590" Column="64" TopLine="555"/>
+        <Caret Column="67"/>
       </Position3>
       <Position4>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Column="67"/>
+        <Caret Line="448" Column="11" TopLine="414"/>
       </Position4>
       <Position5>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="448" Column="11" TopLine="414"/>
+        <Caret Line="510" Column="11" TopLine="472"/>
       </Position5>
       <Position6>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="510" Column="11" TopLine="472"/>
+        <Caret Line="520" Column="11" TopLine="482"/>
       </Position6>
       <Position7>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="520" Column="11" TopLine="482"/>
+        <Caret Line="1967" TopLine="1884"/>
       </Position7>
       <Position8>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="1967" TopLine="1884"/>
+        <Caret Line="448" Column="11" TopLine="428"/>
       </Position8>
       <Position9>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="448" Column="11" TopLine="428"/>
+        <Caret Line="510" Column="11" TopLine="472"/>
       </Position9>
       <Position10>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="510" Column="11" TopLine="472"/>
+        <Caret Line="520" Column="11" TopLine="482"/>
       </Position10>
       <Position11>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="520" Column="11" TopLine="482"/>
+        <Caret Line="1947" Column="61" TopLine="1783"/>
       </Position11>
       <Position12>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="1947" Column="61" TopLine="1783"/>
+        <Caret Line="1959" Column="35" TopLine="1856"/>
       </Position12>
       <Position13>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="1959" Column="35" TopLine="1856"/>
+        <Caret Line="1963" Column="32" TopLine="1875"/>
       </Position13>
       <Position14>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="1963" Column="32" TopLine="1875"/>
+        <Caret Line="448" Column="13" TopLine="428"/>
       </Position14>
       <Position15>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="448" Column="13" TopLine="428"/>
+        <Caret Line="510" Column="13" TopLine="472"/>
       </Position15>
       <Position16>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="510" Column="13" TopLine="472"/>
+        <Caret Line="520" Column="13" TopLine="482"/>
       </Position16>
       <Position17>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="520" Column="13" TopLine="482"/>
+        <Caret Line="1947" Column="52" TopLine="1856"/>
       </Position17>
       <Position18>
         <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="1947" Column="52" TopLine="1856"/>
+        <Caret Line="1959" Column="35" TopLine="1856"/>
       </Position18>
       <Position19>
-        <Filename Value="../LPMS_Backup_Manager-3.02/ldbackupapp.pas"/>
-        <Caret Line="1959" Column="35" TopLine="1856"/>
+        <Filename Value="lpms_main.pas"/>
+        <Caret Line="580" Column="241" TopLine="556"/>
       </Position19>
       <Position20>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="580" Column="241" TopLine="556"/>
+        <Caret Column="63"/>
       </Position20>
       <Position21>
         <Filename Value="lpms_main.pas"/>
-        <Caret Column="63"/>
+        <Caret Line="297" Column="15" TopLine="263"/>
       </Position21>
       <Position22>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="297" Column="15" TopLine="263"/>
+        <Caret Line="440" Column="11" TopLine="405"/>
       </Position22>
       <Position23>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="440" Column="11" TopLine="405"/>
+        <Caret Line="443" Column="11" TopLine="408"/>
       </Position23>
       <Position24>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="443" Column="11" TopLine="408"/>
+        <Caret Line="2090" TopLine="2053"/>
       </Position24>
       <Position25>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2090" TopLine="2053"/>
+        <Caret Line="297" Column="34" TopLine="278"/>
       </Position25>
       <Position26>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="297" Column="34" TopLine="278"/>
+        <Caret Line="441" TopLine="405"/>
       </Position26>
       <Position27>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="441" TopLine="405"/>
+        <Caret Line="2082" Column="31" TopLine="2047"/>
       </Position27>
       <Position28>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2082" Column="31" TopLine="2047"/>
+        <Caret Line="2084" Column="28" TopLine="2049"/>
       </Position28>
       <Position29>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2084" Column="28" TopLine="2049"/>
+        <Caret Line="25" Column="34"/>
       </Position29>
       <Position30>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="25" Column="34"/>
+        <Caret Line="2078" TopLine="2032"/>
       </Position30>
     </JumpHistory>
     <RunParams>
@@ -429,7 +430,7 @@
       <Modes Count="1" ActiveMode="default">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="-H192.168.10.210 -pvincent1 -uroot"/>
+            <CommandLineParams Value="-H10.0.0.210 -pvincent1 -uroot"/>
           </local>
         </Mode0>
       </Modes>

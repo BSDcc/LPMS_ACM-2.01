@@ -290,7 +290,7 @@ begin
 {$ELSE}
 
    LocalPath := AppendPathDelim(GetUSerDir);
-   LocalPath := LocalPath + '.lpms_acm' + OSDelim;
+   LocalPath := AppendPathDelim(LocalPath + '.lpms_acm');
 
 {$ENDIF}
 
