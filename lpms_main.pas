@@ -292,10 +292,10 @@ private  { Private Declarations }
    sqlQry1 : TSQLQuery;
 {$ENDIF}
 
-   PlaceHolder                                        : integer;
-   DoSave, CanUpdate, DoGen, FirstRun, RestoreSuccess : boolean;
-   ClipKey, RestoreFile                               : string;
-   Root                                               : TTreeNode;
+   PlaceHolder                                                   : integer;
+   DoSave, CanUpdate, DoGen, FirstRun, RestoreSuccess, BackSpace : boolean;
+   ClipKey, RestoreFile                                          : string;
+   Root                                                          : TTreeNode;
 
 {$IFDEF DARWIN}
 
@@ -714,24 +714,65 @@ end;
 // the Root display in order to preserve the positionof the '-' characters
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.edtKeyRKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+var
+   KeepSelStart, KeepLength : integer;
+   ThisField                : string;
 begin
+
+//--- Trap and Process the Backspace key
 
    if Key = VK_BACK then begin
 
-{------------------------------------------------------------------------------}
-{---- Add Code to reformat the Input field when Backspace is pressed       ----}
-{------------------------------------------------------------------------------}
+//--- If we are at the start of the field then we consume the key and do nothing
 
-{
-      if edtKeyR.SelLength = Length(edtKeyR.Text) then
-         edtKeyR.Text := ''
-      else
-         edtKeyR.Text := Copy(edtKeyR.Text,1,Length(edtKeyR.Text) - 1);
+      if edtKeyR.SelStart = 0 then begin
 
-      edtKeyR.SelStart := Length(edtKeyR.Text);
+         Key := 0;
+         Exit;
+
+      end;
+
+//--- If the whole field is slected then simple delete the contents
+
+      if edtKeyR.SelLength = Length(edtKeyR.Text) then begin
+
+         edtKeyR.Text := '';
+         KeepSelStart := 0;
+
+      end else begin
+
+         ThisField    := '';
+         KeepLength   := edtKeyR.SelLength;
+         KeepSelStart := edtKeyR.SelStart;
+
+         if KeepSelStart = 1 then
+
+            ThisField := Copy(edtKeyR.Text,2,Length(edtKeyR.Text) - 1)
+
+         else begin
+
+            if KeepLength = 0 then
+               ThisField := Copy(edtKeyR.Text,1,KeepSelStart - 1)
+            else
+               ThisField := Copy(edtKeyR.Text,1,KeepSelStart);
+
+            ThisField := Thisfield + Copy(edtKeyR.Text,KeepSelStart + KeepLength + 1,Length(edtKeyR.Text) - 1);
+
+         end;
+
+         edtKeyR.Text := ThisField;
+
+         if KeepSelStart < 0 then
+            KeepSelStart := 0;
+
+      end;
 
       Key := 0;
-}
+
+      if KeepLength = 0 then
+         edtKeyR.SelStart := KeepSelStart - 1
+      else
+         edtKeyR.SelStart := KeepSelStart;
 
    end;
 
@@ -1775,6 +1816,14 @@ begin
 
    end;
 
+   if CpyExists(edtPrefixR.Text) = False then begin
+
+      Application.MessageBox(PChar('' + edtPrefixR.Text + ''' is not a valid Prefix.'),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+      edtPrefixR.SetFocus();
+      Exit;
+
+   end;
+
    ThisPass := InputQueryM('LPMS Access Control Management','Pass phrase:',ord(TYPE_PASSWORD));
 
    if ThisPass <> PassPhrase then
@@ -1919,8 +1968,9 @@ end;
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main. edtKeyRChange( Sender: TObject);
 var
-   ThisCount : integer;
-   ThisKey   : string;
+   idx1, idx2, SelStrt : integer;
+   ThisKey, ThisStr    : string;
+   Parts               : TStringList;
 
 begin
 
@@ -1930,35 +1980,46 @@ begin
    btnDecodeR.Enabled := False;
    btnEncodeR.Enabled := False;
 
-
    if edtKeyR.Focused() = True then begin
 
-//--- If the backspace key was pressed then we don't do any processing here
+      try
+         Parts := TStringList.Create;
 
-{
-      if BackSpace = True then begin
+         SelStrt := edtKeyR.SelStart;
+         ThisKey := '';
+         ThisStr := '';
 
-         BackSpace := False;
-         Exit;
+         ExtractStrings(['-'], [' '], PChar(edtKeyR.Text), Parts);
+
+         for idx1 := 0 to Parts.Count - 1 do
+            ThisStr := ThisStr + Parts[idx1];
+
+         for idx2 := 1 to Length(ThisStr) do begin
+
+            ThisKey := ThisKey + ThisStr[idx2];
+
+            if idx2 in [4,7,11,15,19,23,27] then begin
+
+               ThisKey := ThisKey + '-';
+               Inc(SelStrt);
+
+            end;
+
+         end;
+
+      finally
+
+         Parts.Free;
 
       end;
-}
 
-      ThisCount := Length(edtKeyR.Text);
-      ThisKey   := edtKeyR.Text;
-
-      if ThisCount in [4,8,13,18,23,28,33] then
-         ThisKey := ThisKey + '-';
-
-      if ThisCount in [6,10,15,20,25,30] then begin
-
-         if Copy(edtKeyR.Text,ThisCount,1) = '-' then
-            ThisKey := Copy(edtKeyR.Text, 1, ThisCount - 1);
-
-      end;
-
+      CanUpdate := True;
       edtKeyR.Text := ThisKey;
-      edtKeyR.SelStart := Length(edtKeyR.Text);
+
+//      if SelStrt < 37 then
+//         edtKeyR.SelStart := SelStrt;
+
+      CanUpdate := False;
 
    end;
 
@@ -2390,6 +2451,7 @@ end;
 procedure TFLPMS_Main.ToolsEmailExecute(Sender: TObject);
 var
    idx          : integer;     // Loop counter
+   EditEmail    : boolean;     // Used to determine whether the standalone emil viewer should be called
    From         : string;      // Email address of the Sender
    ToStr        : string;      // To addresses, comma delimited
    CcStr        : string;      // Cc addresses, comma delimited
@@ -2399,26 +2461,57 @@ var
    Attach       : string;      // '|' delimited string containing files to be attached
    SMTPStr      : string;      // '|' delimited string containing the SMTP parameters
    SMUtil       : string;      // Name of external email viewer - assumed to be in the execution directory
-   Process      : TProcess;    // Used forc alling the standalone email utility if 'Edit Email' is checked
+   Addressee    : string;      // Name of he addressee
+   ExpiryDate   : string;      // Key expiry date
+   Key          : string;      // The Key
+   Prefix       : string;      // The Prefix
+   Process      : TProcess;    // Used for calling the standalone email utility if 'Edit Email' is checked
 
 begin
 
    if (pnlBackup.Visible = True) or (pnlRestore.Visible = True) then
       Exit;
 
+//--- We can only send email from the Root and User panels. If the Root panel
+//--- is visible then the ToStr is still undetermined.
+
+   if pnlRoot.Visible = True then begin
+
+      EditEmail  := True;
+      ToStr      := 'Please specify';
+      Addressee  := '[Insert]';
+      ExpiryDate := DateToStr(dtpExpiryR.Date);
+      Key        := edtKeyR.Text;
+      Prefix     := edtPrefixR.Text;
+
+   end else if pnlUser.Visible = True then begin
+
+      EditEmail  := cbEditemail.Checked;
+      ToStr      := edtEmailU.Text;
+      Addressee  := edtUserNameU.Text;
+      ExpiryDate := DateToStr(dtpExpiryDateU.Date);
+      Key        := edtKeyU.Text;
+      Prefix     := edtPrefixU.Text;
+
+   end else begin
+
+      Exit;
+
+   end;
+
+//--- Construct the email
    From    := 'registration@bluecrane.cc';
-   ToStr   := edtEmailU.Text;
    CcStr   := '';
    BccStr  := 'registration@bluecrane.cc';
    Subject := 'LPMS Activation Key';
    Attach  := '';
    SMTPStr := edtServerR.Text + '|registration@bluecrane.cc|' + edtPasswordR.Text + '|';
 
-   Body    := 'Dear ' + edtUserNameU.Text + ',|' +
+   Body    := 'Dear ' + Addressee + ',|' +
               ' |' +
-              'Attached below is your new/updated LPMS Activation Key which expires on ' + DateToStr(dtpExpiryDateU.Date) + ':|' +
+              'Attached below is your new/updated LPMS Activation Key which expires on ' + ExpiryDate + ':|' +
               ' |' +
-              '   ' + edtKeyU.Text + '|' +
+              '   ' + Key + '|' +
               ' |' +
               'To activate LPMS with this key please do the following:|' +
               ' |' +
@@ -2431,13 +2524,13 @@ begin
               ' |' +
               '2.  If your release is a multi-company release then:|' +
               ' |' +
-              '    2.1. Enter ''' + edtPrefixU.Text + ''' in the field next to ''DBPrefix:'';|' +
+              '    2.1. Enter ''' + Prefix + ''' in the field next to ''DBPrefix:'';|' +
               '    2.2. Select ''Multi Company Support''; and|' +
               '    2.3. Click on ''Ok'' button to proceed;|' +
               ' |' +
               '3.  If your release is not a multi-company release simply click on the ''Ok'' button;|' +
               '4.  Click on the ''Maintenance'' tab;|' +
-              '5.  Enter ''' + edtPrefixU.Text + ''' in the field next to ''Prefix:'';|' +
+              '5.  Enter ''' + Prefix + ''' in the field next to ''Prefix:'';|' +
               '6.  Copy the key above and paste in the field next to ''Key:'';|' +
               '7.  Click on the ''Update'' button, then on the ''OK'' button and then on the ''Close'' button; and|' +
               '8.  Start LPMS.|' +
@@ -2460,7 +2553,7 @@ begin
 
 //--- Call and execute the SendMimeMail function in the DLL
 
-   if cbEditemail.Checked = True then begin
+   if EditEmail = True then begin
 
 //--- User wants to see/edit the email before it is sent. Make sure the
 //--- external program exists and can be called
