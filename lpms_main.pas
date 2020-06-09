@@ -725,14 +725,14 @@ begin
 
 //--- If we are at the start of the field then we consume the key and do nothing
 
-      if edtKeyR.SelStart = 0 then begin
-
-         Key := 0;
-         Exit;
-
-      end;
-
-//--- If the whole field is slected then simple delete the contents
+//      if edtKeyR.SelStart = 0 then begin
+//
+//         Key := 0;
+//         Exit;
+//
+//      end;
+//
+//--- If the whole field is selected then simply delete the contents
 
       if edtKeyR.SelLength = Length(edtKeyR.Text) then begin
 
@@ -760,7 +760,9 @@ begin
 
          end;
 
+         CanUpdate := True;
          edtKeyR.Text := ThisField;
+         CanUpdate := False;
 
          if KeepSelStart < 0 then
             KeepSelStart := 0;
@@ -773,6 +775,8 @@ begin
          edtKeyR.SelStart := KeepSelStart - 1
       else
          edtKeyR.SelStart := KeepSelStart;
+
+      edtKeyRChange(Sender);
 
    end;
 
@@ -1969,6 +1973,7 @@ end;
 procedure TFLPMS_Main. edtKeyRChange( Sender: TObject);
 var
    idx1, idx2, SelStrt : integer;
+   DoIns               : boolean;
    ThisKey, ThisStr    : string;
    Parts               : TStringList;
 
@@ -1980,14 +1985,23 @@ begin
    btnDecodeR.Enabled := False;
    btnEncodeR.Enabled := False;
 
+   if Trim(edtKeyR.Text) = '' then
+      Exit;
+
    if edtKeyR.Focused() = True then begin
 
       try
          Parts := TStringList.Create;
 
          SelStrt := edtKeyR.SelStart;
-         ThisKey := '';
-         ThisStr := '';
+
+         if SelStrt < Length(edtKeyR.Text) then
+            DoIns := True
+         else
+            DoIns := False;
+
+         ThisKey  := '';
+         ThisStr  := '';
 
          ExtractStrings(['-'], [' '], PChar(edtKeyR.Text), Parts);
 
@@ -1998,12 +2012,8 @@ begin
 
             ThisKey := ThisKey + ThisStr[idx2];
 
-            if idx2 in [4,7,11,15,19,23,27] then begin
-
+            if idx2 in [4,7,11,15,19,23,27] then
                ThisKey := ThisKey + '-';
-               Inc(SelStrt);
-
-            end;
 
          end;
 
@@ -2013,11 +2023,16 @@ begin
 
       end;
 
-      CanUpdate := True;
+      CanUpdate    := True;
       edtKeyR.Text := ThisKey;
 
-//      if SelStrt < 37 then
-//         edtKeyR.SelStart := SelStrt;
+      if ThisKey[SelStrt] = '-' then
+         Inc(SelStrt);
+
+      if DoIns = True then
+         edtKeyR.SelStart := SelStrt
+      else
+         edtKeyR.SelStart := Length(edtKeyR.Text);
 
       CanUpdate := False;
 

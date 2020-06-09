@@ -3,7 +3,7 @@
   <ProjectSession>
     <Version Value="11"/>
     <BuildModes Active="Debug"/>
-    <Units Count="44">
+    <Units Count="45">
       <Unit0>
         <Filename Value="LPMS_ACM.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -18,7 +18,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Login"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="606"/>
         <CursorPos Y="639"/>
         <UsageCount Value="200"/>
@@ -33,13 +33,13 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="2009"/>
-        <CursorPos X="3" Y="2020"/>
-        <FoldState Value=" T3rO0p1 pidkE03213 pm8qb0{Y]Lj5m10{I1]KRp7053]J2jR095]9eka0{G016]zgoQ0I5]9fk40T2]9bjc0{~[n4CnU0J[94TkP0^2]93lI0*2 TL:b0]r0.Z0H1 pK.E0QF"/>
+        <TopLine Value="2001"/>
+        <CursorPos Y="2029"/>
+        <FoldState Value=" T3rO0p1 pidkE03213 TL:f05 p0@30H]QK.E0QQ"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
-          <Item0 X="29" Y="732"/>
-          <Item1 X="3" Y="1976" ID="1"/>
+          <Item0 X="31" Y="732"/>
+          <Item1 X="3" Y="1981" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -78,7 +78,7 @@
         <EditorIndex Value="1"/>
         <TopLine Value="12"/>
         <CursorPos X="38" Y="25"/>
-        <UsageCount Value="138"/>
+        <UsageCount Value="141"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -124,14 +124,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1579"/>
         <CursorPos Y="1607"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit10>
       <Unit11>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/treeview.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1594"/>
         <CursorPos Y="1607"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit11>
       <Unit12>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/control.inc"/>
@@ -145,7 +145,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3016"/>
         <CursorPos Y="3063"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit13>
       <Unit14>
         <Filename Value="../SendEmail-1.00/SendEmail.pas"/>
@@ -157,23 +157,21 @@
       <Unit15>
         <Filename Value="../Saved/dllCall.pas"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit15>
       <Unit16>
         <Filename Value="../BSD_Utilities/BSD_Utilities.lpr"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="1621"/>
         <CursorPos Y="1630"/>
-        <FoldState Value=" T3m40N2 picjX08]9qgrQ0{/111 p0+M0#le]MvGjA0{A1]WbjY0{x]Amel00{V]AjTk]UIz"/>
         <UsageCount Value="21"/>
-        <Loaded Value="True"/>
       </Unit16>
       <Unit17>
         <Filename Value="BSD_Utilities.lpr"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="151"/>
         <CursorPos Y="161"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit17>
       <Unit18>
         <Filename Value="../../.lazarus/onlinepackagemanager/packages/fpspreadsheet/source/common/fpspreadsheet.pas"/>
@@ -348,127 +346,134 @@
         <CursorPos X="2" Y="18"/>
         <UsageCount Value="9"/>
       </Unit43>
+      <Unit44>
+        <Filename Value="/usr/lib/lazarus/2.0.6/lcl/include/wincontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="5640"/>
+        <CursorPos Y="5675"/>
+        <UsageCount Value="10"/>
+      </Unit44>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2001" TopLine="1980"/>
+        <Caret Line="1994" TopLine="1954"/>
       </Position1>
       <Position2>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2004" TopLine="1980"/>
+        <Caret Line="1996" TopLine="1954"/>
       </Position2>
       <Position3>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2005" TopLine="1980"/>
+        <Caret Line="1998" TopLine="1954"/>
       </Position3>
       <Position4>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1997" TopLine="1980"/>
+        <Caret Line="2001" TopLine="1957"/>
       </Position4>
       <Position5>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1999" TopLine="1980"/>
+        <Caret Line="2003" TopLine="1959"/>
       </Position5>
       <Position6>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2001" TopLine="1980"/>
+        <Caret Line="2004" TopLine="1960"/>
       </Position6>
       <Position7>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2004" TopLine="1980"/>
+        <Caret Line="2006" TopLine="1962"/>
       </Position7>
       <Position8>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2005" TopLine="1980"/>
+        <Caret Line="2008" TopLine="1964"/>
       </Position8>
       <Position9>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1997" TopLine="1980"/>
+        <Caret Line="2009" TopLine="1965"/>
       </Position9>
       <Position10>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1999" TopLine="1980"/>
+        <Caret Line="2008" TopLine="1965"/>
       </Position10>
       <Position11>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2001" TopLine="1980"/>
+        <Caret Line="2011" TopLine="1967"/>
       </Position11>
       <Position12>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2002" TopLine="1980"/>
+        <Caret Line="2013" TopLine="1969"/>
       </Position12>
       <Position13>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2004" TopLine="1980"/>
+        <Caret Line="2015" TopLine="1971"/>
       </Position13>
       <Position14>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2005" TopLine="1980"/>
+        <Caret Line="2011" TopLine="1971"/>
       </Position14>
       <Position15>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1997" TopLine="1980"/>
+        <Caret Line="2013" TopLine="1971"/>
       </Position15>
       <Position16>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1999" TopLine="1980"/>
+        <Caret Line="2015" TopLine="1971"/>
       </Position16>
       <Position17>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2001" TopLine="1980"/>
+        <Caret Line="2011" TopLine="1971"/>
       </Position17>
       <Position18>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2004" TopLine="1980"/>
+        <Caret Line="2013" TopLine="1971"/>
       </Position18>
       <Position19>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2005" TopLine="1980"/>
+        <Caret Line="2015" TopLine="1971"/>
       </Position19>
       <Position20>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1997" TopLine="1980"/>
+        <Caret Line="2011" TopLine="1971"/>
       </Position20>
       <Position21>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1999" TopLine="1980"/>
+        <Caret Line="2013" TopLine="1971"/>
       </Position21>
       <Position22>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2001" TopLine="1980"/>
+        <Caret Line="2015" TopLine="1971"/>
       </Position22>
       <Position23>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2004" TopLine="1980"/>
+        <Caret Line="2016" TopLine="1972"/>
       </Position23>
       <Position24>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2005" TopLine="1980"/>
+        <Caret Line="2011" TopLine="1972"/>
       </Position24>
       <Position25>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1997" TopLine="1980"/>
+        <Caret Line="2022" TopLine="1979"/>
       </Position25>
       <Position26>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1999" TopLine="1980"/>
+        <Caret Line="2026" TopLine="1983"/>
       </Position26>
       <Position27>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2001" TopLine="1980"/>
+        <Caret Line="2027" TopLine="1984"/>
       </Position27>
       <Position28>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2004" TopLine="1980"/>
+        <Caret Line="2029" TopLine="1986"/>
       </Position28>
       <Position29>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1988" TopLine="1980"/>
+        <Caret Line="2032" TopLine="1989"/>
       </Position29>
       <Position30>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2012" TopLine="2011"/>
+        <Caret Line="779" TopLine="724"/>
       </Position30>
     </JumpHistory>
     <RunParams>
@@ -476,23 +481,26 @@
       <Modes Count="1" ActiveMode="default">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="-Hwww.lawsa.me -pvincent1 -uroot"/>
+            <CommandLineParams Value="-H10.0.0.210 -pvincent1 -uroot"/>
           </local>
         </Mode0>
       </Modes>
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <Watches Count="3">
+    <Watches Count="4">
       <Item1>
-        <Expression Value="ThisField"/>
+        <Expression Value="ThisKey"/>
       </Item1>
       <Item2>
-        <Expression Value="KeepSelStart"/>
+        <Expression Value="SelStrt"/>
       </Item2>
       <Item3>
-        <Expression Value="KeepLength"/>
+        <Expression Value="idx2"/>
       </Item3>
+      <Item4>
+        <Expression Value="DoIns"/>
+      </Item4>
     </Watches>
   </Debugging>
 </CONFIG>

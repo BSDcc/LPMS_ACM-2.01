@@ -19,7 +19,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="105"/>
+      <BuildNr Value="108"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -28,7 +28,7 @@
           <Version Value="11"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <Libraries Value="../BSD_Utilities/lib/x86_64-linux/Debug"/>
+            <Libraries Value="../BSD_Utilities/lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -44,8 +44,6 @@
               <StackChecks Value="True"/>
             </Checks>
             <VerifyObjMethodCallValidity Value="True"/>
-            <TargetCPU Value="x86_64"/>
-            <TargetOS Value="linux"/>
             <Optimizations>
               <OptimizationLevel Value="0"/>
             </Optimizations>
@@ -74,13 +72,12 @@
           <Version Value="11"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <Libraries Value="../BSD_Utilities/lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
             <OtherUnitFiles Value="../../.lazarus/onlinepackagemanager/packages/synapse40.1"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
-            <TargetCPU Value="x86_64"/>
-            <TargetOS Value="darwin"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -98,9 +95,10 @@
           </Linking>
         </CompilerOptions>
       </Item3>
-      <SharedMatrixOptions Count="2">
+      <SharedMatrixOptions Count="3">
         <Item1 ID="455610805303" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
         <Item2 ID="002081718519" Type="IDEMacro" MacroName="LCLWidgetType" Value="carbon"/>
+        <Item3 ID="260386358658" Modes="Debug,Release,Default" Type="OutDir" Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
