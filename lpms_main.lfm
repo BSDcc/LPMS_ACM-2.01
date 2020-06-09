@@ -5,7 +5,7 @@ object FLPMS_Main: TFLPMS_Main
   Width = 880
   ActiveControl = Panel1
   Caption = 'FLPMS_Main'
-  ClientHeight = 570
+  ClientHeight = 571
   ClientWidth = 880
   Icon.Data = {
     F607000000000100020010100000010018006803000026000000101000000100
@@ -78,20 +78,20 @@ object FLPMS_Main: TFLPMS_Main
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.8.0'
+  LCLVersion = '2.0.6.0'
   object Panel1: TPanel
     Left = 0
-    Height = 517
+    Height = 516
     Top = 32
     Width = 210
     Align = alLeft
     BevelOuter = bvNone
-    ClientHeight = 517
+    ClientHeight = 516
     ClientWidth = 210
     TabOrder = 0
     object tvTree: TTreeView
       Left = 2
-      Height = 513
+      Height = 512
       Hint = 'Click on an item to display it''s information on the right'
       Top = 2
       Width = 208
@@ -114,7 +114,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Bevel5: TBevel
       Left = 0
-      Height = 513
+      Height = 512
       Top = 2
       Width = 2
       Align = alLeft
@@ -122,25 +122,25 @@ object FLPMS_Main: TFLPMS_Main
     object Bevel6: TBevel
       Left = 0
       Height = 2
-      Top = 515
+      Top = 514
       Width = 210
       Align = alBottom
     end
   end
   object Panel4: TPanel
     Left = 213
-    Height = 517
+    Height = 516
     Top = 32
     Width = 667
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 517
+    ClientHeight = 516
     ClientWidth = 667
     TabOrder = 1
     object Panel2: TPanel
       Left = 0
       Height = 41
-      Top = 476
+      Top = 475
       Width = 667
       Align = alBottom
       BevelOuter = bvNone
@@ -217,12 +217,12 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Panel3: TPanel
       Left = 0
-      Height = 476
+      Height = 475
       Top = 0
       Width = 667
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 476
+      ClientHeight = 475
       ClientWidth = 667
       TabOrder = 0
       object Bevel1: TBevel
@@ -234,14 +234,14 @@ object FLPMS_Main: TFLPMS_Main
       end
       object Bevel8: TBevel
         Left = 0
-        Height = 472
+        Height = 471
         Top = 2
         Width = 2
         Align = alLeft
       end
       object Bevel9: TBevel
         Left = 665
-        Height = 472
+        Height = 471
         Top = 2
         Width = 2
         Align = alRight
@@ -249,63 +249,63 @@ object FLPMS_Main: TFLPMS_Main
       object Bevel10: TBevel
         Left = 0
         Height = 2
-        Top = 474
+        Top = 473
         Width = 667
         Align = alBottom
       end
       object pnlCompany: TPanel
         Left = 2
-        Height = 472
+        Height = 471
         Top = 2
         Width = 663
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 472
+        ClientHeight = 471
         ClientWidth = 663
         TabOrder = 1
         object Label1: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 16
-          Width = 35
+          Width = 32
           Caption = 'Prefix:'
           ParentColor = False
         end
         object Label2: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 48
-          Width = 53
+          Width = 51
           Caption = 'Key Type:'
           ParentColor = False
         end
         object Label3: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 80
-          Width = 56
+          Width = 55
           Caption = 'Company:'
           ParentColor = False
         end
         object Label4: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 112
-          Width = 81
+          Width = 78
           Caption = 'License Count:'
           ParentColor = False
         end
         object Label5: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 144
-          Width = 89
+          Width = 84
           Caption = 'Renewal Period:'
           ParentColor = False
         end
         object edtPrefixC: TEdit
           Left = 116
-          Height = 27
+          Height = 23
           Top = 12
           Width = 121
           OnChange = edtPrefixCChange
@@ -314,7 +314,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtCompanyC: TEdit
           Left = 116
-          Height = 27
+          Height = 23
           Top = 76
           Width = 537
           Anchors = [akTop, akLeft, akRight]
@@ -323,10 +323,10 @@ object FLPMS_Main: TFLPMS_Main
         end
         object cbxKeyTypeC: TComboBox
           Left = 116
-          Height = 27
+          Height = 23
           Top = 44
           Width = 121
-          ItemHeight = 0
+          ItemHeight = 15
           ItemIndex = 0
           Items.Strings = (
             '--- Select ---'
@@ -340,16 +340,16 @@ object FLPMS_Main: TFLPMS_Main
         end
         object cbBlockedC: TCheckBox
           Left = 116
-          Height = 21
+          Height = 19
           Top = 172
-          Width = 70
+          Width = 65
           Caption = ' Blocked'
           OnClick = edtPrefixCChange
           TabOrder = 3
         end
         object speRenewalC: TSpinEdit
           Left = 116
-          Height = 27
+          Height = 23
           Top = 140
           Width = 121
           MaxValue = 999
@@ -360,7 +360,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object speLicCountC: TSpinEdit
           Left = 116
-          Height = 27
+          Height = 23
           Top = 108
           Width = 121
           MaxValue = 999
@@ -372,19 +372,19 @@ object FLPMS_Main: TFLPMS_Main
       end
       object pnlBackup: TPanel
         Left = 2
-        Height = 472
+        Height = 471
         Top = 2
         Width = 663
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 472
+        ClientHeight = 471
         ClientWidth = 663
         TabOrder = 4
         object StaticText2: TStaticText
           Left = 8
-          Height = 29
+          Height = 26
           Top = 16
-          Width = 421
+          Width = 371
           AutoSize = True
           Caption = 'LPMS Access Control Manager - Backup'
           Font.Color = clWindowText
@@ -530,7 +530,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object BackupLog: TListView
           Left = 8
-          Height = 316
+          Height = 315
           Top = 156
           Width = 645
           Anchors = [akTop, akLeft, akRight, akBottom]
@@ -555,30 +555,30 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label29: TLabel
           Left = 10
-          Height = 17
+          Height = 15
           Top = 64
-          Width = 43
+          Width = 37
           Caption = 'UserID:'
           ParentColor = False
         end
         object edtUserIDB: TEdit
           Left = 88
-          Height = 27
+          Height = 23
           Top = 60
           Width = 120
           TabOrder = 3
         end
         object Label30: TLabel
           Left = 228
-          Height = 17
+          Height = 15
           Top = 64
-          Width = 57
+          Width = 53
           Caption = 'Password:'
           ParentColor = False
         end
         object edtPasswordB: TEdit
           Left = 306
-          Height = 27
+          Height = 23
           Top = 60
           Width = 120
           EchoMode = emPassword
@@ -587,15 +587,15 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label31: TLabel
           Left = 448
-          Height = 17
+          Height = 15
           Top = 64
-          Width = 64
+          Width = 61
           Caption = 'Read Block:'
           ParentColor = False
         end
         object speReadBlockB: TSpinEdit
           Left = 526
-          Height = 27
+          Height = 23
           Top = 60
           Width = 127
           MaxValue = 100000
@@ -604,15 +604,15 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label34: TLabel
           Left = 10
-          Height = 17
+          Height = 15
           Top = 96
-          Width = 66
+          Width = 63
           Caption = 'Host Name:'
           ParentColor = False
         end
         object edtTemplateB: TEdit
           Left = 88
-          Height = 27
+          Height = 23
           Hint = 'Valid symbolic variables are &Date, &Year, &Month, &Day, &Time, &Hour, &Minute, &BackupName, &HostName, &BackupType, &DBName, &OSName, &OSShort'
           Top = 124
           Width = 565
@@ -623,24 +623,24 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label35: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 128
-          Width = 55
+          Width = 53
           Caption = 'Template:'
           ParentColor = False
         end
         object edtHostNameB: TEdit
           Left = 88
-          Height = 27
+          Height = 23
           Top = 92
           Width = 200
           TabOrder = 6
         end
         object Label36: TLabel
           Left = 308
-          Height = 17
+          Height = 15
           Top = 96
-          Width = 50
+          Width = 49
           Caption = 'Location:'
           ParentColor = False
         end
@@ -662,12 +662,12 @@ object FLPMS_Main: TFLPMS_Main
       end
       object pnlRoot: TPanel
         Left = 2
-        Height = 472
+        Height = 471
         Top = 2
         Width = 663
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 472
+        ClientHeight = 471
         ClientWidth = 663
         TabOrder = 0
         object Image1: TImage
@@ -1389,65 +1389,65 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label19: TLabel
           Left = 18
-          Height = 17
+          Height = 15
           Top = 104
-          Width = 23
+          Width = 22
           Caption = 'Key:'
           ParentColor = False
         end
         object Label20: TLabel
           Left = 106
-          Height = 17
+          Height = 15
           Top = 136
-          Width = 35
+          Width = 32
           Caption = 'Prefix:'
           ParentColor = False
         end
         object Label21: TLabel
           Left = 106
-          Height = 17
+          Height = 15
           Top = 168
-          Width = 43
+          Width = 41
           Caption = 'Unique:'
           ParentColor = False
         end
         object Label22: TLabel
           Left = 106
-          Height = 17
+          Height = 15
           Top = 200
-          Width = 67
+          Width = 61
           Caption = 'Expiry Date:'
           ParentColor = False
         end
         object Label23: TLabel
           Left = 106
-          Height = 17
+          Height = 15
           Top = 260
-          Width = 61
+          Width = 56
           Caption = 'Priveleges:'
           ParentColor = False
         end
         object Label24: TLabel
           Left = 18
-          Height = 17
+          Height = 15
           Top = 314
-          Width = 43
+          Width = 41
           Caption = 'Unique:'
           ParentColor = False
         end
         object Label25: TLabel
           Left = 106
-          Height = 17
+          Height = 15
           Top = 232
-          Width = 75
+          Width = 71
           Caption = 'License Type:'
           ParentColor = False
         end
         object StaticText1: TStaticText
           Left = 18
-          Height = 29
+          Height = 26
           Top = 30
-          Width = 323
+          Width = 281
           AutoSize = True
           Caption = 'LPMS Access Control Manager'
           Font.Color = clWindowText
@@ -1492,7 +1492,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtUniqueR: TEdit
           Left = 192
-          Height = 27
+          Height = 23
           Top = 164
           Width = 127
           CharCase = ecUppercase
@@ -1502,7 +1502,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtPrefixR: TEdit
           Left = 192
-          Height = 27
+          Height = 23
           Top = 132
           Width = 127
           MaxLength = 6
@@ -1511,36 +1511,36 @@ object FLPMS_Main: TFLPMS_Main
         end
         object cbCollectR: TCheckBox
           Left = 192
-          Height = 21
+          Height = 19
           Top = 258
-          Width = 87
+          Width = 82
           Caption = ' Collections'
           OnClick = edtKeyRChange
           TabOrder = 8
         end
         object cbDocGenR: TCheckBox
           Left = 303
-          Height = 21
+          Height = 19
           Top = 258
-          Width = 104
+          Width = 94
           Caption = ' Doc Generate'
           OnClick = edtKeyRChange
           TabOrder = 9
         end
         object cbOption4R: TCheckBox
           Left = 525
-          Height = 21
+          Height = 19
           Top = 258
-          Width = 73
+          Width = 69
           Caption = ' Option 4'
           OnClick = edtKeyRChange
           TabOrder = 11
         end
         object cbFloatingR: TCheckBox
           Left = 424
-          Height = 21
+          Height = 19
           Top = 258
-          Width = 70
+          Width = 66
           Caption = ' Floating'
           OnClick = edtKeyRChange
           TabOrder = 10
@@ -1556,7 +1556,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtUniqueF: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 310
           Width = 213
           CharCase = ecUppercase
@@ -1579,7 +1579,7 @@ object FLPMS_Main: TFLPMS_Main
           Top = 228
           Width = 127
           AutoSize = False
-          ItemHeight = 0
+          ItemHeight = 15
           Items.Strings = (
             '--- Select ---'
             'Trial'
@@ -1593,7 +1593,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtKeyR: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 100
           Width = 310
           CharCase = ecUppercase
@@ -1642,15 +1642,15 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label32: TLabel
           Left = 18
-          Height = 17
+          Height = 15
           Top = 372
-          Width = 74
+          Width = 67
           Caption = 'Email Server:'
           ParentColor = False
         end
         object edtServerR: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 368
           Width = 310
           OnChange = edtUniqueFChange
@@ -1658,15 +1658,15 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label33: TLabel
           Left = 18
-          Height = 17
+          Height = 15
           Top = 404
-          Width = 57
+          Width = 53
           Caption = 'Password:'
           ParentColor = False
         end
         object edtPasswordR: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 400
           Width = 214
           EchoMode = emPassword
@@ -1715,121 +1715,121 @@ object FLPMS_Main: TFLPMS_Main
       end
       object pnlUser: TPanel
         Left = 2
-        Height = 472
+        Height = 471
         Top = 2
         Width = 663
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 472
+        ClientHeight = 471
         ClientWidth = 663
         TabOrder = 2
         object Label6: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 16
-          Width = 35
+          Width = 32
           Caption = 'Prefix:'
           ParentColor = False
         end
         object Label8: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 112
-          Width = 34
+          Width = 32
           Caption = 'Email:'
           ParentColor = False
         end
         object Label10: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 273
-          Width = 56
+          Width = 52
           Caption = 'Renewals:'
           ParentColor = False
         end
         object Label7: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 80
-          Width = 56
+          Width = 55
           Caption = 'Company:'
           ParentColor = False
         end
         object Label11: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 144
-          Width = 65
+          Width = 64
           Caption = 'Contact No:'
           ParentColor = False
         end
         object Label12: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 48
-          Width = 62
+          Width = 56
           Caption = 'Username:'
           ParentColor = False
         end
         object Label13: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 176
-          Width = 43
+          Width = 41
           Caption = 'Unique:'
           ParentColor = False
         end
         object Label14: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 208
-          Width = 75
+          Width = 71
           Caption = 'License Type:'
           ParentColor = False
         end
         object Label15: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 240
-          Width = 67
+          Width = 61
           Caption = 'Expiry Date:'
           ParentColor = False
         end
         object Label16: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 323
-          Width = 46
+          Width = 45
           Caption = 'Options:'
           ParentColor = False
         end
         object Label9: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 349
-          Width = 23
+          Width = 22
           Caption = 'Key:'
           ParentColor = False
         end
         object Label17: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 403
-          Width = 76
+          Width = 74
           Caption = 'New Lic Type:'
           ParentColor = False
         end
         object Label18: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 435
-          Width = 63
+          Width = 59
           Caption = 'New Prefix:'
           ParentColor = False
         end
         object edtPrefixU: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 12
           Width = 121
           ReadOnly = True
@@ -1837,7 +1837,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtEmailU: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 108
           Width = 455
           Anchors = [akTop, akLeft, akRight]
@@ -1847,16 +1847,16 @@ object FLPMS_Main: TFLPMS_Main
         end
         object cbBlockedU: TCheckBox
           Left = 106
-          Height = 21
+          Height = 19
           Top = 298
-          Width = 70
+          Width = 65
           Caption = ' Blocked'
           OnClick = cbBlockedUClick
           TabOrder = 15
         end
         object edtCompanyU: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 76
           Width = 547
           Anchors = [akTop, akLeft, akRight]
@@ -1866,7 +1866,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtContactU: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 140
           Width = 121
           MaxLength = 50
@@ -1875,7 +1875,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtUserNameU: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 44
           Width = 547
           Anchors = [akTop, akLeft, akRight]
@@ -1885,7 +1885,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtUniqueU: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 172
           Width = 121
           CharCase = ecUppercase
@@ -1900,7 +1900,7 @@ object FLPMS_Main: TFLPMS_Main
           Top = 204
           Width = 121
           AutoSize = False
-          ItemHeight = 0
+          ItemHeight = 15
           ItemIndex = 0
           Items.Strings = (
             '--- Select ---'
@@ -1941,7 +1941,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtRenewalsU: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 269
           Width = 60
           ReadOnly = True
@@ -1949,34 +1949,34 @@ object FLPMS_Main: TFLPMS_Main
         end
         object cbCollectU: TCheckBox
           Left = 106
-          Height = 21
+          Height = 19
           Top = 320
-          Width = 87
+          Width = 82
           Caption = ' Collections'
           OnChange = edtUniqueUChange
           TabOrder = 16
         end
         object cbDocGenU: TCheckBox
           Left = 216
-          Height = 21
+          Height = 19
           Top = 320
-          Width = 104
+          Width = 94
           Caption = ' Doc Generate'
           OnChange = edtUniqueUChange
           TabOrder = 17
         end
         object cbFloatingU: TCheckBox
           Left = 336
-          Height = 21
+          Height = 19
           Top = 320
-          Width = 70
+          Width = 66
           Caption = ' Floating'
           OnChange = edtUniqueUChange
           TabOrder = 18
         end
         object edtKeyU: TEdit
           Left = 106
-          Height = 27
+          Height = 23
           Top = 345
           Width = 297
           OnChange = edtUserNameUChange
@@ -1985,19 +1985,19 @@ object FLPMS_Main: TFLPMS_Main
         end
         object cbTransferU: TCheckBox
           Left = 106
-          Height = 21
+          Height = 19
           Top = 374
-          Width = 73
+          Width = 66
           Caption = ' Transfer'
           OnClick = cbTransferUClick
           TabOrder = 21
         end
         object cbxNewLicU: TComboBox
           Left = 106
-          Height = 27
+          Height = 23
           Top = 399
           Width = 121
-          ItemHeight = 0
+          ItemHeight = 15
           ItemIndex = 0
           Items.Strings = (
             '--- Select ---'
@@ -2012,10 +2012,10 @@ object FLPMS_Main: TFLPMS_Main
         end
         object cbxNewPrefixU: TComboBox
           Left = 106
-          Height = 27
+          Height = 23
           Top = 431
           Width = 121
-          ItemHeight = 0
+          ItemHeight = 15
           ItemIndex = 0
           Items.Strings = (
             '--- Select ---'
@@ -2098,16 +2098,16 @@ object FLPMS_Main: TFLPMS_Main
         end
         object cbOption4U: TCheckBox
           Left = 456
-          Height = 21
+          Height = 19
           Top = 320
-          Width = 73
+          Width = 69
           Caption = ' Option 4'
           OnChange = edtUniqueUChange
           TabOrder = 19
         end
         object txtExpired: TStaticText
           Left = 233
-          Height = 18
+          Height = 1
           Top = 240
           Width = 4
           AutoSize = True
@@ -2120,26 +2120,26 @@ object FLPMS_Main: TFLPMS_Main
         end
         object edtDBKeyU: TEdit
           Left = 250
-          Height = 27
+          Height = 23
           Top = 12
           Width = 121
           TabOrder = 1
           Visible = False
         end
         object cbEditEmail: TCheckBox
-          Left = 568
-          Height = 21
+          Left = 574
+          Height = 19
           Top = 110
-          Width = 81
+          Width = 75
           Anchors = [akTop, akRight]
           Caption = ' Edit email'
           TabOrder = 5
         end
         object cbAllowDuplicates: TCheckBox
           Left = 265
-          Height = 21
+          Height = 19
           Top = 174
-          Width = 118
+          Width = 111
           Caption = ' Allow Duplicates'
           Enabled = False
           OnChange = edtUserNameUChange
@@ -2147,7 +2147,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object txtInvalid: TStaticText
           Left = 433
-          Height = 18
+          Height = 1
           Top = 349
           Width = 4
           AutoSize = True
@@ -2199,19 +2199,19 @@ object FLPMS_Main: TFLPMS_Main
       end
       object pnlRestore: TPanel
         Left = 2
-        Height = 472
+        Height = 471
         Top = 2
         Width = 663
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 472
+        ClientHeight = 471
         ClientWidth = 663
         TabOrder = 3
         object StaticText3: TStaticText
           Left = 8
-          Height = 29
+          Height = 26
           Top = 16
-          Width = 426
+          Width = 373
           AutoSize = True
           Caption = 'LPMS Access Control Manager - Restore'
           Font.Color = clWindowText
@@ -2354,7 +2354,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object RestoreLogRe1: TListView
           Left = 8
-          Height = 284
+          Height = 283
           Top = 188
           Width = 645
           Anchors = [akTop, akLeft, akRight, akBottom]
@@ -2379,30 +2379,30 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label37: TLabel
           Left = 10
-          Height = 17
+          Height = 15
           Top = 64
-          Width = 43
+          Width = 37
           Caption = 'UserID:'
           ParentColor = False
         end
         object edtUserIDRe: TEdit
           Left = 88
-          Height = 27
+          Height = 23
           Top = 60
           Width = 208
           TabOrder = 3
         end
         object Label38: TLabel
           Left = 355
-          Height = 17
+          Height = 15
           Top = 64
-          Width = 57
+          Width = 53
           Caption = 'Password:'
           ParentColor = False
         end
         object edtPasswordRe: TEdit
           Left = 445
-          Height = 27
+          Height = 23
           Top = 60
           Width = 208
           EchoMode = emPassword
@@ -2411,15 +2411,15 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label40: TLabel
           Left = 10
-          Height = 17
+          Height = 15
           Top = 96
-          Width = 66
+          Width = 63
           Caption = 'Host Name:'
           ParentColor = False
         end
         object edtHostNameRe: TEdit
           Left = 88
-          Height = 27
+          Height = 23
           Top = 92
           Width = 565
           Anchors = [akTop, akLeft, akRight]
@@ -2427,15 +2427,15 @@ object FLPMS_Main: TFLPMS_Main
         end
         object Label42: TLabel
           Left = 8
-          Height = 17
+          Height = 15
           Top = 128
-          Width = 44
+          Width = 42
           Caption = 'Backup:'
           ParentColor = False
         end
         object edtBackupRe: TEditButton
           Left = 88
-          Height = 27
+          Height = 23
           Top = 124
           Width = 565
           Anchors = [akTop, akLeft, akRight]
@@ -2479,7 +2479,7 @@ object FLPMS_Main: TFLPMS_Main
           Left = 88
           Height = 26
           Hint = 'Click to terminate LPMS Access Control Manager'
-          Top = 156
+          Top = 155
           Width = 75
           Caption = 'Open'
           OnClick = btnOpenReClick
@@ -2487,7 +2487,7 @@ object FLPMS_Main: TFLPMS_Main
         end
         object RestoreLogRe2: TListView
           Left = 8
-          Height = 284
+          Height = 283
           Top = 188
           Width = 645
           Anchors = [akTop, akLeft, akRight, akBottom]
@@ -2511,8 +2511,8 @@ object FLPMS_Main: TFLPMS_Main
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 21
-    Top = 549
+    Height = 23
+    Top = 548
     Width = 880
     Panels = <    
       item
@@ -2615,7 +2615,7 @@ object FLPMS_Main: TFLPMS_Main
   end
   object Splitter1: TSplitter
     Left = 210
-    Height = 517
+    Height = 516
     Top = 32
     Width = 3
     AutoSnap = False

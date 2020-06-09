@@ -25,7 +25,7 @@ uses
 {$ENDIF}
 
    Classes, SysUtils, sqldb, Forms, Controls, Graphics, Dialogs, StdCtrls,
-   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles,
+   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles, LazFileUtils,
 
 {$IFDEF DARWIN}                      // Target is macOS
    Zipper, StrUtils, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
@@ -63,6 +63,7 @@ type
    edtPassword: TEdit;
    edtUserID: TEdit;
    Image1: TImage;
+   jvBrowse: TSelectDirectoryDialog;
    Label1: TLabel;
    Label2: TLabel;
    Label3: TLabel;
@@ -85,6 +86,10 @@ private  { Private Declarations }
    Minor      : string;     // Minor Version component of the Version info
    VerRelease : string;     // Release component of the Version info
    Build      : string;     // Build Number component of the Version info
+   INILoc     : string;     // Location of the INI file
+   LocalPath  : string;     // Path to location of the INI file
+
+
 
 {$IFDEF WINDOWS}                   // Target is Winblows
    sqlCon  : TMySQL56Connection;
@@ -181,7 +186,6 @@ implementation
 procedure TFLPMS_Login.FormCreate(Sender: TObject);
 var
    idx, NumParms  : integer;
-   INILoc         : string;
    Params, Args   : TStringList;
    IniFile        : TINIFile;
 
@@ -287,9 +291,78 @@ begin
 
    end;
 
+//--- Set the location of the INI file. We get the path to the user's home
+//--- directory (this is platform independent). Winblows is a problem due to a
+//--- lack of naming conventions across versions of Winblows. If it is not
+//--- 'Documents' or 'My Documents' then we give the User a change to select
+//--- the home directory.
+
+{$IFDEF WINDOWS}
+
+   LocalPath := AppendPathDelim(GetUserDir + 'Documents');
+
+   if DirectoryExists(LocalPath) = False then begin
+
+      LocalPath := AppendPathDelim(GetUserDir + 'My Documents');
+
+      if DirectoryExists(LocalPath) = False then begin
+
+         if (MessageDlg('LPMS Access Control Management','WARNING: Unable to locate home directory. You can:' + #10 + #10 + #10 + 'Click [Yes] to locate the home directory; or ' + #10 +#10 + 'Click [No] to terminate.', mtWarning, [mbYes,mbNo], '') = mrNo) then begin;
+
+            Application.Terminate;
+            Exit;
+
+         end;
+
+
+         if jvBrowse.Execute = False then begin
+
+            Application.Terminate;
+            Exit;
+
+         end;
+
+      end;
+
+   end;
+
+   LocalPath := AppendPathDelim(LocalPath + 'LPMS_ACM');
+
+{$ELSE}
+
+   LocalPath := AppendPathDelim(GetUSerDir);
+   LocalPath := AppendPathDelim(LocalPath + '.lpms_acm');
+
+{$ENDIF}
+
+//--- We now have what passes for a home directory with the working directory
+//--- 'LPMS_ACM' (Winblows) or '.lpms_acm' (*nix) added to it and tests whether
+//--- this exists. If it does not then we ask the User whether we should create
+//--- it and do so if the User agrees otherwise we terminate the Application
+
+   if DirectoryExists(LocalPath) = False then begin
+
+      if (MessageDlg('LPMS Access Control Management','WARNING: LPMS_ACM directory does not exist. You can:' + #10 + #10 + #10 + 'Click [Yes] to create the directory; or' +#10 + #10 + 'Click [No] to terminate.', mtWarning, [mbYes,mbNo], '') = mrNo) then begin;
+
+         Application.Terminate;
+         Exit;
+
+      end;
+
+      if CreateDir(LocalPath) = False then begin
+
+         MessageDlg('LPMS Access Control Management','FATAL: Unable to create LPMS_ACM directory.' + #10 + #10 + 'LPMS_ACM cannot continue and will be terminated.', mtError, [mbOk], '');
+         Application.Terminate;
+         Exit;
+
+      end;
+
+   end;
+
+
 //--- Get the SMTP parameters from the INI file and store for later use
 
-   INILoc := ExtractFilePath(Application.ExeName) + 'LPMS_ACM.ini';
+   INILoc := LocalPath + 'LPMS_ACM.ini';
 
    if FileExists(INILoc) = True then begin
 
@@ -340,8 +413,7 @@ end;
 //------------------------------------------------------------------------------
 procedure TFLPMS_Login. FormClose( Sender: TObject; var CloseAction: TCloseAction);
 var
-   INILoc  : string;
-   IniFile : TINIFile;
+   IniFile   : TINIFile;
 
 begin
 
@@ -351,7 +423,7 @@ begin
 
 //--- Write the current SMTP parameters to the INI file
 
-   INILoc := ExtractFilePath(Application.ExeName) + 'LPMS_ACM.ini';
+   INILoc := LocalPath + 'LPMS_ACM.ini';
 
    IniFile := TINIFile.Create(INILoc);
 
