@@ -725,13 +725,13 @@ begin
 
 //--- If we are at the start of the field then we consume the key and do nothing
 
-//      if edtKeyR.SelStart = 0 then begin
-//
-//         Key := 0;
-//         Exit;
-//
-//      end;
-//
+      if (edtKeyR.SelStart = 0) and (edtKeyR.SelLength = 0) then begin
+
+         Key := 0;
+         Exit;
+
+      end;
+
 //--- If the whole field is selected then simply delete the contents
 
       if edtKeyR.SelLength = Length(edtKeyR.Text) then begin
@@ -740,6 +740,8 @@ begin
          KeepSelStart := 0;
 
       end else begin
+
+//--- Otherwise delete what is selected
 
          ThisField    := '';
          KeepLength   := edtKeyR.SelLength;
@@ -760,23 +762,20 @@ begin
 
          end;
 
+//--- Update the field without invoking the edtKeyRChange routine
+
          CanUpdate := True;
          edtKeyR.Text := ThisField;
          CanUpdate := False;
 
-         if KeepSelStart < 0 then
-            KeepSelStart := 0;
-
       end;
-
-      Key := 0;
 
       if KeepLength = 0 then
          edtKeyR.SelStart := KeepSelStart - 1
       else
          edtKeyR.SelStart := KeepSelStart;
 
-      edtKeyRChange(Sender);
+      Key := 0;
 
    end;
 
@@ -1993,6 +1992,9 @@ begin
       try
          Parts := TStringList.Create;
 
+//--- Determine where the cursor is and whether we are at the end of the field.
+//--- If we are not at the end then we are doing an insert
+
          SelStrt := edtKeyR.SelStart;
 
          if SelStrt < Length(edtKeyR.Text) then
@@ -2003,10 +2005,15 @@ begin
          ThisKey  := '';
          ThisStr  := '';
 
+//--- Remove the '-' characters from the key as these will shift due to new
+//--- characters being added or eisting characters being deleted
+
          ExtractStrings(['-'], [' '], PChar(edtKeyR.Text), Parts);
 
          for idx1 := 0 to Parts.Count - 1 do
             ThisStr := ThisStr + Parts[idx1];
+
+//--- Rebuild the structure of the key inserting '-' at the appropriate places
 
          for idx2 := 1 to Length(ThisStr) do begin
 
@@ -2026,8 +2033,18 @@ begin
       CanUpdate    := True;
       edtKeyR.Text := ThisKey;
 
-      if ThisKey[SelStrt] = '-' then
-         Inc(SelStrt);
+//--- If the cursor is positioned at a '-' then we need to move it forward by
+//--- 1 position, however this test will fail if we are at the beginning of the
+//--- field
+
+      if SelStrt > 0 then begin
+
+         if ThisKey[SelStrt] = '-' then
+            Inc(SelStrt);
+
+      end;
+
+//--- Reposition the cursor depending on wheter we are doing an insert or not
 
       if DoIns = True then
          edtKeyR.SelStart := SelStrt
@@ -2038,6 +2055,8 @@ begin
 
    end;
 
+
+//--- Set the disposition of the Encode and Decode buttons
 
    if Length(edtKeyR.Text) = 38 then
       btnDecodeR.Enabled := True;
@@ -2062,47 +2081,6 @@ begin
       btnFindR.Enabled := True;
 
 end;
-
-{
-//------------------------------------------------------------------------------
-// Function to load the LPMS_EncDec DLL and decode a key contained in
-// Decode_Key_Priv
-//------------------------------------------------------------------------------
-function TFLPMS_Main.DeCode() : integer;
-begin
-
-//--- Call and execute the DoDecode function in the DLL
-
-   This_Key_Priv := DoDecode(This_Key_Priv);
-
-//--- Return the Result
-
-   Result := This_Key_Priv.DaysLeft;
-
-end;
-}
-
-{
-//------------------------------------------------------------------------------
-// Function to load the LPMS_EncDec DLL and encode a key with the information
-// contained in Encode_Key_Values
-//------------------------------------------------------------------------------
-function TFLPMS_Main.EnCode() : boolean;
-begin
-
-//--- Call and execute the DoDecode function in the DLL
-
-   This_Key_Values := DoEncode(This_Key_Values);
-
-//--- If the encoding was successful Unique will contain the Key
-
-   if This_Key_Values.Unique = '000000000000' then
-      Result := False
-   else
-      Result := True;
-
-end;
-}
 
 //------------------------------------------------------------------------------
 // User clicked on the Backup button
