@@ -123,7 +123,7 @@ public   { Public Declarations }
    CopyRight, UserName, Password, Version, DTDLocation : string;
    AutoUser, AutoPass, AutoHost, Path, ThisSMTPHost    : string;
    ThisSMTPPass, DBUser, DBPass, DBHost, DBLocation    : string;
-   DBTemplate                                          : string;
+   DBTemplate, AutoKey                                 : string;
 
 type
 
@@ -248,7 +248,7 @@ begin
 
 //--- Call and execute the cmdlOptions function in the BSD_Utilities DLL
 
-      NumParms := cmdlOptions('u:p:H:', Args, Params);
+      NumParms := cmdlOptions('u:p:H:K:', Args, Params);
 
       if NumParms > 0 then begin
 
@@ -275,6 +275,15 @@ begin
 
                AutoHost  := Params.Strings[idx + 1];
                AutoLogin := true;
+
+            end;
+
+            if Params.Strings[idx] = 'K' then begin
+
+               if Length(Params.Strings[idx + 1]) = 38 then
+                  AutoKey := Params.Strings[idx + 1]
+               else
+                  AutoKey := '';
 
             end;
 
@@ -510,6 +519,7 @@ begin
       FLPMS_Main.CopyRight    := CopyRight;
       FLPMS_Main.ThisSMTPHost := ThisSMTPHost;
       FLPMS_Main.ThisSMTPPass := ThisSMTPPass;
+      FLPMS_Main.AutoKey      := AutoKey;
 
       FLPMS_Main.edtUserIDB.Text     := DBUSer;
       FLPMS_Main.edtPasswordB.Text   := DBPass;

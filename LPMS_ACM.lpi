@@ -19,7 +19,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="114"/>
+      <BuildNr Value="116"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -74,7 +74,7 @@
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="../BSD_Utilities/lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
             <OtherUnitFiles Value="../../.lazarus/onlinepackagemanager/packages/synapse40.1"/>
-            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>

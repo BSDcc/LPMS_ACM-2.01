@@ -7,10 +7,9 @@
       <Unit0>
         <Filename Value="LPMS_ACM.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <CursorPos Y="17"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="lpms_login.pas"/>
@@ -19,12 +18,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Login"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="606"/>
-        <CursorPos Y="639"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="499"/>
+        <CursorPos X="42" Y="522"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="lpms_main.pas"/>
@@ -34,13 +32,13 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="637"/>
-        <CursorPos X="25" Y="656"/>
-        <FoldState Value=" T3uc03113 TL:e05 p0imd0Qj"/>
+        <TopLine Value="563"/>
+        <CursorPos X="7" Y="598"/>
+        <FoldState Value=" T3rP0p013 TL,505 p0imd0Qi"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
-          <Item0 Y="726"/>
-          <Item1 X="3" Y="1980" ID="1"/>
+          <Item0 Y="734"/>
+          <Item1 X="3" Y="1988" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -76,11 +74,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Excel"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="12"/>
         <CursorPos X="38" Y="25"/>
-        <UsageCount Value="145"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="146"/>
       </Unit5>
       <Unit6>
         <Filename Value="../LPMS_Backup_Manager-3.02/Source/ldbackupapp.pas"/>
@@ -357,14 +354,13 @@
       <Unit45>
         <Filename Value="../LPMS_Backup_Manager-3.02.git/ldbackupapp.pas"/>
         <UnitName Value="ldBackupApp"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="644"/>
         <CursorPos Y="671"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit45>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="lpms_main.pas"/>
         <Caret Line="1043" Column="17" TopLine="795"/>
@@ -426,72 +422,68 @@
         <Caret Line="214" Column="14" TopLine="197"/>
       </Position15>
       <Position16>
-        <Filename Value="LPMS_ACM.lpr"/>
-        <Caret Line="17"/>
+        <Filename Value="lpms_main.pas"/>
+        <Caret Line="529" TopLine="510"/>
       </Position16>
       <Position17>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="529" TopLine="510"/>
+        <Caret Line="533" Column="14" TopLine="511"/>
       </Position17>
       <Position18>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="533" Column="14" TopLine="511"/>
+        <Caret Line="532" Column="14" TopLine="511"/>
       </Position18>
       <Position19>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="532" Column="14" TopLine="511"/>
+        <Caret Line="533" Column="14" TopLine="511"/>
       </Position19>
       <Position20>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="533" Column="14" TopLine="511"/>
+        <Caret Line="654" Column="14" TopLine="605"/>
       </Position20>
       <Position21>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="654" Column="14" TopLine="605"/>
+        <Caret Line="655" Column="14" TopLine="606"/>
       </Position21>
       <Position22>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="655" Column="14" TopLine="606"/>
+        <Caret Line="656" Column="14" TopLine="607"/>
       </Position22>
       <Position23>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="656" Column="14" TopLine="607"/>
+        <Caret Line="657" Column="14" TopLine="627"/>
       </Position23>
       <Position24>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="657" Column="14" TopLine="627"/>
+        <Caret Line="1044" Column="17" TopLine="796"/>
       </Position24>
       <Position25>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1044" Column="17" TopLine="796"/>
+        <Caret Line="1093" TopLine="1064"/>
       </Position25>
       <Position26>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1093" TopLine="1064"/>
+        <Caret Line="1092" TopLine="1063"/>
       </Position26>
       <Position27>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1092" TopLine="1063"/>
+        <Caret Line="2901" Column="17" TopLine="2803"/>
       </Position27>
       <Position28>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="2901" Column="17" TopLine="2803"/>
+        <Caret Line="653" Column="4" TopLine="636"/>
       </Position28>
       <Position29>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="653" Column="4" TopLine="636"/>
-      </Position29>
-      <Position30>
-        <Filename Value="lpms_main.pas"/>
         <Caret Line="1043" Column="17" TopLine="795"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
       <Modes Count="1" ActiveMode="default">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="-Hwww.lawsa.me -pvincent1 -uroot"/>
+            <CommandLineParams Value="-Hwww.lawsa.me -pvincent1 -uroot -KABCD-EFG-HIJK-LMNO-PQRS-TUVW-XYZ1-2345"/>
           </local>
         </Mode0>
       </Modes>
@@ -504,7 +496,7 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="lpms_main.pas"/>
-        <Line Value="1092"/>
+        <Line Value="1100"/>
       </Item1>
     </BreakPoints>
     <Watches Count="4">

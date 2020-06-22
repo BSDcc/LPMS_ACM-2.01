@@ -347,7 +347,7 @@ type
    RES_TYPE = (RT_OPEN,             // Extract Restore information from the BackupFile
                RT_RESTORE);         // Restore from the Backup File
 
- {$ENDIF}
+{$ENDIF}
 
 public   { Public Declarations }
 
@@ -363,6 +363,7 @@ public   { Public Declarations }
    ThisSMTPHost : string;      // SMTP Host for sending emails
    ThisSMTPPass : string;      // SMTP Password for sending emails
    PassPhrase   : string;      // Contains the Phass Phrase to unlock restricted activities
+   AutoKey      : string;      // Set by Login. If autoKey contains a key then itis automatically displayed and decoded
 
 end;
 
@@ -589,6 +590,13 @@ begin
    edtServerR.Text   := ThisSMTPHost;
    edtPasswordR.Text := ThisSMTPPass;
    edtKeyR.SetFocus();
+
+   if Trim(AutoKey) <> '' then begin
+
+      edtKeyR.Text := AutoKey;
+      btnDecodeRClick(Sender);
+
+   end;
 
 end;
 
