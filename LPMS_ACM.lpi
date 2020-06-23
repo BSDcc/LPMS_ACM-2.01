@@ -19,7 +19,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="116"/>
+      <BuildNr Value="120"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -29,7 +29,8 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="../BSD_Utilities/lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
-            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+            <OtherUnitFiles Value="../../.lazarus/onlinepackagemanager/packages/synapse40.1;../BSD_Utilities"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -73,7 +74,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="../BSD_Utilities/lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
-            <OtherUnitFiles Value="../../.lazarus/onlinepackagemanager/packages/synapse40.1"/>
+            <OtherUnitFiles Value="../../.lazarus/onlinepackagemanager/packages/synapse40.1;../BSD_Utilities"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -125,7 +126,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="7">
       <Unit0>
         <Filename Value="LPMS_ACM.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -147,36 +148,40 @@
         <UnitName Value="LPMS_Main"/>
       </Unit2>
       <Unit3>
-        <Filename Value="lpms_inputquery.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FLPMS_InputQuery"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="LPMS_InputQuery"/>
-      </Unit3>
-      <Unit4>
         <Filename Value="lpms_show.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FLPMS_Show"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Show"/>
-      </Unit4>
-      <Unit5>
+      </Unit3>
+      <Unit4>
         <Filename Value="lpms_excel.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FLPMS_Excel"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Excel"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="LPMS_InputQuery.type"/>
+        <IsPartOfProject Value="True"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="../BSD_Utilities/lpms_inputquery.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FLPMS_InputQuery"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="LPMS_InputQuery"/>
+      </Unit6>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../../.lazarus/onlinepackagemanager/packages/synapse40.1"/>
+      <OtherUnitFiles Value="../../.lazarus/onlinepackagemanager/packages/synapse40.1;../BSD_Utilities"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
