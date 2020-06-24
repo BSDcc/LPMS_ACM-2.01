@@ -38,9 +38,9 @@ uses
 
 {$IFDEF DARWIN}                      // Target is macOS
    Zipper, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
-  {$IFDEF CPUI386}                   // Running on old hardware i.e. i386 - Widget set must be Carbon
+  {$IFDEF CPUI386}                   // Running on older hardware - Widget set must be Carbon
       mysql55conn, Interfaces;
-   {$ELSE}                           // Running on x86_64 - Widget set must be Cocoa
+   {$ELSE}                           // Running on new hardware - Widget set must be Cocoa
       mysql57conn, Interfaces;
    {$ENDIF}
 {$ENDIF}
@@ -270,10 +270,6 @@ type
    procedure ToolsGenerateExecute(Sender: TObject);
    procedure tvTreeClick(Sender: TObject);
 
-{$IFDEF DARWIN}
-{$INCLUDE '../BSD_Utilities/BSD_Utilities_01.inc'}
-{$ENDIF}
-
 private  { Private Declarations }
 
 {$IFDEF WINDOWS}                   // Target is Winblows
@@ -292,19 +288,20 @@ private  { Private Declarations }
    sqlQry1 : TSQLQuery;
 {$ENDIF}
 
+{$IFDEF DARWIN}
+   {$IFDEF CPUI386}               // Running on older hardware
+      sqlCon : TMySQL55Connection;
+   {$ELSE}                        // Running on new harsdware
+      sqlCon : TMySQL57Connection;
+   {$ENDIF}
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+{$ENDIF}
+
    PlaceHolder                                                   : integer;
    DoSave, CanUpdate, DoGen, FirstRun, RestoreSuccess, BackSpace : boolean;
    ClipKey, RestoreFile                                          : string;
    Root                                                          : TTreeNode;
-
-{$IFDEF DARWIN}
-
-   This_Key_Values : REC_Key_Values;
-   This_Key_Priv   : REC_Key_Priv;
-
-{$INCLUDE '../BSD_Utilities/BSD_Utilities_02.inc'}
-
-{$ENDIF}
 
    procedure RunBackup();
    procedure RunRestore();
@@ -338,16 +335,12 @@ type
                TYPE_READ,           // Reading from the database - &quote to '''
                TYPE_WRITE);         // Writing to the database - ''' to &quote
 
-{$IFNDEF DARWIN}
-
    RE_RSLT =  (ERR_INVALID,         // The content of the Key is invalid
                ERR_LENGTH,          // The length of the Key is wrong
                ERR_EXPIRED);        // The Key has expired
 
    RES_TYPE = (RT_OPEN,             // Extract Restore information from the BackupFile
                RT_RESTORE);         // Restore from the Backup File
-
-{$ENDIF}
 
 public   { Public Declarations }
 
@@ -366,8 +359,6 @@ public   { Public Declarations }
    AutoKey      : string;      // Set by Login. If autoKey contains a key then itis automatically displayed and decoded
 
 end;
-
-{$IFNDEF DARWIN}
 
 //------------------------------------------------------------------------------
 // Global variables
@@ -408,18 +399,18 @@ var
 //--- Utilities contained in BSD_Utilities.dll
 
 {$IFDEF LINUX}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities';
-   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities';
-   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'libbsd_utilities';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'libbsd_utilities';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'libbsd_utilities';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'libbsd_utilities';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'libbsd_utilities';
 {$ENDIF}
 {$IFDEF WINDOWS}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'BSD_Utilities';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'BSD_Utilities';
-   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'BSD_Utilities';
-   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'BSD_Utilities';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'BSD_Utilities';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'BSD_Utilities';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'BSD_Utilities';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'BSD_Utilities';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'BSD_Utilities';
 {$ENDIF}
 
 implementation
@@ -428,27 +419,7 @@ implementation
 
 {$R *.lfm}
 
-{$ElSE}
-
-//------------------------------------------------------------------------------
-// Global variables
-//------------------------------------------------------------------------------
-var
-   FLPMS_Main: TFLPMS_Main;
-
-implementation
-
-   uses LPMS_Login, LPMS_InputQuery, LPMS_Show, LPMS_Excel;
-
-{$R *.lfm}
-
-{$DEFINE LPMS_ACM_Main}
-{$INCLUDE '../BSD_Utilities/BSD_Utilities.lpr'}
-{$UNDEF LPMMS_ACM_Main}
-
-{$ENDIF}
-
-   { TFLPMS_Main }
+{ TFLPMS_Main }
 
 //------------------------------------------------------------------------------
 // Executed when the Form is created
@@ -483,9 +454,9 @@ begin
 {$ENDIF}
 
 {$IFDEF DARWIN}                     // Target is macOS
-   {$IFDEF CPUI386}                 // Running on older hardware i.e. i386
+   {$IFDEF CPUI386}                 // Running on older hardware
       sqlCon := TMySQL55Connection.Create(nil);
-   {$ELSE}                          // Running on x86_64
+   {$ELSE}                          // Running on new hardware
       sqlCon := TMySQL57Connection.Create(nil);
    {$ENDIF}
    sqlTran := TSQLTransaction.Create(nil);

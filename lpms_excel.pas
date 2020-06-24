@@ -27,9 +27,9 @@ uses
 {$IFDEF DARWIN}                      // Target is macOS
    Zipper, StrUtils, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
    ComCtrls,
- {$IFDEF CPUI386}                  // Running on old hardware i.e. i386
+ {$IFDEF CPUI386}                    // Running on older hardware - Widget set must be Carbon
       mysql55conn, Interfaces;
-  {$ELSE}                           // Running on Catalina
+  {$ELSE}                            // Running on new hardware - Widget set must be Cocoa
       mysql57conn, Interfaces;
   {$ENDIF}
 {$ENDIF}
@@ -88,20 +88,11 @@ type
       procedure FormClose( Sender: TObject; var CloseAction: TCloseAction);
       procedure FormCreate( Sender: TObject);
       procedure FormShow( Sender: TObject);
-
-{$IFDEF DARWIN}
-{$INCLUDE '../BSD_Utilities/BSD_Utilities_01.inc'}
-{$ENDIF}
-
 private   {Private Declarations}
 
    SpreadSheetName : string;        // Holds the Path and Name (without the Ext) of the Generated File
    ErrMsg          : string;        // Holds last MySQL error message
    InitDir         : string;        // Remembers the Initial Directory from the first File Save when the form is shown
-
-{$IFDEF DARWIN}
-   This_Key_Priv   : REC_Key_Priv;
-{$ENDIF}
 
 {$IFDEF WINDOWS}                   // Target is Winblows
    sqlCon  : TMySQL56Connection;
@@ -121,8 +112,15 @@ private   {Private Declarations}
    sqlQry2 : TSQLQuery;
 {$ENDIF}
 
-{$IFDEF DARWIN}
-{$INCLUDE '../BSD_Utilities/BSD_Utilities_02.inc'}
+{$IFDEF DARWIN}                    // Target is macOS
+   {$IFDEF CPUARMHF}               // Running on older hardware
+      sqlCon : TMySQL55Connection;
+   {$ELSE}                         // Running on new hardware
+      sqlCon : TMySQL57Connection;
+   {$ENDIF}
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+   sqlQry2 : TSQLQuery;
 {$ENDIF}
 
    function  CreateSheet(): boolean;
@@ -134,13 +132,9 @@ private   {Private Declarations}
 
 type
 
-{$IFNDEF DARWIN}
-
    RE_RSLT =  (ERR_INVALID,         // The content of the Key is invalid
                ERR_LENGTH,          // The length of the Key is wrong
                ERR_EXPIRED);        // The Key has expired
-
-{$ENDIF}
 
 public    {Public Declarations}
 
@@ -149,8 +143,6 @@ public    {Public Declarations}
    Password : string;       // Passed from calling Form
 
 end;
-
-{$IFNDEF DARWIN}
 
 //------------------------------------------------------------------------------
 // Global variables
@@ -180,33 +172,15 @@ var
 //--- Utilities contained in BSD_Utilities.dll
 
 {$IFDEF LINUX}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities';
 {$ENDIF}
 {$IFDEF WINDOWS}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'BSD_Utilities';
 {$ENDIF}
 
 implementation
 
 {$R *.lfm}
-
-{$ElSE}
-
-//------------------------------------------------------------------------------
-// Global variables
-//------------------------------------------------------------------------------
-var
-   FLPMS_Excel: TFLPMS_Excel;
-
-implementation
-
-{$R *.lfm}
-
-{$DEFINE LPMS_ACM_Excel}
-{$INCLUDE '../BSD_Utilities/BSD_Utilities.lpr'}
-{$UNDEF LPMS_ACM_Excel}
-
-{$ENDIF}
 
 { TFLPMS_Excel }
 
@@ -238,9 +212,9 @@ begin
 {$ENDIF}
 
 {$IFDEF DARWIN}                     // Target is macOS
-   {$IFDEF CPUI386}                 // Running on a version below Catalina
+   {$IFDEF CPUI386}                 // Running on older hardware
       sqlCon := TMySQL55Connection.Create(nil);
-   {$ELSE}
+   {$ELSE}                          // Running on new hardware
       sqlCon := TMySQL57Connection.Create(nil);
    {$ENDIF}
    sqlTran := TSQLTransaction.Create(nil);

@@ -30,9 +30,9 @@ uses
 {$IFDEF DARWIN}                      // Target is macOS
    Zipper, StrUtils, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
    macOSAll,
-  {$IFDEF CPUI386}                   // Running on old hardware i.e. i386 - Widget set must be Carbon
+  {$IFDEF CPUI386}                   // Running on older hardware - Widget set must be Carbon
       CarbonProc, mysql55conn, Interfaces;
-   {$ELSE}                           // Running on X86_64 hardware - Widget set must be Cocoa
+   {$ELSE}                           // Running on new hardware - Widget set must be Cocoa
       CocoaUtils, mysql57conn, Interfaces;
    {$ENDIF}
 {$ENDIF}
@@ -76,10 +76,6 @@ type
    procedure FormShow( Sender: TObject);
    procedure timTimerTimer( Sender: TObject);
 
-{$IFDEF DARWIN}
-{$INCLUDE '../BSD_Utilities/BSD_Utilities_01.inc'}
-{$ENDIF}
-
 private  { Private Declarations }
 
    Major      : string;     // Major Version component of the Version info
@@ -88,8 +84,6 @@ private  { Private Declarations }
    Build      : string;     // Build Number component of the Version info
    INILoc     : string;     // Location of the INI file
    LocalPath  : string;     // Path to location of the INI file
-
-
 
 {$IFDEF WINDOWS}                   // Target is Winblows
    sqlCon  : TMySQL56Connection;
@@ -109,8 +103,15 @@ private  { Private Declarations }
    sqlQry2 : TSQLQuery;
 {$ENDIF}
 
-{$IFDEF DARWIN}
-{$INCLUDE '../BSD_Utilities/BSD_Utilities_02.inc'}
+{$IFDEF DARWIN}                    // Target is macOS
+   {$IFDEF CPUAI386}               // Running on older hardware
+      sqlCon : TMySQL55Connection;
+   {$ELSE}                         // Running on new hardware
+      sqlCon : TMySQL57Connection;
+   {$ENDIF}
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+   sqlQry2 : TSQLQuery;
 {$ENDIF}
 
    function  DoLogin() : boolean;
@@ -127,16 +128,10 @@ public   { Public Declarations }
 
 type
 
-{$IFNDEF DARWIN}
-
    MASK_TYPES   = (MA_MASK,          // Encode the input field
                    MA_UNMASK);       // Decode the input field
 
-{$ENDIF}
-
 end;
-
-{$IFNDEF DARWIN}
 
 //------------------------------------------------------------------------------
 // Global variables
@@ -145,11 +140,11 @@ var
    FLPMS_Login: TFLPMS_Login;
 
 {$IFDEF WINDOWS}
-   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; cdecl; external 'BSD_Utilities';
-   function  MaskField(InputField: string; MaskType: integer): string; cdecl; external 'BSD_Utilities';
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'BSD_Utilities';
+   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'BSD_Utilities';
 {$ELSE}
-   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; cdecl; external 'libbsd_utilities';
-   function  MaskField(InputField: string; MaskType: integer): string; cdecl; external 'libbsd_utilities';
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'libbsd_utilities';
+   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'libbsd_utilities';
 {$ENDIF}
 
 implementation
@@ -157,26 +152,6 @@ implementation
    uses LPMS_Main;
 
 {$R *.lfm}
-
-{$ElSE}
-
-//------------------------------------------------------------------------------
-// Global variables
-//------------------------------------------------------------------------------
-var
-   FLPMS_Login: TFLPMS_Login;
-
-implementation
-
-   uses LPMS_Main;
-
-{$R *.lfm}
-
-{$DEFINE LPMS_ACM_Login}
-{$INCLUDE '../BSD_Utilities/BSD_Utilities.lpr'}
-{$UNDEF LPMMS_ACM_Login}
-
-{$ENDIF}
 
 { TFLPMS_Login }
 
@@ -212,9 +187,9 @@ begin
 {$ENDIF}
 
 {$IFDEF DARWIN}                     // Target is macOS
-   {$IFDEF CPUI386}                 // Running on a version below Catalina
+   {$IFDEF CPUI386}                 // Running on older hardware
       sqlCon := TMySQL55Connection.Create(nil);
-   {$ELSE}
+   {$ELSE}                          // Running on new hardware
       sqlCon := TMySQL57Connection.Create(nil);
    {$ENDIF}
    sqlTran := TSQLTransaction.Create(nil);

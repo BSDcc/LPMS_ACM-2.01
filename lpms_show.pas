@@ -34,9 +34,9 @@ uses
 {$ENDIF}
 
 {$IFDEF DARWIN}                      // Target is macOS
-   {$IFDEF CPUI386}                  // Running on a version below Catalina
+   {$IFDEF CPUI386}                  // Running on older hardware - Widget set must be Carbon
       mysql55conn;
-   {$ELSE}                           // Running on Catalina
+   {$ELSE}                           // Running on new hardware - Widget set must be Cocoa
       mysql57conn;
    {$ENDIF}
 {$ENDIF}
@@ -77,9 +77,9 @@ private   { Private Declarations }
 {$ENDIF}
 
 {$IFDEF DARWIN}                    // Target is macOS
-   {$IFDEF CPUI386}                // Running on a version below Catalina
+   {$IFDEF CPUI386}                // Running on older hardware
       sqlCon : TMySQL55Connection;
-   {$ELSE}                         // Running on Catalina
+   {$ELSE}                         // Running on new hardware
       sqlCon : TMySQL57Connection;
    {$ENDIF}
 {$ENDIF}
@@ -127,9 +127,9 @@ begin
 {$ENDIF}
 
 {$IFDEF DARWIN}                     // Target is macOS
-   {$IFDEF CPUI386}                 // Running on a version below Catalina
+   {$IFDEF CPUI386}                 // Running on older hardwarre
       sqlCon := TMySQL55Connection.Create(nil);
-   {$ELSE}
+   {$ELSE}                          // Running on new hardware
       sqlCon := TMySQL57Connection.Create(nil);
    {$ENDIF}
 {$ENDIF}
