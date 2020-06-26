@@ -86,6 +86,7 @@ private  { Private Declarations }
    LocalPath   : string;     // Path to location of the INI file
    SQLAddress  : string;     // IP Address of the server on which MySQL is runnng
    SQLVersion  : string;     // Version of the connected MySQL Server
+   ACMPort     : string;     // Holds the MySQL port number
 
 {$IFDEF WINDOWS}                   // Target is Winblows
    sqlCon  : TMySQL56Connection;
@@ -170,6 +171,7 @@ var
 begin
 
    AutoLogin := False;
+   ACMPort := '3306';
 
 {$IFDEF WINDOWS}                    // Target is Winblows
    sqlCon  := TMySQL56Connection.Create(nil);
@@ -226,7 +228,7 @@ begin
 
 //--- Call and execute the cmdlOptions function in the BSD_Utilities DLL
 
-      NumParms := cmdlOptions('u:p:H:K:', Args, Params);
+      NumParms := cmdlOptions('u:p:H:K:P:', Args, Params);
 
       if NumParms > 0 then begin
 
@@ -262,6 +264,12 @@ begin
                   AutoKey := Params.Strings[idx + 1]
                else
                   AutoKey := '';
+
+            end;
+
+            if Params.Strings[idx] = 'P' then begin
+
+               ACMPort := Params.Strings[idx + 1];
 
             end;
 
@@ -552,6 +560,7 @@ begin
    sqlCon.UserName     := edtUserID.Text;
    sqlCon.Password     := edtPassword.Text;
    sqlCon.DatabaseName := 'lpmsdefault';
+   sqlCon.Port         := StrToInt(ACMPort);
    sqlQry1.DataBase    := sqlCon;
 
    try
