@@ -37,11 +37,11 @@ uses
 {$ENDIF}
 
 {$IFDEF DARWIN}                      // Target is macOS
-   Zipper, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
+//   Zipper, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
   {$IFDEF CPUI386}                   // Running on older hardware - Widget set must be Carbon
-      mysql55conn, Interfaces;
+      mysql55conn{, Interfaces};
    {$ELSE}                           // Running on new hardware - Widget set must be Cocoa
-      mysql57conn, Interfaces;
+      mysql57conn{, Interfaces};
    {$ENDIF}
 {$ENDIF}
 
@@ -60,6 +60,7 @@ type
    ActionsRestore: TAction;
    actList: TActionList;
    Backup1: TMenuItem;
+   lblIPAddress: TLabel;
    RestoreLogRe1: TListView;
    Bevel1: TBevel;
    Bevel10: TBevel;
@@ -298,10 +299,10 @@ private  { Private Declarations }
    sqlQry1 : TSQLQuery;
 {$ENDIF}
 
-   PlaceHolder                                                   : integer;
-   DoSave, CanUpdate, DoGen, FirstRun, RestoreSuccess, BackSpace : boolean;
-   ClipKey, RestoreFile                                          : string;
-   Root                                                          : TTreeNode;
+   PlaceHolder                                        : integer;
+   DoSave, CanUpdate, DoGen, FirstRun, RestoreSuccess : boolean;
+   ClipKey, RestoreFile                               : string;
+   Root                                               : TTreeNode;
 
    procedure RunBackup();
    procedure RunRestore();

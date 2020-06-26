@@ -78,12 +78,14 @@ type
 
 private  { Private Declarations }
 
-   Major      : string;     // Major Version component of the Version info
-   Minor      : string;     // Minor Version component of the Version info
-   VerRelease : string;     // Release component of the Version info
-   Build      : string;     // Build Number component of the Version info
-   INILoc     : string;     // Location of the INI file
-   LocalPath  : string;     // Path to location of the INI file
+   Major       : string;     // Major Version component of the Version info
+   Minor       : string;     // Minor Version component of the Version info
+   VerRelease  : string;     // Release component of the Version info
+   Build       : string;     // Build Number component of the Version info
+   INILoc      : string;     // Location of the INI file
+   LocalPath   : string;     // Path to location of the INI file
+   SQLAddress  : string;     // IP Address of the server on which MySQL is runnng
+   SQLVersion  : string;     // Version of the connected MySQL Server
 
 {$IFDEF WINDOWS}                   // Target is Winblows
    sqlCon  : TMySQL56Connection;
@@ -115,6 +117,7 @@ private  { Private Declarations }
 {$ENDIF}
 
    function  DoLogin() : boolean;
+   procedure GetInfo();
    procedure GetVersion();
 
 public   { Public Declarations }
@@ -482,6 +485,8 @@ begin
 
    end else begin
 
+      GetInfo();
+
       FLPMS_Login.Hide();
       FLPMS_Main := TFLPMS_Main.Create(Application);
 
@@ -496,12 +501,13 @@ begin
       FLPMS_Main.ThisSMTPPass := ThisSMTPPass;
       FLPMS_Main.AutoKey      := AutoKey;
 
-      FLPMS_Main.edtUserIDB.Text     := DBUSer;
-      FLPMS_Main.edtPasswordB.Text   := DBPass;
-      FLPMS_Main.speReadBlockB.Value := DBBlock;
-      FLPMS_Main.edtHostNameB.Text   := DBHost;
-      FLPMS_Main.edtLocationB.Text   := DBLocation;
-      FLPMS_Main.edtTemplateB.Text   := DBTemplate;
+      FLPMS_Main.edtUserIDB.Text      := DBUSer;
+      FLPMS_Main.edtPasswordB.Text    := DBPass;
+      FLPMS_Main.speReadBlockB.Value  := DBBlock;
+      FLPMS_Main.edtHostNameB.Text    := DBHost;
+      FLPMS_Main.edtLocationB.Text    := DBLocation;
+      FLPMS_Main.edtTemplateB.Text    := DBTemplate;
+      FLPMS_Main.lblIPAddress.Caption :=  'Server IP Address: ' + SQLAddress + ',   Server Version: ' + SQLVersion;
 
 //--- Call the Main form
 
@@ -568,6 +574,64 @@ begin
    sqlCon.Close();
 
    Result := True;
+
+end;
+//------------------------------------------------------------------------------
+// Procedure to extract the bind_address and version of the Server we are
+// connecting to
+//------------------------------------------------------------------------------
+procedure TFLPMS_Login.GetInfo();
+begin
+
+   sqlQry1.Close();
+   sqlCon.Close();
+
+   sqlCon.HostName     := edtHostName.Text;
+   sqlCon.UserName     := edtUserID.Text;
+   sqlCon.Password     := edtPassword.Text;
+   sqlCon.DatabaseName := 'lpmsdefault';
+   sqlQry1.DataBase    := sqlCon;
+
+//--- Get the Bind Address
+
+   try
+
+      sqlQry1.Close();
+      sqlQry1.SQL.Text := 'SHOW variables WHERE Variable_Name = "bind_address"';
+      sqlQry1.Open();
+
+      except on E : Exception do begin
+
+         Application.MessageBox(Pchar('FATAL: Unexpected database error: ' + #10 + #10 + '''' + E.Message + ''''),'LPMS Access Control Manager - Login',(MB_OK + MB_ICONSTOP));
+         Exit;
+
+      end;
+
+   end;
+
+   SQLAddress := sqlQry1.FieldByName('value').AsString;
+
+//--- Get the Sever version
+
+   try
+
+      sqlQry1.Close();
+      sqlQry1.SQL.Text := 'SHOW variables WHERE Variable_Name = "version"';
+      sqlQry1.Open();
+
+      except on E : Exception do begin
+
+         Application.MessageBox(Pchar('FATAL: Unexpected database error: ' + #10 + #10 + '''' + E.Message + ''''),'LPMS Access Control Manager - Login',(MB_OK + MB_ICONSTOP));
+         Exit;
+
+      end;
+
+   end;
+
+   SQLVersion := sqlQry1.FieldByName('value').AsString;
+
+   sqlQry1.Close();
+   sqlCon.Close();
 
 end;
 
