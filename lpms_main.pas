@@ -22,7 +22,7 @@ interface
 uses
    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
    Menus, ActnList, StdCtrls, Buttons, Spin, DateTimePicker, StrUtils, LCLType,
-   EditBtn, Process, sqldb,
+   EditBtn, Process, sqldb, LazFileUtils,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    mysql56conn;
@@ -37,11 +37,11 @@ uses
 {$ENDIF}
 
 {$IFDEF DARWIN}                      // Target is macOS
-   Zipper, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
-  {$IFDEF CPUI386}                  // Running on old hardware i.e. i386
-      mysql55conn, Interfaces;
-   {$ELSE}                           // Running on Catalina
-      mysql57conn, Interfaces;
+//   Zipper, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
+  {$IFDEF CPUI386}                   // Running on older hardware - Widget set must be Carbon
+      mysql55conn{, Interfaces};
+   {$ELSE}                           // Running on new hardware - Widget set must be Cocoa
+      mysql57conn{, Interfaces};
    {$ENDIF}
 {$ENDIF}
 
@@ -60,6 +60,11 @@ type
    ActionsRestore: TAction;
    actList: TActionList;
    Backup1: TMenuItem;
+   edtPortB: TEdit;
+   edtPortRe: TEdit;
+   Label39: TLabel;
+   Label41: TLabel;
+   lblIPAddress: TLabel;
    RestoreLogRe1: TListView;
    Bevel1: TBevel;
    Bevel10: TBevel;
@@ -208,7 +213,6 @@ type
    speLicCountC: TSpinEdit;
    speReadBlockB: TSpinEdit;
    Splitter1: TSplitter;
-   sqlTran: TSQLTransaction;
    StaticText1: TStaticText;
    StaticText2: TStaticText;
    StaticText3: TStaticText;
@@ -271,14 +275,12 @@ type
    procedure ToolsGenerateExecute(Sender: TObject);
    procedure tvTreeClick(Sender: TObject);
 
-{$IFDEF DARWIN}
-{$INCLUDE '../BSD_Utilities/BSD_Utilities_01.inc'}
-{$ENDIF}
-
 private  { Private Declarations }
 
 {$IFDEF WINDOWS}                   // Target is Winblows
    sqlCon  : TMySQL56Connection;
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
 {$ENDIF}
 
 {$IFDEF LINUX}                     // Target is Linux
@@ -287,15 +289,23 @@ private  { Private Declarations }
    {$ELSE}                         // Running on Intel architecture
       sqlCon : TMySQL57Connection;
    {$ENDIF}
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
 {$ENDIF}
 
 {$IFDEF DARWIN}
-{$INCLUDE '../BSD_Utilities/BSD_Utilities_02.inc'}
+   {$IFDEF CPUI386}               // Running on older hardware
+      sqlCon : TMySQL55Connection;
+   {$ELSE}                        // Running on new harsdware
+      sqlCon : TMySQL57Connection;
+   {$ENDIF}
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
 {$ENDIF}
 
    PlaceHolder                                        : integer;
    DoSave, CanUpdate, DoGen, FirstRun, RestoreSuccess : boolean;
-   ClipKey, OSDelim, RestoreFile                      : string;
+   ClipKey, RestoreFile                               : string;
    Root                                               : TTreeNode;
 
    procedure RunBackup();
@@ -339,22 +349,22 @@ type
 
 public   { Public Declarations }
 
-   UserName    : string;      // UserName passed from Login
-   Password    : string;      // Password passed from Login
-   HostName    : string;      // Host name passed from Login
-   Version     : string;      // Version string passed from Login
-   CopyRight   : string;      // Copyright notice passed from Login
-   ThisRes     : string;      // Holds result from InoutQuery
-   ThisName    : string;      // Used by LPMS_Show
-   ThisCompany : string;      // Used by LPMS_Show
-   ThisUnique  : string;      // Used by LPMS_Show
-   SMTPHost    : string;      // SMTP Host for sending emails
-   SMTPPass    : string;      // SMTP Password for sending emails
-   PassPhrase  : string;      // Contains the Phass Phrase to unlock restricted activities
+   UserName     : string;      // UserName passed from Login
+   Password     : string;      // Password passed from Login
+   HostName     : string;      // Host name passed from Login
+   Version      : string;      // Version string passed from Login
+   CopyRight    : string;      // Copyright notice passed from Login
+   ThisRes      : string;      // Holds result from InoutQuery
+   ThisName     : string;      // Used by LPMS_Show
+   ThisCompany  : string;      // Used by LPMS_Show
+   ThisUnique   : string;      // Used by LPMS_Show
+   ThisSMTPHost : string;      // SMTP Host for sending emails
+   ThisSMTPPass : string;      // SMTP Password for sending emails
+   PassPhrase   : string;      // Contains the Phass Phrase to unlock restricted activities
+   AutoKey      : string;      // Set by Login. If autoKey contains a key then itis automatically displayed and decoded
+   ACMPort      : string;      // Port number on which we are accessing the MySQL Server
 
 end;
-
-{$IFNDEF DARWIN}
 
 //------------------------------------------------------------------------------
 // Global variables
@@ -368,7 +378,7 @@ type
       LPMS_Collections : boolean;
       LPMS_DocGen      : boolean;
       LPMS_Floating    : boolean;
-      LPMS_Option4     : boolean;
+      LPMS_Options4    : boolean;
       License          : integer;
       DBPrefix         : string;
       Unique           : string;
@@ -395,25 +405,25 @@ var
 //--- Utilities contained in BSD_Utilities.dll
 
 {$IFDEF DARWIN}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities.dylib';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities.dylib';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities.dylib';
-   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities.dylib';
-   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'libbsd_utilities.dylib';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities.dylib';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'libbsd_utilities.dylib';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'libbsd_utilities.dylib';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'libbsd_utilities.dylib';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'libbsd_utilities.dylib';
 {$ENDIF}
 {$IFDEF LINUX}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'libbsd_utilities';
-   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'libbsd_utilities';
-   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'libbsd_utilities';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities.so';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'libbsd_utilities.so';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'libbsd_utilities.so';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'libbsd_utilities.so';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'libbsd_utilities.so';
 {$ENDIF}
 {$IFDEF WINDOWS}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'BSD_Utilities';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; cdecl; external 'BSD_Utilities';
-   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; cdecl; external 'BSD_Utilities';
-   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; cdecl; external 'BSD_Utilities';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'BSD_Utilities.dll';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'BSD_Utilities.dll';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'BSD_Utilities.dll';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'BSD_Utilities.dll';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'BSD_Utilities.dll';
 {$ENDIF}
 
 implementation
@@ -422,28 +432,7 @@ implementation
 
 {$R *.lfm}
 
-{$ElSE}
-
-//------------------------------------------------------------------------------
-// Global variables
-//------------------------------------------------------------------------------
-var
-   FBSDSendEmail: TFBSDSendEmail;
-
-   This_Key_Values : REC_Key_Values;
-   This_Key_Priv   : REC_Key_Priv;
-
-implementation
-
-   uses LPMS_Login, LPMS_InputQuery, LPMS_Show, LPMS_Excel;
-
-{$R *.lfm}
-
-{$INCLUDE '../BSD_Utilities/BSD_Utilities.lpr'}
-
-{$ENDIF}
-
-   { TFLPMS_Main }
+{ TFLPMS_Main }
 
 //------------------------------------------------------------------------------
 // Executed when the Form is created
@@ -461,11 +450,10 @@ begin
    DefaultFormatSettings.ShortDateFormat := 'yyyy/MM/dd';
    DefaultFormatSettings.DateSeparator   := '/';
 
-   OSDelim := '/';
-
 {$IFDEF WINDOWS}                    // Target is Winblows
-   OSDelim := '\';
    sqlCon  := TMySQL56Connection.Create(nil);
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
 {$ENDIF}
 
 {$IFDEF LINUX}                      // Target is Linux
@@ -474,14 +462,18 @@ begin
    {$ELSE}                          // Running on Intel architecture
       sqlCon  := TMySQL57Connection.Create(nil);
    {$ENDIF}
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
 {$ENDIF}
 
 {$IFDEF DARWIN}                     // Target is macOS
-   {$IFDEF CPUI386}                 // Running on a version below Catalina
+   {$IFDEF CPUI386}                 // Running on older hardware
       sqlCon := TMySQL55Connection.Create(nil);
-   {$ELSE}
-     sqlCon := TMySQL57Connection.Create(nil);
+   {$ELSE}                          // Running on new hardware
+      sqlCon := TMySQL57Connection.Create(nil);
    {$ENDIF}
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
 {$ENDIF}
 
    sqlTran.DataBase    := sqlCon;
@@ -579,9 +571,16 @@ begin
    ToolsEmail.Enabled    := False;
 
    dtpExpiryR.Date   := Now();
-   edtServerR.Text   := SMTPHost;
-   edtPasswordR.Text := SMTPPass;
+   edtServerR.Text   := ThisSMTPHost;
+   edtPasswordR.Text := ThisSMTPPass;
    edtKeyR.SetFocus();
+
+   if Trim(AutoKey) <> '' then begin
+
+      edtKeyR.Text := AutoKey;
+      btnDecodeRClick(Sender);
+
+   end;
 
 end;
 
@@ -612,8 +611,8 @@ begin
 
    OpenDB(ord(DB_CLOSE));
 
-   FLPMS_Login.SMTPHost := edtServerR.Text;
-   FLPMS_Login.SMTPPass := edtPasswordR.Text;
+   FLPMS_Login.ThisSMTPHost := edtServerR.Text;
+   FLPMS_Login.ThisSMTPPass := edtPasswordR.Text;
 
 end;
 
@@ -707,24 +706,68 @@ end;
 // the Root display in order to preserve the positionof the '-' characters
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main.edtKeyRKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+var
+   KeepSelStart, KeepLength : integer;
+   ThisField                : string;
 begin
+
+//--- Trap and Process the Backspace key
 
    if Key = VK_BACK then begin
 
-{------------------------------------------------------------------------------}
-{---- Add Code to reformat the Input field when Backspace is pressed       ----}
-{------------------------------------------------------------------------------}
+//--- If we are at the start of the field then we consume the key and do nothing
 
-{
-      if edtKeyR.SelLength = Length(edtKeyR.Text) then
-         edtKeyR.Text := ''
+      if (edtKeyR.SelStart = 0) and (edtKeyR.SelLength = 0) then begin
+
+         Key := 0;
+         Exit;
+
+      end;
+
+//--- If the whole field is selected then simply delete the contents
+
+      if edtKeyR.SelLength = Length(edtKeyR.Text) then begin
+
+         edtKeyR.Text := '';
+         KeepSelStart := 0;
+
+      end else begin
+
+//--- Otherwise delete what is selected
+
+         ThisField    := '';
+         KeepLength   := edtKeyR.SelLength;
+         KeepSelStart := edtKeyR.SelStart;
+
+         if KeepSelStart = 1 then
+
+            ThisField := Copy(edtKeyR.Text,2,Length(edtKeyR.Text) - 1)
+
+         else begin
+
+            if KeepLength = 0 then
+               ThisField := Copy(edtKeyR.Text,1,KeepSelStart - 1)
+            else
+               ThisField := Copy(edtKeyR.Text,1,KeepSelStart);
+
+            ThisField := Thisfield + Copy(edtKeyR.Text,KeepSelStart + KeepLength + 1,Length(edtKeyR.Text) - 1);
+
+         end;
+
+//--- Update the field without invoking the edtKeyRChange routine
+
+         CanUpdate := True;
+         edtKeyR.Text := ThisField;
+         CanUpdate := False;
+
+      end;
+
+      if KeepLength = 0 then
+         edtKeyR.SelStart := KeepSelStart - 1
       else
-         edtKeyR.Text := Copy(edtKeyR.Text,1,Length(edtKeyR.Text) - 1);
-
-      edtKeyR.SelStart := Length(edtKeyR.Text);
+         edtKeyR.SelStart := KeepSelStart;
 
       Key := 0;
-}
 
    end;
 
@@ -945,7 +988,7 @@ begin
       cbCollectU.Checked  := This_Key_Priv.LPMS_Collections;
       cbDocGenU.Checked   := This_Key_Priv.LPMS_DocGen;
       cbFloatingU.Checked := This_Key_Priv.LPMS_Floating;
-      cbOption4U.Checked  := This_Key_Priv.LPMS_Option4;
+      cbOption4U.Checked  := This_Key_Priv.LPMS_Options4;
 
       btnNew.Enabled    := False;
       btnCancel.Enabled := False;
@@ -1541,7 +1584,7 @@ end;
 procedure TFLPMS_Main.RunBackup();
 begin
 
-   DoBackup('Ad-Hoc',edtLocationB.Text,'lpmsdefault',edtHostNameB.Text,edtUserIDB.Text,edtPasswordB.Text,'LPMS_ACM',edtTemplateB.Text,FLPMS_Login.Version,speReadBlockB.Value,BackupLog,nil,True);
+   DoBackup('Ad-Hoc',edtLocationB.Text,'lpmsdefault',edtHostNameB.Text,edtUserIDB.Text,edtPasswordB.Text,edtPortB.Text,'LPMS_ACM',edtTemplateB.Text,FLPMS_Login.Version,speReadBlockB.Value,BackupLog,nil,True);
 
 end;
 
@@ -1586,7 +1629,7 @@ begin
    end;
 
    RestoreSuccess := False;
-   ThisResult := DoRestore(RestoreFile,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe1,nil,ord(RT_RESTORE));
+   ThisResult := DoRestore(RestoreFile,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,edtPortRe.Text,'',RestoreLogRe1,nil,ord(RT_RESTORE));
 
    if ThisResult <> '' then
       RestoreSuccess := True;
@@ -1745,7 +1788,7 @@ begin
    cbCollectR.Checked    := This_Key_Priv.LPMS_Collections;
    cbDocGenR.Checked     := This_Key_Priv.LPMS_DocGen;
    cbFloatingR.Checked   := This_Key_Priv.LPMS_Floating;
-   cbOption4R.Checked    := This_Key_Priv.LPMS_Option4;
+   cbOption4R.Checked    := This_Key_Priv.LPMS_Options4;
    edtUniqueF.Text       := This_Key_Priv.Unique;
 
    edtKeyR.SetFocus();
@@ -1764,6 +1807,14 @@ begin
 
       Application.MessageBox('Dynamic encoding not allowed when ''Unique:'' is ''123456789ABC''.','LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
       edtUniqueR.SetFocus();
+      Exit;
+
+   end;
+
+   if CpyExists(edtPrefixR.Text) = False then begin
+
+      Application.MessageBox(PChar('' + edtPrefixR.Text + ''' is not a valid Prefix.'),'LPMS Access Control Management',(MB_OK + MB_ICONSTOP));
+      edtPrefixR.SetFocus();
       Exit;
 
    end;
@@ -1912,8 +1963,10 @@ end;
 //------------------------------------------------------------------------------
 procedure TFLPMS_Main. edtKeyRChange( Sender: TObject);
 var
-   ThisCount : integer;
-   ThisKey   : string;
+   idx1, idx2, SelStrt : integer;
+   DoIns               : boolean;
+   ThisKey, ThisStr    : string;
+   Parts               : TStringList;
 
 begin
 
@@ -1923,38 +1976,79 @@ begin
    btnDecodeR.Enabled := False;
    btnEncodeR.Enabled := False;
 
+   if Trim(edtKeyR.Text) = '' then
+      Exit;
 
    if edtKeyR.Focused() = True then begin
 
-//--- If the backspace key was pressed then we don't do any processing here
+      try
+         Parts := TStringList.Create;
 
-{
-      if BackSpace = True then begin
+//--- Determine where the cursor is and whether we are at the end of the field.
+//--- If we are not at the end then we are doing an insert
 
-         BackSpace := False;
-         Exit;
+         SelStrt := edtKeyR.SelStart;
+
+         if SelStrt < Length(edtKeyR.Text) then
+            DoIns := True
+         else
+            DoIns := False;
+
+         ThisKey  := '';
+         ThisStr  := '';
+
+//--- Remove the '-' characters from the key as these will shift due to new
+//--- characters being added or eisting characters being deleted
+
+         ExtractStrings(['-'], [' '], PChar(edtKeyR.Text), Parts);
+
+         for idx1 := 0 to Parts.Count - 1 do
+            ThisStr := ThisStr + Parts[idx1];
+
+//--- Rebuild the structure of the key inserting '-' at the appropriate places
+
+         for idx2 := 1 to Length(ThisStr) do begin
+
+            ThisKey := ThisKey + ThisStr[idx2];
+
+            if idx2 in [4,7,11,15,19,23,27] then
+               ThisKey := ThisKey + '-';
+
+         end;
+
+      finally
+
+         Parts.Free;
 
       end;
-}
 
-      ThisCount := Length(edtKeyR.Text);
-      ThisKey   := edtKeyR.Text;
-
-      if ThisCount in [4,8,13,18,23,28,33] then
-         ThisKey := ThisKey + '-';
-
-      if ThisCount in [6,10,15,20,25,30] then begin
-
-         if Copy(edtKeyR.Text,ThisCount,1) = '-' then
-            ThisKey := Copy(edtKeyR.Text, 1, ThisCount - 1);
-
-      end;
-
+      CanUpdate    := True;
       edtKeyR.Text := ThisKey;
-      edtKeyR.SelStart := Length(edtKeyR.Text);
+
+//--- If the cursor is positioned at a '-' then we need to move it forward by
+//--- 1 position, however this test will fail if we are at the beginning of the
+//--- field
+
+      if SelStrt > 0 then begin
+
+         if ThisKey[SelStrt] = '-' then
+            Inc(SelStrt);
+
+      end;
+
+//--- Reposition the cursor depending on wheter we are doing an insert or not
+
+      if DoIns = True then
+         edtKeyR.SelStart := SelStrt
+      else
+         edtKeyR.SelStart := Length(edtKeyR.Text);
+
+      CanUpdate := False;
 
    end;
 
+
+//--- Set the disposition of the Encode and Decode buttons
 
    if Length(edtKeyR.Text) = 38 then
       btnDecodeR.Enabled := True;
@@ -1979,47 +2073,6 @@ begin
       btnFindR.Enabled := True;
 
 end;
-
-{
-//------------------------------------------------------------------------------
-// Function to load the LPMS_EncDec DLL and decode a key contained in
-// Decode_Key_Priv
-//------------------------------------------------------------------------------
-function TFLPMS_Main.DeCode() : integer;
-begin
-
-//--- Call and execute the DoDecode function in the DLL
-
-   This_Key_Priv := DoDecode(This_Key_Priv);
-
-//--- Return the Result
-
-   Result := This_Key_Priv.DaysLeft;
-
-end;
-}
-
-{
-//------------------------------------------------------------------------------
-// Function to load the LPMS_EncDec DLL and encode a key with the information
-// contained in Encode_Key_Values
-//------------------------------------------------------------------------------
-function TFLPMS_Main.EnCode() : boolean;
-begin
-
-//--- Call and execute the DoDecode function in the DLL
-
-   This_Key_Values := DoEncode(This_Key_Values);
-
-//--- If the encoding was successful Unique will contain the Key
-
-   if This_Key_Values.Unique = '000000000000' then
-      Result := False
-   else
-      Result := True;
-
-end;
-}
 
 //------------------------------------------------------------------------------
 // User clicked on the Backup button
@@ -2051,6 +2104,8 @@ begin
    btnCancel.Enabled := True;
    btnDelete.Enabled := False;
    btnUpdate.Enabled := False;
+
+   edtPortB.Text := ACMPort;
 
    btnLockB.Visible   := True;
    btnUnlockB.Visible := False;
@@ -2101,12 +2156,7 @@ end;
 procedure TFLPMS_Main.edtLocationBAcceptDirectory(Sender: TObject; var Value: String);
 begin
 
-{$IFDEF WINDOWS}
-   if Length(Value) > 3 then
-      Value := Value + OSDelim;
-{$ELSE}
-   Value := Value + OSDELIM;
-{$ENDIF}
+   Value := AppendPathDelim(Value);
 
 end;
 
@@ -2178,6 +2228,8 @@ begin
    btnCancel.Enabled := True;
    btnDelete.Enabled := False;
    btnUpdate.Enabled := False;
+
+   edtPortRe.Text := ACMPort;
 
    btnLockR.Visible   := False;
    btnUnlockR.Visible := False;
@@ -2271,7 +2323,7 @@ begin
    RestoreLogRe2.Visible := True;
    RestoreLogRe2.Clear;
 
-   ThisResult := DoRestore(edtBackupRe.Text,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe2,nil,ord(RT_OPEN));
+   ThisResult := DoRestore(edtBackupRe.Text,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,edtPortRe.Text,'',RestoreLogRe2,nil,ord(RT_OPEN));
 
    if ThisResult <> '' then begin
 
@@ -2388,6 +2440,7 @@ end;
 procedure TFLPMS_Main.ToolsEmailExecute(Sender: TObject);
 var
    idx          : integer;     // Loop counter
+   EditEmail    : boolean;     // Used to determine whether the standalone emil viewer should be called
    From         : string;      // Email address of the Sender
    ToStr        : string;      // To addresses, comma delimited
    CcStr        : string;      // Cc addresses, comma delimited
@@ -2397,26 +2450,57 @@ var
    Attach       : string;      // '|' delimited string containing files to be attached
    SMTPStr      : string;      // '|' delimited string containing the SMTP parameters
    SMUtil       : string;      // Name of external email viewer - assumed to be in the execution directory
-   Process      : TProcess;    // Used forc alling the standalone email utility if 'Edit Email' is checked
+   Addressee    : string;      // Name of he addressee
+   ExpiryDate   : string;      // Key expiry date
+   Key          : string;      // The Key
+   Prefix       : string;      // The Prefix
+   Process      : TProcess;    // Used for calling the standalone email utility if 'Edit Email' is checked
 
 begin
 
    if (pnlBackup.Visible = True) or (pnlRestore.Visible = True) then
       Exit;
 
+//--- We can only send email from the Root and User panels. If the Root panel
+//--- is visible then the ToStr is still undetermined.
+
+   if pnlRoot.Visible = True then begin
+
+      EditEmail  := True;
+      ToStr      := 'Please specify';
+      Addressee  := '[Insert]';
+      ExpiryDate := DateToStr(dtpExpiryR.Date);
+      Key        := edtKeyR.Text;
+      Prefix     := edtPrefixR.Text;
+
+   end else if pnlUser.Visible = True then begin
+
+      EditEmail  := cbEditemail.Checked;
+      ToStr      := edtEmailU.Text;
+      Addressee  := edtUserNameU.Text;
+      ExpiryDate := DateToStr(dtpExpiryDateU.Date);
+      Key        := edtKeyU.Text;
+      Prefix     := edtPrefixU.Text;
+
+   end else begin
+
+      Exit;
+
+   end;
+
+//--- Construct the email
    From    := 'registration@bluecrane.cc';
-   ToStr   := edtEmailU.Text;
    CcStr   := '';
    BccStr  := 'registration@bluecrane.cc';
    Subject := 'LPMS Activation Key';
    Attach  := '';
    SMTPStr := edtServerR.Text + '|registration@bluecrane.cc|' + edtPasswordR.Text + '|';
 
-   Body    := 'Dear ' + edtUserNameU.Text + ',|' +
+   Body    := 'Dear ' + Addressee + ',|' +
               ' |' +
-              'Attached below is your new/updated LPMS Activation Key which expires on ' + DateToStr(dtpExpiryDateU.Date) + ':|' +
+              'Attached below is your new/updated LPMS Activation Key which expires on ' + ExpiryDate + ':|' +
               ' |' +
-              '   ' + edtKeyU.Text + '|' +
+              '   ' + Key + '|' +
               ' |' +
               'To activate LPMS with this key please do the following:|' +
               ' |' +
@@ -2429,13 +2513,13 @@ begin
               ' |' +
               '2.  If your release is a multi-company release then:|' +
               ' |' +
-              '    2.1. Enter ''' + edtPrefixU.Text + ''' in the field next to ''DBPrefix:'';|' +
+              '    2.1. Enter ''' + Prefix + ''' in the field next to ''DBPrefix:'';|' +
               '    2.2. Select ''Multi Company Support''; and|' +
               '    2.3. Click on ''Ok'' button to proceed;|' +
               ' |' +
               '3.  If your release is not a multi-company release simply click on the ''Ok'' button;|' +
               '4.  Click on the ''Maintenance'' tab;|' +
-              '5.  Enter ''' + edtPrefixU.Text + ''' in the field next to ''Prefix:'';|' +
+              '5.  Enter ''' + Prefix + ''' in the field next to ''Prefix:'';|' +
               '6.  Copy the key above and paste in the field next to ''Key:'';|' +
               '7.  Click on the ''Update'' button, then on the ''OK'' button and then on the ''Close'' button; and|' +
               '8.  Start LPMS.|' +
@@ -2458,7 +2542,7 @@ begin
 
 //--- Call and execute the SendMimeMail function in the DLL
 
-   if cbEditemail.Checked = True then begin
+   if EditEmail = True then begin
 
 //--- User wants to see/edit the email before it is sent. Make sure the
 //--- external program exists and can be called
@@ -2541,6 +2625,7 @@ begin
          sqlCon.UserName     := UserName;
          sqlCon.Password     := Password;
          sqlCon.DatabaseName := 'lpmsdefault';
+         sqlCon.Port         := StrToInt(ACMPort);
          adoQry1.DataBase    := sqlCon;
          adoQry2.Database    := sqlCon;
 

@@ -1,16 +1,17 @@
 object FLPMS_Login: TFLPMS_Login
-  Left = 561
-  Height = 184
-  Top = 188
+  Left = 881
+  Height = 216
+  Top = 377
   Width = 430
+  BorderIcons = []
   Caption = 'FLPMS_Login'
-  ClientHeight = 184
+  ClientHeight = 216
   ClientWidth = 430
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.8.0'
   object Image1: TImage
     Left = 358
     Height = 64
@@ -729,7 +730,7 @@ object FLPMS_Login: TFLPMS_Login
   end
   object Label1: TLabel
     Left = 8
-    Height = 15
+    Height = 17
     Top = 60
     Width = 43
     Caption = 'UserID:'
@@ -737,7 +738,7 @@ object FLPMS_Login: TFLPMS_Login
   end
   object Label2: TLabel
     Left = 8
-    Height = 15
+    Height = 17
     Top = 92
     Width = 57
     Caption = 'Password:'
@@ -745,7 +746,7 @@ object FLPMS_Login: TFLPMS_Login
   end
   object Label3: TLabel
     Left = 8
-    Height = 15
+    Height = 17
     Top = 124
     Width = 29
     Caption = 'Host:'
@@ -765,14 +766,14 @@ object FLPMS_Login: TFLPMS_Login
   end
   object edtHostName: TEdit
     Left = 88
-    Height = 26
+    Height = 27
     Top = 120
     Width = 248
     TabOrder = 3
   end
   object edtPassword: TEdit
     Left = 88
-    Height = 26
+    Height = 27
     Top = 88
     Width = 248
     EchoMode = emPassword
@@ -781,25 +782,25 @@ object FLPMS_Login: TFLPMS_Login
   end
   object edtUserID: TEdit
     Left = 88
-    Height = 26
+    Height = 27
     Top = 56
     Width = 248
     TabOrder = 1
   end
   object btnLogin: TButton
     Left = 347
-    Height = 25
-    Top = 120
+    Height = 27
+    Top = 152
     Width = 75
     Caption = 'Login'
     Default = True
     OnClick = btnLoginClick
-    TabOrder = 4
+    TabOrder = 6
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 20
-    Top = 164
+    Height = 21
+    Top = 195
     Width = 430
     Font.Style = [fsBold]
     Panels = <    
@@ -810,19 +811,43 @@ object FLPMS_Login: TFLPMS_Login
     SimplePanel = False
     SizeGrip = False
   end
+  object Label4: TLabel
+    Left = 8
+    Height = 17
+    Top = 156
+    Width = 26
+    Caption = 'Port:'
+    ParentColor = False
+  end
+  object edtPort: TEdit
+    Left = 88
+    Height = 27
+    Top = 152
+    Width = 72
+    OnChange = edtPortChange
+    TabOrder = 4
+  end
+  object btnClose: TButton
+    Left = 347
+    Height = 27
+    Top = 120
+    Width = 75
+    Caption = 'Close'
+    OnClick = btnCloseClick
+    TabOrder = 5
+  end
+  object Label5: TLabel
+    Left = 168
+    Height = 17
+    Top = 156
+    Width = 153
+    Caption = 'Leave blank for default Port'
+    ParentColor = False
+  end
   object timTimer: TTimer
     Enabled = False
     Interval = 500
     OnTimer = timTimerTimer
     left = 96
-  end
-  object sqlQry1: TSQLQuery
-    FieldDefs = <>
-    Params = <>
-    left = 144
-  end
-  object sqlTran: TSQLTransaction
-    Active = False
-    left = 192
   end
 end

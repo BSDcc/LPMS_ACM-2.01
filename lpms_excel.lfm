@@ -10,7 +10,7 @@ object FLPMS_Excel: TFLPMS_Excel
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.8.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -37,7 +37,7 @@ object FLPMS_Excel: TFLPMS_Excel
     end
     object sCellIndicator1: TsCellIndicator
       Left = 8
-      Height = 26
+      Height = 27
       Top = 7
       Width = 80
       WorkbookSource = wbsSource
@@ -170,7 +170,7 @@ object FLPMS_Excel: TFLPMS_Excel
     end
     object Label1: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 12
       Width = 82
       Caption = 'Export Format:'
@@ -178,7 +178,7 @@ object FLPMS_Excel: TFLPMS_Excel
     end
     object cbxFormat: TComboBox
       Left = 120
-      Height = 26
+      Height = 27
       Top = 8
       Width = 206
       ItemHeight = 0
@@ -338,25 +338,6 @@ object FLPMS_Excel: TFLPMS_Excel
       Caption = 'Close this Dialog upon Open'
       TabOrder = 5
     end
-  end
-  object sqlQry1: TSQLQuery
-    FieldDefs = <>
-    Transaction = sqlTran
-    Params = <>
-    left = 432
-    top = 256
-  end
-  object sqlQry2: TSQLQuery
-    FieldDefs = <>
-    Transaction = sqlTran
-    Params = <>
-    left = 504
-    top = 256
-  end
-  object sqlTran: TSQLTransaction
-    Active = False
-    left = 584
-    top = 256
   end
   object dlgSelDir: TSelectDirectoryDialog
     InitialDir = '~'

@@ -25,7 +25,17 @@ uses
 {$ENDIF}
 
    Classes, SysUtils, sqldb, Forms, Controls, Graphics, Dialogs, StdCtrls,
-   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles,
+   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles, LazFileUtils,
+
+{$IFDEF DARWIN}                      // Target is macOS
+   Zipper, StrUtils, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
+   macOSAll,
+  {$IFDEF CPUI386}                   // Running on older hardware - Widget set must be Carbon
+      CarbonProc, mysql55conn, Interfaces;
+   {$ELSE}                           // Running on new hardware - Widget set must be Cocoa
+      CocoaUtils, mysql57conn, Interfaces;
+   {$ENDIF}
+{$ENDIF}
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    winpeimagereader, mysql56conn;
@@ -40,15 +50,6 @@ uses
    {$ENDIF}
 {$ENDIF}
 
-{$IFDEF DARWIN}                      // Target is macOS
-   macOSAll, CarbonProc,
-   {$IFDEF CPUI386}                  // Running on a version below Catalina
-      mysql55conn;
-   {$ELSE}                           // Running on Catalina
-      mysql57conn;
-   {$ENDIF}
-{$ENDIF}
-
 //------------------------------------------------------------------------------
 // Declarations
 //------------------------------------------------------------------------------
@@ -58,19 +59,24 @@ type
 
    TFLPMS_Login = class( TForm)
    btnLogin: TButton;
+   btnClose: TButton;
    edtHostName: TEdit;
+   edtPort: TEdit;
    edtPassword: TEdit;
    edtUserID: TEdit;
    Image1: TImage;
+   jvBrowse: TSelectDirectoryDialog;
    Label1: TLabel;
    Label2: TLabel;
    Label3: TLabel;
-   sqlQry1: TSQLQuery;
-   sqlTran: TSQLTransaction;
+   Label4: TLabel;
+   Label5: TLabel;
    StaticText1: TStaticText;
    StatusBar1: TStatusBar;
    timTimer: TTimer;
+   procedure btnCloseClick(Sender: TObject);
    procedure btnLoginClick( Sender: TObject);
+   procedure edtPortChange(Sender: TObject);
    procedure FormClose( Sender: TObject; var CloseAction: TCloseAction);
    procedure FormCreate( Sender: TObject);
    procedure FormShow( Sender: TObject);
@@ -78,13 +84,21 @@ type
 
 private  { Private Declarations }
 
-   Major      : string;     // Major Version component of the Version info
-   Minor      : string;     // Minor Version component of the Version info
-   VerRelease : string;     // Release component of the Version info
-   Build      : string;     // Build Number component of the Version info
+   Major       : string;     // Major Version component of the Version info
+   Minor       : string;     // Minor Version component of the Version info
+   VerRelease  : string;     // Release component of the Version info
+   Build       : string;     // Build Number component of the Version info
+   INILoc      : string;     // Location of the INI file
+   LocalPath   : string;     // Path to location of the INI file
+   SQLAddress  : string;     // IP Address of the server on which MySQL is runnng
+   SQLVersion  : string;     // Version of the connected MySQL Server
+   ACMPort     : string;     // Holds the MySQL port number
 
 {$IFDEF WINDOWS}                   // Target is Winblows
    sqlCon  : TMySQL56Connection;
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+   sqlQry2 : TSQLQuery;
 {$ENDIF}
 
 {$IFDEF LINUX}                     // Target is Linux
@@ -93,26 +107,34 @@ private  { Private Declarations }
    {$ELSE}                         // Running on Intel architecture
       sqlCon : TMySQL57Connection;
    {$ENDIF}
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+   sqlQry2 : TSQLQuery;
 {$ENDIF}
 
 {$IFDEF DARWIN}                    // Target is macOS
-   {$IFDEF CPUI386}                // Running on a version below Catalina
+   {$IFDEF CPUAI386}               // Running on older hardware
       sqlCon : TMySQL55Connection;
-   {$ELSE}                         // Running on Catalina
+   {$ELSE}                         // Running on new hardware
       sqlCon : TMySQL57Connection;
    {$ENDIF}
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+   sqlQry2 : TSQLQuery;
 {$ENDIF}
 
    function  DoLogin() : boolean;
+   procedure GetInfo();
    procedure GetVersion();
 
 public   { Public Declarations }
 
-   LoginCount, DBBlock                                    : integer;
-   AutoLogin                                              : boolean;
-   CopyRight, UserName, Password, Version, DTDLocation    : string;
-   AutoUser, AutoPass, AutoHost, Path, SMTPHost, SMTPPass : string;
-   DBUser, DBPass, DBHost, DBLocation, DBTemplate         : string;
+   LoginCount, DBBlock                                 : integer;
+   AutoLogin                                           : boolean;
+   CopyRight, UserName, Password, Version, DTDLocation : string;
+   AutoUser, AutoPass, AutoHost, Path, ThisSMTPHost    : string;
+   ThisSMTPPass, DBUser, DBPass, DBHost, DBLocation    : string;
+   DBTemplate, AutoKey                                 : string;
 
 type
 
@@ -127,12 +149,17 @@ end;
 var
    FLPMS_Login: TFLPMS_Login;
 
+{$IFDEF DARWIN}
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'libbsd_utilities.dylib';
+   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'libbsd_utilities.dylib';
+{$ENDIF}
 {$IFDEF WINDOWS}
-   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; cdecl; external 'BSD_Utilities';
-   function  MaskField(InputField: string; MaskType: integer): string; cdecl; external 'BSD_Utilities';
-{$ELSE}
-   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; cdecl; external 'libbsd_utilities';
-   function  MaskField(InputField: string; MaskType: integer): string; cdecl; external 'libbsd_utilities';
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'BSD_Utilities.dll';
+   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'BSD_Utilities.dll';
+{$ENDIF}
+{$IFDEF LINUX}
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'libbsd_utilities.so';
+   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'libbsd_utilities.so';
 {$ENDIF}
 
 implementation
@@ -149,16 +176,19 @@ implementation
 procedure TFLPMS_Login.FormCreate(Sender: TObject);
 var
    idx, NumParms  : integer;
-   INILoc         : string;
    Params, Args   : TStringList;
    IniFile        : TINIFile;
 
 begin
 
    AutoLogin := False;
+   ACMPort := '3306';
 
 {$IFDEF WINDOWS}                    // Target is Winblows
    sqlCon  := TMySQL56Connection.Create(nil);
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
+   sqlQry2 := TSQLQuery.Create(nil);
 {$ENDIF}
 
 {$IFDEF LINUX}                      // Target is Linux
@@ -167,14 +197,20 @@ begin
    {$ELSE}                          // Running on Intel architecture
       sqlCon  := TMySQL57Connection.Create(nil);
    {$ENDIF}
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
+   sqlQry2 := TSQLQuery.Create(nil);
 {$ENDIF}
 
 {$IFDEF DARWIN}                     // Target is macOS
-   {$IFDEF CPUI386}                 // Running on a version below Catalina
+   {$IFDEF CPUI386}                 // Running on older hardware
       sqlCon := TMySQL55Connection.Create(nil);
-   {$ELSE}
+   {$ELSE}                          // Running on new hardware
       sqlCon := TMySQL57Connection.Create(nil);
    {$ENDIF}
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
+   sqlQry2 := TSQLQuery.Create(nil);
 {$ENDIF}
 
    sqlTran.DataBase    := sqlCon;
@@ -203,7 +239,7 @@ begin
 
 //--- Call and execute the cmdlOptions function in the BSD_Utilities DLL
 
-      NumParms := cmdlOptions('u:p:H:', Args, Params);
+      NumParms := cmdlOptions('u:p:H:K:P:', Args, Params);
 
       if NumParms > 0 then begin
 
@@ -233,6 +269,22 @@ begin
 
             end;
 
+            if Params.Strings[idx] = 'K' then begin
+
+               if Length(Params.Strings[idx + 1]) = 38 then
+                  AutoKey := Params.Strings[idx + 1]
+               else
+                  AutoKey := '';
+
+            end;
+
+            if Params.Strings[idx] = 'P' then begin
+
+               ACMPort      := Params.Strings[idx + 1];
+               edtPort.Text := ACMPort;
+
+            end;
+
             idx := idx + 2;
 
          end;
@@ -246,22 +298,91 @@ begin
 
    end;
 
+//--- Set the location of the INI file. We get the path to the user's home
+//--- directory (this is platform independent). Winblows is a problem due to a
+//--- lack of naming conventions across versions of Winblows. If it is not
+//--- 'Documents' or 'My Documents' then we give the User a change to select
+//--- the home directory.
+
+{$IFDEF WINDOWS}
+
+   LocalPath := AppendPathDelim(GetUserDir + 'Documents');
+
+   if DirectoryExists(LocalPath) = False then begin
+
+      LocalPath := AppendPathDelim(GetUserDir + 'My Documents');
+
+      if DirectoryExists(LocalPath) = False then begin
+
+         if (MessageDlg('LPMS Access Control Management','WARNING: Unable to locate home directory. You can:' + #10 + #10 + #10 + 'Click [Yes] to locate the home directory; or ' + #10 +#10 + 'Click [No] to terminate.', mtWarning, [mbYes,mbNo], '') = mrNo) then begin;
+
+            Application.Terminate;
+            Exit;
+
+         end;
+
+
+         if jvBrowse.Execute = False then begin
+
+            Application.Terminate;
+            Exit;
+
+         end;
+
+      end;
+
+   end;
+
+   LocalPath := AppendPathDelim(LocalPath + 'LPMS_ACM');
+
+{$ELSE}
+
+   LocalPath := AppendPathDelim(GetUSerDir);
+   LocalPath := AppendPathDelim(LocalPath + '.lpms_acm');
+
+{$ENDIF}
+
+//--- We now have what passes for a home directory with the working directory
+//--- 'LPMS_ACM' (Winblows) or '.lpms_acm' (*nix) added to it and tests whether
+//--- this exists. If it does not then we ask the User whether we should create
+//--- it and do so if the User agrees otherwise we terminate the Application
+
+   if DirectoryExists(LocalPath) = False then begin
+
+      if (MessageDlg('LPMS Access Control Management','WARNING: LPMS_ACM directory does not exist. You can:' + #10 + #10 + #10 + 'Click [Yes] to create the directory; or' +#10 + #10 + 'Click [No] to terminate.', mtWarning, [mbYes,mbNo], '') = mrNo) then begin;
+
+         Application.Terminate;
+         Exit;
+
+      end;
+
+      if CreateDir(LocalPath) = False then begin
+
+         MessageDlg('LPMS Access Control Management','FATAL: Unable to create LPMS_ACM directory.' + #10 + #10 + 'LPMS_ACM cannot continue and will be terminated.', mtError, [mbOk], '');
+         Application.Terminate;
+         Exit;
+
+      end;
+
+   end;
+
+
 //--- Get the SMTP parameters from the INI file and store for later use
 
-   INILoc := ExtractFilePath(Application.ExeName) + 'LPMS_ACM.ini';
+   INILoc := LocalPath + 'LPMS_ACM.ini';
 
    if FileExists(INILoc) = True then begin
 
       IniFile := TINIFile.Create(INILoc);
 
-      SMTPHost   := IniFile.ReadString('Config','SMTPHost','');
-      SMTPPass   := IniFile.ReadString('Config','SMTPPass','');
-      DBUser     := IniFile.ReadString('Config','DBuser','');
-      DBPass     := IniFile.ReadString('Config','DBPass','');
-      DBHost     := IniFile.ReadString('Config','DBHost','');
-      DBLocation := IniFile.ReadString('Config','DBLocation','');
-      DBTemplate := IniFile.ReadString('Config','DBTemplate','&Date@&Time - &BackupType Backup for &BackupName (&DBName on &HostName) {&OSShort}');
-      DBBlock    := IniFile.ReadInteger('Config','DBBlock',20000);
+      ThisSMTPHost := IniFile.ReadString('Config','SMTPHost','');
+      ThisSMTPPass := IniFile.ReadString('Config','SMTPPass','');
+      DBUser       := IniFile.ReadString('Config','DBuser','');
+      DBPass       := IniFile.ReadString('Config','DBPass','');
+      DBHost       := IniFile.ReadString('Config','DBHost','');
+      DBLocation   := IniFile.ReadString('Config','DBLocation','');
+      DBTemplate   := IniFile.ReadString('Config','DBTemplate','&Date@&Time - &BackupType Backup for &BackupName (&DBName on &HostName) {&OSShort}');
+      DBBlock      := IniFile.ReadInteger('Config','DBBlock',20000);
 
       IniFile.Destroy;
 
@@ -269,7 +390,7 @@ begin
 
 //--- Unmask the Password
 
-   SMTPPass := MaskField(SMTPPass,ord(MA_UNMASK));
+   ThisSMTPPass := MaskField(ThisSMTPPass,ord(MA_UNMASK));
 
 end;
 
@@ -299,23 +420,22 @@ end;
 //------------------------------------------------------------------------------
 procedure TFLPMS_Login. FormClose( Sender: TObject; var CloseAction: TCloseAction);
 var
-   INILoc  : string;
-   IniFile : TINIFile;
+   IniFile   : TINIFile;
 
 begin
 
 //--- Mask the SMTP Password before it is written to the INI File
 
-   SMTPPass := MaskField(SMTPPass,ord(MA_MASK));
+   ThisSMTPPass := MaskField(ThisSMTPPass,ord(MA_MASK));
 
 //--- Write the current SMTP parameters to the INI file
 
-   INILoc := ExtractFilePath(Application.ExeName) + 'LPMS_ACM.ini';
+   INILoc := LocalPath + 'LPMS_ACM.ini';
 
    IniFile := TINIFile.Create(INILoc);
 
-   IniFile.WriteString('Config','SMTPHost',SMTPHost);
-   IniFile.WriteString('Config','SMTPPass',SMTPPass);
+   IniFile.WriteString('Config','SMTPHost',ThisSMTPHost);
+   IniFile.WriteString('Config','SMTPPass',ThisSMTPPass);
    IniFile.WriteString('Config','DBuser',DBUser);
    IniFile.WriteString('Config','DBPass',DBPass);
    IniFile.WriteString('Config','DBHost',DBHost);
@@ -324,6 +444,16 @@ begin
    IniFile.WriteInteger('Config','DBBlock',DBBlock);
 
    IniFile.Destroy;
+
+end;
+
+//------------------------------------------------------------------------------
+// User changed the Port number
+//------------------------------------------------------------------------------
+procedure TFLPMS_Login.edtPortChange(Sender: TObject);
+begin
+
+   ACMPort := edtPort.Text;
 
 end;
 
@@ -385,25 +515,30 @@ begin
 
    end else begin
 
+      GetInfo();
+
       FLPMS_Login.Hide();
       FLPMS_Main := TFLPMS_Main.Create(Application);
 
 //--- Set up some values on the Main form
 
-      FLPMS_Main.UserName  := edtUserID.Text;
-      FLPMS_Main.Password  := edtPassword.Text;
-      FLPMS_Main.HostName  := edtHostName.Text;
-      FLPMS_Main.Version   := Version;
-      FLPMS_Main.CopyRight := CopyRight;
-      FLPMS_Main.SMTPHost  := SMTPHost;
-      FLPMS_Main.SMTPPass  := SMTPPass;
+      FLPMS_Main.UserName     := edtUserID.Text;
+      FLPMS_Main.Password     := edtPassword.Text;
+      FLPMS_Main.HostName     := edtHostName.Text;
+      FLPMS_Main.Version      := Version;
+      FLPMS_Main.CopyRight    := CopyRight;
+      FLPMS_Main.ThisSMTPHost := ThisSMTPHost;
+      FLPMS_Main.ThisSMTPPass := ThisSMTPPass;
+      FLPMS_Main.AutoKey      := AutoKey;
+      FLPMS_Main.ACMPort      := ACMPort;
 
-      FLPMS_Main.edtUserIDB.Text     := DBUSer;
-      FLPMS_Main.edtPasswordB.Text   := DBPass;
-      FLPMS_Main.speReadBlockB.Value := DBBlock;
-      FLPMS_Main.edtHostNameB.Text   := DBHost;
-      FLPMS_Main.edtLocationB.Text   := DBLocation;
-      FLPMS_Main.edtTemplateB.Text   := DBTemplate;
+      FLPMS_Main.edtUserIDB.Text      := DBUSer;
+      FLPMS_Main.edtPasswordB.Text    := DBPass;
+      FLPMS_Main.speReadBlockB.Value  := DBBlock;
+      FLPMS_Main.edtHostNameB.Text    := DBHost;
+      FLPMS_Main.edtLocationB.Text    := DBLocation;
+      FLPMS_Main.edtTemplateB.Text    := DBTemplate;
+      FLPMS_Main.lblIPAddress.Caption :=  'Server IP Address: ' + SQLAddress + ',   Server Version: ' + SQLVersion;
 
 //--- Call the Main form
 
@@ -430,6 +565,16 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+// User clicked on the Close button
+//------------------------------------------------------------------------------
+procedure TFLPMS_Login.btnCloseClick(Sender: TObject);
+begin
+
+   Close;
+
+end;
+
+//------------------------------------------------------------------------------
 // Function to connect to the database. If the connection succeeds then the
 // supplied UserID, Password and HostName is valid
 //------------------------------------------------------------------------------
@@ -448,6 +593,7 @@ begin
    sqlCon.UserName     := edtUserID.Text;
    sqlCon.Password     := edtPassword.Text;
    sqlCon.DatabaseName := 'lpmsdefault';
+   sqlCon.Port         := StrToInt(ACMPort);
    sqlQry1.DataBase    := sqlCon;
 
    try
@@ -470,6 +616,65 @@ begin
    sqlCon.Close();
 
    Result := True;
+
+end;
+
+//------------------------------------------------------------------------------
+// Procedure to extract the bind_address and version of the Server we are
+// connecting to
+//------------------------------------------------------------------------------
+procedure TFLPMS_Login.GetInfo();
+begin
+
+   sqlQry1.Close();
+   sqlCon.Close();
+
+   sqlCon.HostName     := edtHostName.Text;
+   sqlCon.UserName     := edtUserID.Text;
+   sqlCon.Password     := edtPassword.Text;
+   sqlCon.DatabaseName := 'lpmsdefault';
+   sqlQry1.DataBase    := sqlCon;
+
+//--- Get the Bind Address
+
+   try
+
+      sqlQry1.Close();
+      sqlQry1.SQL.Text := 'SHOW variables WHERE Variable_Name = "bind_address"';
+      sqlQry1.Open();
+
+      except on E : Exception do begin
+
+         Application.MessageBox(Pchar('FATAL: Unexpected database error: ' + #10 + #10 + '''' + E.Message + ''''),'LPMS Access Control Manager - Login',(MB_OK + MB_ICONSTOP));
+         Exit;
+
+      end;
+
+   end;
+
+   SQLAddress := sqlQry1.FieldByName('value').AsString;
+
+//--- Get the Sever version
+
+   try
+
+      sqlQry1.Close();
+      sqlQry1.SQL.Text := 'SHOW variables WHERE Variable_Name = "version"';
+      sqlQry1.Open();
+
+      except on E : Exception do begin
+
+         Application.MessageBox(Pchar('FATAL: Unexpected database error: ' + #10 + #10 + '''' + E.Message + ''''),'LPMS Access Control Manager - Login',(MB_OK + MB_ICONSTOP));
+         Exit;
+
+      end;
+
+   end;
+
+   SQLVersion := sqlQry1.FieldByName('value').AsString;
+
+   sqlQry1.Close();
+   sqlCon.Close();
 
 end;
 
@@ -512,6 +717,7 @@ begin
       VersionString := CFStringToStr(ValueRef);
 
    except on E : Exception do
+
       ShowMessage(E.Message);
 
    end;
@@ -558,196 +764,6 @@ begin
 {$ENDIF}
 
 end;
-
-{
-//------------------------------------------------------------------------------
-// Function to mask/unmask a field written to a plain text file
-//------------------------------------------------------------------------------
-function TFLPMS_Login.MaskField(InputField: string; MaskType: integer) : string;
-var
-   idx1             : integer;
-   S2               : string;
-   S1               : array[1..64] of char;
-   Hi1, Hi2, HL, Lo : Word;
-
-begin
-
-   case MaskType of
-
-//--- Mask the Input Field
-
-      ord(MA_MASK): begin
-
-         S1   := InputField;
-         S2   := '';
-         idx1 := 1;
-
-         while (S1[idx1] <> #0) do begin
-
-//--- Get copies of the current character
-
-            Hi1 := Word(S1[idx1]);
-            Lo  := Word(S1[idx1]);
-
-//--- Move the 4 high bits to the right and mask out the four left bits
-
-            Hi1 := Hi1 shr 4;
-            Lo  := Lo and %00001111;
-
-//--- Turn the Hi and Lo parts into displayable characters
-
-            Hi1 := Hi1 or %01000000;
-            Lo  := Lo  or %01000000;
-
-//--- Add them to the result string
-
-            S2 := S2 + char(Hi1) + char(Lo);
-
-            inc(idx1);
-
-         end;
-
-         Result := S2;
-
-      end;
-
-//--- Unmask the input field
-
-      ord(MA_UNMASK) : begin
-
-         S1   := InputField;
-         S2   := '';
-         idx1 := 1;
-
-         while (S1[idx1] <> #0) do begin
-
-//--- Get copies of the next 2 characters
-
-            Hi1 := Word(S1[idx1]);
-            Inc(idx1);
-            Hi2 := Word(S1[idx1]);
-            Inc(idx1);
-
-//--- Move the 4 low bits of the first to the left and mask the 4 low bits then
-//--- mask the 4 high bits of the second
-
-            Hi1 := Hi1 shl 4;
-            Hi1 := Hi1 and %11110000;
-            Hi2 := Hi2 and %00001111;
-
-//--- Merge the 2 characters
-
-            HL := Hi1 or Hi2;
-
-//--- Add it to the result string
-
-            S2 := S2 + char(HL);
-
-         end;
-
-         Result := S2;
-
-      end;
-
-   end;
-
-end;
-}
-
-{
-//------------------------------------------------------------------------------
-// Function to extract and return the parameters that were passed on the
-// command line when the application was invoked.
-//
-// An Option list of "H:L:mu:" would expect a command line similar to:
-//   -H followed by a parameter e.g. -Hwww.sourcingmethods.com
-//   -L followed by a parameter e.g. -L1
-//   -m
-//   -u followed by a parameter e.g. -uFrancois
-//
-// The calling function must create the following TStringList variables:
-//
-//   Options
-//   Parms
-//
-// The function returns:
-//
-//    0 if no command line parameters were passed
-//    $ in the Parms string if a value was expected but not found
-//    # in the Parms string if an unknown parameter was found
-//   -1 if the switch '-' could not be found
-//   The number of parameters found if no error were found
-//---------------------------------------------------------------------------
-function TFLPMS_Login.cmdlOpt(OptList : string; Options, Parms : TStringList) : integer;
-var
-   idx1, idx2           : integer;
-   Found                : boolean;
-   ThisParm, ThisOption : string;
-
-begin
-
-   if ParamCount < 1 then begin
-
-      Result := 0;
-      Exit;
-
-   end;
-
-//--- Extract the parameters that were passed from ParamStr
-
-   for idx1 := 1 to ParamCount do begin
-
-      ThisParm := ParamStr(idx1);
-
-//--- First character of the argument must be the switch character ('-')
-
-      if ThisParm.SubString(0,1) <> '-' then begin
-
-         Result := -1;
-         Exit;
-
-      end;
-
-//--- Extract the second character and search for it in OptList
-
-      ThisOption := ThisParm.SubString(1,1);
-      Found := False;
-
-      for idx2 := 0 to OptList.Length do begin
-
-         if OptList.SubString(idx2,1) = ThisOption then begin
-
-            Found := True;
-            Options.Add(ThisOption);
-
-//--- If this Option is followed by ":" in the OptList then a parameter is
-//    expected. Extract the parameter if it is expected
-
-            if OptList.SubString(idx2 + 1,1) = ':' then begin
-
-               if ThisParm.Length < 3 then
-                  Parms.Add('$')
-               else
-                  Parms.Add(ThisParm.SubString(2, ThisParm.Length - 1));
-
-            end else
-               Parms.Add('$');
-
-         end;
-
-      end;
-
-      if Found = False then begin
-         Options.Add(ThisOption);
-         Parms.Add('#');
-      end;
-
-   end;
-
-   Result := Parms.Count;
-
-end;
-}
 
 //------------------------------------------------------------------------------
 

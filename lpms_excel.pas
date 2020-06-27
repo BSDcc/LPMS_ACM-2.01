@@ -24,6 +24,16 @@ uses
    fpspreadsheet, fpspreadsheetgrid, fpspreadsheetctrls, fpstypes, xlsbiff8,
    fpsopendocument, fpsCSV, xlsxOOXML,
 
+{$IFDEF DARWIN}                      // Target is macOS
+   Zipper, StrUtils, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
+   ComCtrls,
+ {$IFDEF CPUI386}                    // Running on older hardware - Widget set must be Carbon
+      mysql55conn, Interfaces;
+  {$ELSE}                            // Running on new hardware - Widget set must be Cocoa
+      mysql57conn, Interfaces;
+  {$ENDIF}
+{$ENDIF}
+
 {$IFDEF WINDOWS}                     // Target is Winblows
    mysql56conn;
 {$ENDIF}
@@ -35,15 +45,6 @@ uses
       mysql57conn;
    {$ENDIF}
 {$ENDIF}
-
-{$IFDEF DARWIN}                      // Target is macOS
-   {$IFDEF CPUI386}                  // Running on a version below Catalina
-      mysql55conn;
-   {$ELSE}                           // Running on Catalina
-      mysql57conn;
-   {$ENDIF}
-{$ENDIF}
-
 
 //------------------------------------------------------------------------------
 // Declarations
@@ -76,9 +77,6 @@ type
       dlgSelDir: TSelectDirectoryDialog;
       sCellEdit1: TsCellEdit;
       sCellIndicator1: TsCellIndicator;
-      sqlQry1: TSQLQuery;
-      sqlQry2: TSQLQuery;
-      sqlTran: TSQLTransaction;
       wtcTabControl: TsWorkbookTabControl;
       wbsSource: TsWorkbookSource;
       wsgGrid: TsWorksheetGrid;
@@ -90,15 +88,17 @@ type
       procedure FormClose( Sender: TObject; var CloseAction: TCloseAction);
       procedure FormCreate( Sender: TObject);
       procedure FormShow( Sender: TObject);
-
 private   {Private Declarations}
 
-   SpreadSheetName  : string;      // Holds the Path and Name (without the Ext) of the Generated File
-   ErrMsg    : string;             // Holds last MySQL error message
-   InitDir   : string;             // Remembers the Initial Directory from the first File Save when the form is shown
+   SpreadSheetName : string;        // Holds the Path and Name (without the Ext) of the Generated File
+   ErrMsg          : string;        // Holds last MySQL error message
+   InitDir         : string;        // Remembers the Initial Directory from the first File Save when the form is shown
 
 {$IFDEF WINDOWS}                   // Target is Winblows
    sqlCon  : TMySQL56Connection;
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+   sqlQry2 : TSQLQuery;
 {$ENDIF}
 
 {$IFDEF LINUX}                     // Target is Linux
@@ -107,14 +107,20 @@ private   {Private Declarations}
    {$ELSE}                         // Running on Intel architecture
       sqlCon : TMySQL57Connection;
    {$ENDIF}
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+   sqlQry2 : TSQLQuery;
 {$ENDIF}
 
 {$IFDEF DARWIN}                    // Target is macOS
-   {$IFDEF CPUI386}                // Running on a version below Catalina
+   {$IFDEF CPUARMHF}               // Running on older hardware
       sqlCon : TMySQL55Connection;
-   {$ELSE}                         // Running on Catalina
+   {$ELSE}                         // Running on new hardware
       sqlCon : TMySQL57Connection;
    {$ENDIF}
+   sqlTran : TSQLTransaction;
+   sqlQry1 : TSQLQuery;
+   sqlQry2 : TSQLQuery;
 {$ENDIF}
 
    function  CreateSheet(): boolean;
@@ -150,7 +156,7 @@ type
       LPMS_Collections : boolean;
       LPMS_DocGen      : boolean;
       LPMS_Floating    : boolean;
-      LPMS_Option4     : boolean;
+      LPMS_Options4    : boolean;
       License          : integer;
       DBPrefix         : string;
       Unique           : string;
@@ -166,13 +172,13 @@ var
 //--- Utilities contained in BSD_Utilities.dll
 
 {$IFDEF DARWIN}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities.dylib';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities.dylib';
 {$ENDIF}
 {$IFDEF LINUX}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities.so';
 {$ENDIF}
 {$IFDEF WINDOWS}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'BSD_Utilities.dll';
 {$ENDIF}
 
 implementation
@@ -192,6 +198,9 @@ begin
 
 {$IFDEF WINDOWS}                    // Target is Winblows
    sqlCon  := TMySQL56Connection.Create(nil);
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
+   sqlQry2 := TSQLQuery.Create(nil);
 {$ENDIF}
 
 {$IFDEF LINUX}                      // Target is Linux
@@ -200,14 +209,20 @@ begin
    {$ELSE}                          // Running on Intel architecture
       sqlCon := TMySQL57Connection.Create(nil);
    {$ENDIF}
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
+   sqlQry2 := TSQLQuery.Create(nil);
 {$ENDIF}
 
 {$IFDEF DARWIN}                     // Target is macOS
-   {$IFDEF CPUI386}                 // Running on a version below Catalina
+   {$IFDEF CPUI386}                 // Running on older hardware
       sqlCon := TMySQL55Connection.Create(nil);
-   {$ELSE}
+   {$ELSE}                          // Running on new hardware
       sqlCon := TMySQL57Connection.Create(nil);
    {$ENDIF}
+   sqlTran := TSQLTransaction.Create(nil);
+   sqlQry1 := TSQLQuery.Create(nil);
+   sqlQry2 := TSQLQuery.Create(nil);
 {$ENDIF}
 
    sqlTran.DataBase    := sqlCon;
@@ -505,7 +520,7 @@ begin
          else
             xlsSheet.WriteText(Row,Col+12,'No');
 
-         if This_Key_Priv.LPMS_Option4 = True then
+         if This_Key_Priv.LPMS_Options4 = True then
             xlsSheet.WriteText(Row,Col+13,'Yes')
          else
             xlsSheet.WriteText(Row,Col+13,'No');
