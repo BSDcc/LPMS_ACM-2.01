@@ -585,6 +585,7 @@ begin
    Result := True;
 
 end;
+
 //------------------------------------------------------------------------------
 // Procedure to extract the bind_address and version of the Server we are
 // connecting to
