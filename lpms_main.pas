@@ -37,11 +37,11 @@ uses
 {$ENDIF}
 
 {$IFDEF DARWIN}                      // Target is macOS
-//   Zipper, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
+   macOSAll,
   {$IFDEF CPUI386}                   // Running on older hardware - Widget set must be Carbon
-      mysql55conn{, Interfaces};
+      CarbonProc, mysql55conn;
    {$ELSE}                           // Running on new hardware - Widget set must be Cocoa
-      mysql57conn{, Interfaces};
+      CocoaUtils, mysql57conns;
    {$ENDIF}
 {$ENDIF}
 

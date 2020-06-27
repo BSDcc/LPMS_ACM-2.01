@@ -28,12 +28,11 @@ uses
    ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles, LazFileUtils,
 
 {$IFDEF DARWIN}                      // Target is macOS
-   Zipper, StrUtils, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
    macOSAll,
   {$IFDEF CPUI386}                   // Running on older hardware - Widget set must be Carbon
-      CarbonProc, mysql55conn, Interfaces;
+      CarbonProc, mysql55conn;
    {$ELSE}                           // Running on new hardware - Widget set must be Cocoa
-      CocoaUtils, mysql57conn, Interfaces;
+      CocoaUtils, mysql57conns;
    {$ENDIF}
 {$ENDIF}
 

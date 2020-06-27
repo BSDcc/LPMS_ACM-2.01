@@ -34,10 +34,11 @@ uses
 {$ENDIF}
 
 {$IFDEF DARWIN}                      // Target is macOS
-   {$IFDEF CPUI386}                  // Running on older hardware - Widget set must be Carbon
-      mysql55conn;
+   macOSAll,
+  {$IFDEF CPUI386}                   // Running on older hardware - Widget set must be Carbon
+      CarbonProc, mysql55conn;
    {$ELSE}                           // Running on new hardware - Widget set must be Cocoa
-      mysql57conn;
+      CocoaUtils, mysql57conns;
    {$ENDIF}
 {$ENDIF}
 

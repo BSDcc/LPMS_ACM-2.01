@@ -19,9 +19,9 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Login"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="139"/>
-        <CursorPos X="110" Y="162"/>
-        <FoldState Value=" T3l30}q5 pkGq7052 pj6jS0{1="/>
+        <TopLine Value="4"/>
+        <CursorPos Y="38"/>
+        <FoldState Value=" T3l20}q5 pkGq7052 pj6jS0{1;"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
           <Item0 Y="673"/>
@@ -35,8 +35,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
-        <IsVisibleTab Value="True"/>
-        <CursorPos X="206" Y="426"/>
+        <TopLine Value="13"/>
+        <CursorPos Y="47"/>
         <FoldState Value=" T3r90p1 pj3kL032]9DjW0,3 pm8o80{Y[S45m10{I1]KRp7053]J2jR092 TL:W05 p0in10Q;"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -49,10 +49,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Show"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="142"/>
-        <CursorPos X="63" Y="132"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="10"/>
+        <CursorPos Y="44"/>
         <UsageCount Value="204"/>
+        <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="lpms_excel.pas"/>
@@ -62,8 +64,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Excel"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="160"/>
-        <CursorPos X="103" Y="181"/>
+        <CursorPos Y="27"/>
         <UsageCount Value="156"/>
       </Unit4>
       <Unit5>

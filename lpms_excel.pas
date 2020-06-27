@@ -25,13 +25,12 @@ uses
    fpsopendocument, fpsCSV, xlsxOOXML,
 
 {$IFDEF DARWIN}                      // Target is macOS
-   Zipper, StrUtils, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
-   ComCtrls,
- {$IFDEF CPUI386}                    // Running on older hardware - Widget set must be Carbon
-      mysql55conn, Interfaces;
-  {$ELSE}                            // Running on new hardware - Widget set must be Cocoa
-      mysql57conn, Interfaces;
-  {$ENDIF}
+   macOSAll,
+  {$IFDEF CPUI386}                   // Running on older hardware - Widget set must be Carbon
+      CarbonProc, mysql55conn;
+   {$ELSE}                           // Running on new hardware - Widget set must be Cocoa
+      CocoaUtils, mysql57conns;
+   {$ENDIF}
 {$ENDIF}
 
 {$IFDEF WINDOWS}                     // Target is Winblows
