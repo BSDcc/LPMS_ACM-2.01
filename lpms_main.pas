@@ -60,6 +60,10 @@ type
    ActionsRestore: TAction;
    actList: TActionList;
    Backup1: TMenuItem;
+   edtPortB: TEdit;
+   edtPortRe: TEdit;
+   Label39: TLabel;
+   Label41: TLabel;
    lblIPAddress: TLabel;
    RestoreLogRe1: TListView;
    Bevel1: TBevel;
@@ -358,6 +362,7 @@ public   { Public Declarations }
    ThisSMTPPass : string;      // SMTP Password for sending emails
    PassPhrase   : string;      // Contains the Phass Phrase to unlock restricted activities
    AutoKey      : string;      // Set by Login. If autoKey contains a key then itis automatically displayed and decoded
+   ACMPort      : string;      // Port number on which we are accessing the MySQL Server
 
 end;
 
@@ -399,19 +404,26 @@ var
 
 //--- Utilities contained in BSD_Utilities.dll
 
+{$IFDEF DARWIN}
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities.dylib';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'libbsd_utilities.dylib';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'libbsd_utilities.dylib';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'libbsd_utilities.dylib';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'libbsd_utilities.dylib';
+{$ENDIF}
 {$IFDEF LINUX}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'libbsd_utilities';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'libbsd_utilities';
-   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'libbsd_utilities';
-   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'libbsd_utilities';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities.so';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'libbsd_utilities.so';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'libbsd_utilities.so';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'libbsd_utilities.so';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'libbsd_utilities.so';
 {$ENDIF}
 {$IFDEF WINDOWS}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'BSD_Utilities';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'BSD_Utilities';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'BSD_Utilities';
-   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'BSD_Utilities';
-   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'BSD_Utilities';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'BSD_Utilities.dll';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'BSD_Utilities.dll';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'BSD_Utilities.dll';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'BSD_Utilities.dll';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'BSD_Utilities.dll';
 {$ENDIF}
 
 implementation
@@ -1572,7 +1584,7 @@ end;
 procedure TFLPMS_Main.RunBackup();
 begin
 
-   DoBackup('Ad-Hoc',edtLocationB.Text,'lpmsdefault',edtHostNameB.Text,edtUserIDB.Text,edtPasswordB.Text,'LPMS_ACM',edtTemplateB.Text,FLPMS_Login.Version,speReadBlockB.Value,BackupLog,nil,True);
+   DoBackup('Ad-Hoc',edtLocationB.Text,'lpmsdefault',edtHostNameB.Text,edtUserIDB.Text,edtPasswordB.Text,edtPortB.Text,'LPMS_ACM',edtTemplateB.Text,FLPMS_Login.Version,speReadBlockB.Value,BackupLog,nil,True);
 
 end;
 
@@ -1617,7 +1629,7 @@ begin
    end;
 
    RestoreSuccess := False;
-   ThisResult := DoRestore(RestoreFile,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe1,nil,ord(RT_RESTORE));
+   ThisResult := DoRestore(RestoreFile,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,edtPortRe.Text,'',RestoreLogRe1,nil,ord(RT_RESTORE));
 
    if ThisResult <> '' then
       RestoreSuccess := True;
@@ -2093,6 +2105,8 @@ begin
    btnDelete.Enabled := False;
    btnUpdate.Enabled := False;
 
+   edtPortB.Text := ACMPort;
+
    btnLockB.Visible   := True;
    btnUnlockB.Visible := False;
 
@@ -2215,6 +2229,8 @@ begin
    btnDelete.Enabled := False;
    btnUpdate.Enabled := False;
 
+   edtPortRe.Text := ACMPort;
+
    btnLockR.Visible   := False;
    btnUnlockR.Visible := False;
 
@@ -2307,7 +2323,7 @@ begin
    RestoreLogRe2.Visible := True;
    RestoreLogRe2.Clear;
 
-   ThisResult := DoRestore(edtBackupRe.Text,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,'',RestoreLogRe2,nil,ord(RT_OPEN));
+   ThisResult := DoRestore(edtBackupRe.Text,'lpmsdefault',edtHostNameRe.Text,edtUserIDRe.Text,edtPasswordRe.Text,edtPortRe.Text,'',RestoreLogRe2,nil,ord(RT_OPEN));
 
    if ThisResult <> '' then begin
 
@@ -2609,6 +2625,7 @@ begin
          sqlCon.UserName     := UserName;
          sqlCon.Password     := Password;
          sqlCon.DatabaseName := 'lpmsdefault';
+         sqlCon.Port         := StrToInt(ACMPort);
          adoQry1.DataBase    := sqlCon;
          adoQry2.Database    := sqlCon;
 

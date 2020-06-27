@@ -59,7 +59,9 @@ type
 
    TFLPMS_Login = class( TForm)
    btnLogin: TButton;
+   btnClose: TButton;
    edtHostName: TEdit;
+   edtPort: TEdit;
    edtPassword: TEdit;
    edtUserID: TEdit;
    Image1: TImage;
@@ -67,10 +69,14 @@ type
    Label1: TLabel;
    Label2: TLabel;
    Label3: TLabel;
+   Label4: TLabel;
+   Label5: TLabel;
    StaticText1: TStaticText;
    StatusBar1: TStatusBar;
    timTimer: TTimer;
+   procedure btnCloseClick(Sender: TObject);
    procedure btnLoginClick( Sender: TObject);
+   procedure edtPortChange(Sender: TObject);
    procedure FormClose( Sender: TObject; var CloseAction: TCloseAction);
    procedure FormCreate( Sender: TObject);
    procedure FormShow( Sender: TObject);
@@ -143,12 +149,17 @@ end;
 var
    FLPMS_Login: TFLPMS_Login;
 
+{$IFDEF DARWIN}
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'libbsd_utilities.dylib';
+   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'libbsd_utilities.dylib';
+{$ENDIF}
 {$IFDEF WINDOWS}
-   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'BSD_Utilities';
-   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'BSD_Utilities';
-{$ELSE}
-   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'libbsd_utilities';
-   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'libbsd_utilities';
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'BSD_Utilities.dll';
+   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'BSD_Utilities.dll';
+{$ENDIF}
+{$IFDEF LINUX}
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'libbsd_utilities.so';
+   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'libbsd_utilities.so';
 {$ENDIF}
 
 implementation
@@ -269,7 +280,8 @@ begin
 
             if Params.Strings[idx] = 'P' then begin
 
-               ACMPort := Params.Strings[idx + 1];
+               ACMPort      := Params.Strings[idx + 1];
+               edtPort.Text := ACMPort;
 
             end;
 
@@ -436,6 +448,16 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+// User changed the Port number
+//------------------------------------------------------------------------------
+procedure TFLPMS_Login.edtPortChange(Sender: TObject);
+begin
+
+   ACMPort := edtPort.Text;
+
+end;
+
+//------------------------------------------------------------------------------
 // Executed when timTimer pops
 //------------------------------------------------------------------------------
 procedure TFLPMS_Login. timTimerTimer( Sender: TObject);
@@ -508,6 +530,7 @@ begin
       FLPMS_Main.ThisSMTPHost := ThisSMTPHost;
       FLPMS_Main.ThisSMTPPass := ThisSMTPPass;
       FLPMS_Main.AutoKey      := AutoKey;
+      FLPMS_Main.ACMPort      := ACMPort;
 
       FLPMS_Main.edtUserIDB.Text      := DBUSer;
       FLPMS_Main.edtPasswordB.Text    := DBPass;
@@ -538,6 +561,16 @@ begin
       Close();
 
    end;
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the Close button
+//------------------------------------------------------------------------------
+procedure TFLPMS_Login.btnCloseClick(Sender: TObject);
+begin
+
+   Close;
 
 end;
 
