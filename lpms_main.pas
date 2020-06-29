@@ -334,7 +334,7 @@ type
                DB_SELECT,           // 'SELECT' statement
                DB_OTHER);           // All other SQL statements
 
-   TY_TYPE =  (TYPE_PASSWORD,       // Used when calling LPMS_InoputQuery
+   TY_TYPE =  (TYPE_PASSWORD,       // Used when calling LPMS_InputQuery
                TYPE_TEST,           //
                TYPE_XFER,           //
                TYPE_READ,           // Reading from the database - &quote to '''
@@ -405,25 +405,25 @@ var
 //--- Utilities contained in BSD_Utilities.dll
 
 {$IFDEF DARWIN}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities.dylib';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'libbsd_utilities.dylib';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'libbsd_utilities.dylib';
-   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'libbsd_utilities.dylib';
-   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'libbsd_utilities.dylib';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; stdcall; external 'libbsd_utilities.dylib';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; stdcall; external 'libbsd_utilities.dylib';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; stdcall; external 'libbsd_utilities.dylib';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; stdcall; external 'libbsd_utilities.dylib';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; stdcall; external 'libbsd_utilities.dylib';
 {$ENDIF}
 {$IFDEF LINUX}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities.so';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'libbsd_utilities.so';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'libbsd_utilities.so';
-   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'libbsd_utilities.so';
-   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'libbsd_utilities.so';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; stdcall; external 'libbsd_utilities.so';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; stdcall; external 'libbsd_utilities.so';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; stdcall; external 'libbsd_utilities.so';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; stdcall; external 'libbsd_utilities.so';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; stdcall; external 'libbsd_utilities.so';
 {$ENDIF}
 {$IFDEF WINDOWS}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'BSD_Utilities.dll';
-   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; StdCall; external 'BSD_Utilities.dll';
-   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; StdCall; external 'BSD_Utilities.dll';
-   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; StdCall; external 'BSD_Utilities.dll';
-   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; StdCall; external 'BSD_Utilities.dll';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; stdcall; external 'BSD_Utilities.dll';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; stdcall; external 'BSD_Utilities.dll';
+   function SendMimeMail(From, ToStr, CcStr, BccStr, Subject, Body, Attach, SMTPStr : string): boolean; stdcall; external 'BSD_Utilities.dll';
+   function DoBackup(BackupType, BackupLocation, DBName, HostName, UserID, Password, Port, BackupName, Template, ThisVersion: string; BackupBlog: integer; ShowLog: TListView; ShowStatus: TStaticText; DoCompress: boolean) : boolean; stdcall; external 'BSD_Utilities.dll';
+   function DoRestore(BackupLocation,DBName,HostName,UserID,Password,Port,ThisVersion: string; ShowLog: TListView; ShowStatus: TStaticText; ThisType: integer) : string; stdcall; external 'BSD_Utilities.dll';
 {$ENDIF}
 
 implementation
@@ -3084,33 +3084,6 @@ begin
 
    end;
 
-{
-var
-   Process: TProcess;
-   I: Integer;
-
-begin
-
-   Process := TProcess.Create(nil);
-
-   try
-      Process.InheritHandles := False;
-      Process.Options := [];
-      Process.ShowWindow := swoShow;
-
-// Copy default environment variables including DISPLAY variable for GUI application to work
-
-      for I := 1 to GetEnvironmentVariableCount do
-         Process.Environment.Add(GetEnvironmentString(I));
-
-      Process.Executable := '/usr/bin/gedit';
-      Process.Execute;
-   finally
-      Process.Free;
-   end;
-
-end;
-}
    Process := TProcess.Create(nil);
 
    try

@@ -35,9 +35,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
-        <TopLine Value="13"/>
-        <CursorPos Y="47"/>
-        <FoldState Value=" T3r90p1 pj3kL032]9DjW0,3 pm8o80{Y[S45m10{I1]KRp7053]J2jR092 TL:W05 p0in10Q;"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="2749"/>
+        <CursorPos Y="3073"/>
+        <FoldState Value=" T3r90p1 pj3kL032]9DjW0,3 pm8o80{Y[S45m10{I1]KRp7053]J2jR095]9eka0{G[c49lU0B]JiXjV0I[S40k60T2]Ibjc0{~[u4DnV0J[94TkP0^2 pj3lI0h2 TL:W05a"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -49,12 +50,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Show"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="10"/>
+        <TopLine Value="75"/>
         <CursorPos Y="44"/>
         <UsageCount Value="204"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="lpms_excel.pas"/>
@@ -410,7 +411,7 @@
         <UsageCount Value="10"/>
       </Unit52>
     </Units>
-    <JumpHistory Count="25" HistoryIndex="24">
+    <JumpHistory Count="26" HistoryIndex="25">
       <Position1>
         <Filename Value="lpms_main.pas"/>
         <Caret Line="2617" Column="40" TopLine="2581"/>
@@ -511,6 +512,10 @@
         <Filename Value="lpms_main.pas"/>
         <Caret Line="1580" TopLine="1548"/>
       </Position25>
+      <Position26>
+        <Filename Value="lpms_main.pas"/>
+        <Caret Line="337" Column="65" TopLine="394"/>
+      </Position26>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
