@@ -308,7 +308,6 @@ begin
 //--- the home directory.
 
 {$IFDEF WINDOWS}
-
    LocalPath := AppendPathDelim(GetUserDir + 'Documents');
 
    if DirectoryExists(LocalPath) = False then begin
@@ -337,12 +336,9 @@ begin
    end;
 
    LocalPath := AppendPathDelim(LocalPath + 'LPMS_ACM');
-
 {$ELSE}
-
    LocalPath := AppendPathDelim(GetUSerDir);
    LocalPath := AppendPathDelim(LocalPath + '.lpms_acm');
-
 {$ENDIF}
 
 //--- We now have what passes for a home directory with the working directory
@@ -372,35 +368,22 @@ begin
 //--- Get the SMTP parameters from the INI file and store for later use
 
 {$IFNDEF WINDOWS}
-   INILoc := LocalPath + 'LPMS_ACM.ini';
-
-//   if FileExists(INILoc) = True then begin
-
-      IniFile := TINIFile.Create(INILoc);
+   INILoc  := LocalPath + 'LPMS_ACM.ini';
+   IniFile := TINIFile.Create(INILoc);
 {$ELSE}
-      IniFile := TRegistryIniFile.Create('Software\BlueCrane Software\LPMS_ACM');
+   IniFile := TRegistryIniFile.Create('Software\BlueCrane Software\LPMS_ACM');
 {$ENDIF}
 
-//   INILoc := LocalPath + 'LPMS_ACM.ini';
-//
-//   if FileExists(INILoc) = True then begin
-//
-//      IniFile := TINIFile.Create(INILoc);
-//
-      ThisSMTPHost := IniFile.ReadString('Config','SMTPHost','');
-      ThisSMTPPass := IniFile.ReadString('Config','SMTPPass','');
-      DBUser       := IniFile.ReadString('Config','DBuser','');
-      DBPass       := IniFile.ReadString('Config','DBPass','');
-      DBHost       := IniFile.ReadString('Config','DBHost','');
-      DBLocation   := IniFile.ReadString('Config','DBLocation','');
-      DBTemplate   := IniFile.ReadString('Config','DBTemplate','&Date@&Time - &BackupType Backup for &BackupName (&DBName on &HostName) {&OSShort}');
-      DBBlock      := IniFile.ReadInteger('Config','DBBlock',20000);
+   ThisSMTPHost := IniFile.ReadString('Config','SMTPHost','');
+   ThisSMTPPass := IniFile.ReadString('Config','SMTPPass','');
+   DBUser       := IniFile.ReadString('Config','DBuser','');
+   DBPass       := IniFile.ReadString('Config','DBPass','');
+   DBHost       := IniFile.ReadString('Config','DBHost','');
+   DBLocation   := IniFile.ReadString('Config','DBLocation','');
+   DBTemplate   := IniFile.ReadString('Config','DBTemplate','&Date@&Time - &BackupType Backup for &BackupName (&DBName on &HostName) {&OSShort}');
+   DBBlock      := IniFile.ReadInteger('Config','DBBlock',20000);
 
-      IniFile.Destroy;
-
-//{$IFNDEF WINDOWS}
-//   end;
-//{$ENDIF}
+   IniFile.Destroy;
 
 //--- Unmask the Password
 

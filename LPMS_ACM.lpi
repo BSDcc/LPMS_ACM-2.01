@@ -73,8 +73,8 @@
           <Version Value="11"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <Libraries Value="../BSD_Utilities/lib/i386-win32"/>
-            <OtherUnitFiles Value="C:/Users/francois/AppData/Local/lazarus/onlinepackagemanager/packages/synapse40.1/;../BSD_Utilities"/>
+            <Libraries Value="../BSD_Utilities/lib/x86_64-linux"/>
+            <OtherUnitFiles Value="../../.lazarus/onlinepackagemanager/packages/synapse40.1;../BSD_Utilities"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>

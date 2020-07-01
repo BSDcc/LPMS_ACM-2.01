@@ -2,7 +2,7 @@
 <CONFIG>
   <ProjectSession>
     <Version Value="11"/>
-    <BuildModes Active="Release"/>
+    <BuildModes Active="Debug"/>
     <Units Count="54">
       <Unit0>
         <Filename Value="LPMS_ACM.lpr"/>
@@ -18,15 +18,17 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Login"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="141"/>
-        <CursorPos X="79" Y="161"/>
-        <FoldState Value=" T3s0052 pjBjV[966jS0{1V"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="318"/>
+        <CursorPos X="17" Y="310"/>
+        <FoldState Value=" T3rQ052 pjBjV[966jS0{1f"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
-          <Item0 Y="695"/>
-          <Item1 X="63" Y="604" ID="1"/>
+          <Item0 Y="678"/>
+          <Item1 X="63" Y="587" ID="1"/>
         </Bookmarks>
+        <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="lpms_main.pas"/>
@@ -35,7 +37,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
-        <IsVisibleTab Value="True"/>
+        <TopLine Value="3140"/>
         <CursorPos X="61" Y="2"/>
         <FoldState Value=" T3r90p1 pj3kL032]9DjW0,3 pm8o80{Y[S45m10{I014 TL:W05K"/>
         <UsageCount Value="200"/>
@@ -417,7 +419,7 @@
         <UsageCount Value="11"/>
       </Unit53>
     </Units>
-    <JumpHistory Count="2" HistoryIndex="1">
+    <JumpHistory Count="5" HistoryIndex="4">
       <Position1>
         <Filename Value="lpms_main.pas"/>
         <Caret Line="1410" Column="113" TopLine="1388"/>
@@ -426,6 +428,18 @@
         <Filename Value="lpms_main.pas"/>
         <Caret Line="2" Column="61"/>
       </Position2>
+      <Position3>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="375" TopLine="355"/>
+      </Position3>
+      <Position4>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="379" TopLine="355"/>
+      </Position4>
+      <Position5>
+        <Filename Value="lpms_login.pas"/>
+        <Caret Line="390" TopLine="358"/>
+      </Position5>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
