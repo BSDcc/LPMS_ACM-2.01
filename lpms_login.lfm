@@ -11,7 +11,7 @@ object FLPMS_Login: TFLPMS_Login
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.8.0'
+  LCLVersion = '2.0.6.0'
   object Image1: TImage
     Left = 358
     Height = 64
@@ -730,25 +730,25 @@ object FLPMS_Login: TFLPMS_Login
   end
   object Label1: TLabel
     Left = 8
-    Height = 17
+    Height = 15
     Top = 60
-    Width = 43
+    Width = 37
     Caption = 'UserID:'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 8
-    Height = 17
+    Height = 15
     Top = 92
-    Width = 57
+    Width = 53
     Caption = 'Password:'
     ParentColor = False
   end
   object Label3: TLabel
     Left = 8
-    Height = 17
+    Height = 15
     Top = 124
-    Width = 29
+    Width = 28
     Caption = 'Host:'
     ParentColor = False
   end
@@ -766,14 +766,14 @@ object FLPMS_Login: TFLPMS_Login
   end
   object edtHostName: TEdit
     Left = 88
-    Height = 27
+    Height = 23
     Top = 120
     Width = 248
     TabOrder = 3
   end
   object edtPassword: TEdit
     Left = 88
-    Height = 27
+    Height = 23
     Top = 88
     Width = 248
     EchoMode = emPassword
@@ -782,7 +782,7 @@ object FLPMS_Login: TFLPMS_Login
   end
   object edtUserID: TEdit
     Left = 88
-    Height = 27
+    Height = 23
     Top = 56
     Width = 248
     TabOrder = 1
@@ -799,8 +799,8 @@ object FLPMS_Login: TFLPMS_Login
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 21
-    Top = 195
+    Height = 23
+    Top = 193
     Width = 430
     Font.Style = [fsBold]
     Panels = <    
@@ -813,15 +813,15 @@ object FLPMS_Login: TFLPMS_Login
   end
   object Label4: TLabel
     Left = 8
-    Height = 17
+    Height = 15
     Top = 156
-    Width = 26
+    Width = 25
     Caption = 'Port:'
     ParentColor = False
   end
   object edtPort: TEdit
     Left = 88
-    Height = 27
+    Height = 23
     Top = 152
     Width = 72
     OnChange = edtPortChange
@@ -838,9 +838,9 @@ object FLPMS_Login: TFLPMS_Login
   end
   object Label5: TLabel
     Left = 168
-    Height = 17
+    Height = 15
     Top = 156
-    Width = 153
+    Width = 145
     Caption = 'Leave blank for default Port'
     ParentColor = False
   end

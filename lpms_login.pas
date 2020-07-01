@@ -25,10 +25,10 @@ uses
 {$ENDIF}
 
    Classes, SysUtils, sqldb, Forms, Controls, Graphics, Dialogs, StdCtrls,
-   ExtCtrls, ComCtrls, LCLType, FileInfo, INIFiles, LazFileUtils,
+   ExtCtrls, ComCtrls, LCLType, FileInfo, LazFileUtils,
 
 {$IFDEF DARWIN}                      // Target is macOS
-   macOSAll,
+   INIFiles, macOSAll,
   {$IFDEF CPUI386}                   // Running on older hardware - Widget set must be Carbon
       CarbonProc, mysql55conn;
    {$ELSE}                           // Running on new hardware - Widget set must be Cocoa
@@ -37,11 +37,11 @@ uses
 {$ENDIF}
 
 {$IFDEF WINDOWS}                     // Target is Winblows
-   winpeimagereader, mysql56conn;
+   Registry, winpeimagereader, mysql56conn;
 {$ENDIF}
 
 {$IFDEF LINUX}                       // Target is Linux
-   elfreader,
+   INIFiles, elfreader,
    {$IFDEF CPUARMHF}                 // Running on ARM (Raspbian) architecture
       mysql55conn;
    {$ELSE}                           // Running on Intel architecture
@@ -149,16 +149,16 @@ var
    FLPMS_Login: TFLPMS_Login;
 
 {$IFDEF DARWIN}
-   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'libbsd_utilities.dylib';
-   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'libbsd_utilities.dylib';
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; stdcall; external 'libbsd_utilities.dylib';
+   function  MaskField(InputField: string; MaskType: integer): string; stdcall; external 'libbsd_utilities.dylib';
 {$ENDIF}
 {$IFDEF WINDOWS}
-   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'BSD_Utilities.dll';
-   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'BSD_Utilities.dll';
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; stdcall; external 'BSD_Utilities.dll';
+   function  MaskField(InputField: string; MaskType: integer): string; stdcall; external 'BSD_Utilities.dll';
 {$ENDIF}
 {$IFDEF LINUX}
-   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; StdCall; external 'libbsd_utilities.so';
-   function  MaskField(InputField: string; MaskType: integer): string; StdCall; external 'libbsd_utilities.so';
+   function  cmdlOptions(OptList : string; CmdLine, ParmStr : TStringList): integer; stdcall; external 'libbsd_utilities.so';
+   function  MaskField(InputField: string; MaskType: integer): string; stdcall; external 'libbsd_utilities.so';
 {$ENDIF}
 
 implementation
@@ -176,7 +176,11 @@ procedure TFLPMS_Login.FormCreate(Sender: TObject);
 var
    idx, NumParms  : integer;
    Params, Args   : TStringList;
+{$IFDEF WINDOWS}
+   IniFile        : TRegistryIniFile;
+{$ELSE}
    IniFile        : TINIFile;
+{$ENDIF}
 
 begin
 
@@ -365,15 +369,24 @@ begin
 
    end;
 
-
 //--- Get the SMTP parameters from the INI file and store for later use
 
+{$IFNDEF WINDOWS}
    INILoc := LocalPath + 'LPMS_ACM.ini';
 
-   if FileExists(INILoc) = True then begin
+//   if FileExists(INILoc) = True then begin
 
       IniFile := TINIFile.Create(INILoc);
+{$ELSE}
+      IniFile := TRegistryIniFile.Create('Software\BlueCrane Software\LPMS_ACM');
+{$ENDIF}
 
+//   INILoc := LocalPath + 'LPMS_ACM.ini';
+//
+//   if FileExists(INILoc) = True then begin
+//
+//      IniFile := TINIFile.Create(INILoc);
+//
       ThisSMTPHost := IniFile.ReadString('Config','SMTPHost','');
       ThisSMTPPass := IniFile.ReadString('Config','SMTPPass','');
       DBUser       := IniFile.ReadString('Config','DBuser','');
@@ -385,7 +398,9 @@ begin
 
       IniFile.Destroy;
 
-   end;
+//{$IFNDEF WINDOWS}
+//   end;
+//{$ENDIF}
 
 //--- Unmask the Password
 
@@ -419,7 +434,11 @@ end;
 //------------------------------------------------------------------------------
 procedure TFLPMS_Login. FormClose( Sender: TObject; var CloseAction: TCloseAction);
 var
-   IniFile   : TINIFile;
+{$IFDEF WINDOWS}
+   IniFile : TRegistryIniFile;
+{$ELSE}
+   IniFile : TINIFile;
+{$ENDIF}
 
 begin
 
@@ -429,9 +448,12 @@ begin
 
 //--- Write the current SMTP parameters to the INI file
 
-   INILoc := LocalPath + 'LPMS_ACM.ini';
-
+{$IFNDEF WINDOWS}
+   INILoc  := LocalPath + 'LPMS_ACM.ini';
    IniFile := TINIFile.Create(INILoc);
+{$ELSE}
+   IniFile := TRegistryIniFile.Create('Software\BlueCrane Software\LPMS_ACM');
+{$ENDIF}
 
    IniFile.WriteString('Config','SMTPHost',ThisSMTPHost);
    IniFile.WriteString('Config','SMTPPass',ThisSMTPPass);

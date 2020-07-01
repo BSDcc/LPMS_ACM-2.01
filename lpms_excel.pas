@@ -171,13 +171,13 @@ var
 //--- Utilities contained in BSD_Utilities.dll
 
 {$IFDEF DARWIN}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities.dylib';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; stdcall; external 'libbsd_utilities.dylib';
 {$ENDIF}
 {$IFDEF LINUX}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'libbsd_utilities.so';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; stdcall; external 'libbsd_utilities.so';
 {$ENDIF}
 {$IFDEF WINDOWS}
-   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; StdCall; external 'BSD_Utilities.dll';
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; stdcall; external 'BSD_Utilities.dll';
 {$ENDIF}
 
 implementation
