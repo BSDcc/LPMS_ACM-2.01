@@ -656,7 +656,8 @@ begin
 //--- Populate the TreeView with all available information
 
    tvTree.Items.Clear();
-   ThisRoot := tvTree.Items.AddFirst(nil,'LPMS');
+//   ThisRoot := tvTree.Items.AddFirst(nil,'LPMS');
+   ThisRoot := tvTree.Items.AddFirst(nil,'LPMS_ACM (' + HostName + ':' + ACMPort + ')');
 
    OpenDB(ord(DB_OPEN));
    GetData(ord(DB_ALL),'','','');
